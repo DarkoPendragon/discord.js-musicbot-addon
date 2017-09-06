@@ -1,0 +1,24 @@
+{
+  "name": "discord.js-musicbot-addon",
+  "version": "1.0.0",
+  "description": "A music bot addon for an already made Discord.js bot to run with or simply run by itself.",
+  "main": "index.js",
+  "directories": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "discord.js": "^11.2.1",
+    "youtube-dl": "^1.11.1",
+    "ytdl-core": "^0.9.1"
+  },
+  "keywords": [
+    "discord",
+    "discord.js",
+    "music",
+    "bot",
+    "addon"
+  ],
+  "author": "demisex",
+  "license": "ISC"
+}
