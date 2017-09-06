@@ -22,6 +22,7 @@ __Things I added & Changed:__
 * Videos won't (or are otherwise less likely to) end before the song stops.
 * Help command added.
 * Text replies were changed.
+* Added more options.  
 
 __Pre-installation:__  
 1. `npm install discord.js` // The core discord.js framework (recommended stable > dev branch).  
@@ -90,5 +91,5 @@ music(client, {
   leaveCmd: 'begone'
 });
 ```
-  
+
 Again if you have any issues, feel free to open one on the repo, or join my [Discord server](https://discordapp.com/invite/fj5jPEn).
