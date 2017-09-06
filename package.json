@@ -12,6 +12,14 @@
     "youtube-dl": "^1.11.1",
     "ytdl-core": "^0.9.1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheDemise/discord.js-musicbot-addon"
+  },
+  "bugs": {
+    "url": "https://github.com/TheDemise/discord.js-musicbot-addon/issues"
+  },
+  "homepage": "https://github.com/TheDemise/discord.js-musicbot-addon",
   "keywords": [
     "discord",
     "discord.js",
