@@ -3,8 +3,8 @@
 This module way be buggy and need some fine tuning. Feel free to let me know what problems you encounter by opening an issue on the repo.
 This was originaly an update of the original by [ruiqimao](https://github.com/ruiqimao/discord.js-music), but is now a updated version by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11) for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks.
 
-__The commands available are:__  
-* `help [command]`: Displays help text for commands by this addon, or help for a specific command.
+__The commands available are: (default names)__  
+* `musichelp [command]`: Displays help text for commands by this addon, or help for a specific command.
 * `play <url>|<search string>`: Play a video/music. It can take a URL from various services (YouTube, Vimeo, YouKu, etc). You can also search using a string.
 * `skip [number]`: Skip a song or multi songs with skip [some number],
 * `queue`: Display the current queue.
@@ -45,7 +45,9 @@ __Fix:__ This one is a little more complicated.
 If that doesn't fix your issue;  
 1. Download and install the [Windows 8.1 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-8-1-sdk)
 
-This is a music plugin for Discord.js. Using it is as easy as:  
+This is a music plugin for Discord.js. Using it is as easy as:
+
+__Exaple basic code, standalone:__
 ```javascript
 const Discord = require('discord.js');
 const music = require('discord.js-musicbot-addon');
@@ -59,17 +61,32 @@ music(<client>);
 <client>.login(token);
 ```
 
-The module consists of a single function, which takes two arguments:  
+All options are optional and thus not needed.
+The options you can pass in music(<client>, options) is as followed:
+* prefix: Prefix to set for commands.  
+* global: true/false. If set to true, will use global queues, false will use server. (default false)  
+* maxQueueSize: Max size of queues.
+* anyoneCanSkip: Whether or not anyone can skip, true/false. Defaults false.
+* clearInvoker: Whether or not to clear the command message.
+* volume: Default volume. Anywhere from 1 to 200, default is 50.
+* helpCmd: Name of the help command.
+* playCmd: Sets the play command name.
+* skipCmd: Sets the skip command name.
+* queueCmd: Sets the queue command name.
+* pauseCmd: Sets the name for the pause command.
+* resumeCmd: Sets the name for the resume command.
+* volumeCmd: Sets the name for the volume command.
+* leaveCmd: Sets the name for the leave command.
+* clearCmd: Sets the name for the clearqueue command.  
+
+An example of a few custom commands would be:  
 ```javascript
-/*
- * @param {Client} client - The discord.js client.
- * @param {object} options - (Optional) Options to configure the music bot. Acceptable options are:
- * 		prefix: The prefix to use for the commands (default '!').
- * 		global: Whether to use a global queue instead of a server-specific queue (default false).
- * 		maxQueueSize: The maximum queue size (default 20).
- * 		anyoneCanSkip: Allow anybody to skip the song.
- * 		clearInvoker: Clear the command message.
- * 		volume: The default volume of the player (1 to 200, default 50).
- */
-music(<client>, options);
+music(client, {
+  prefix: ">",
+  maxQueueSize: "10",
+  anyoneCanSkip: false,
+  helpCmd: 'mhelp',
+  playCmd: 'music',
+  leaveCmd: 'begone'
+});
 ```
