@@ -62,7 +62,7 @@ music(<client>);
 ```
 
 All options are optional and thus not needed.
-The options you can pass in music(<client>, options) is as followed:
+The options you can pass in music(client, options) is as followed:
 * prefix: Prefix to set for commands.  
 * global: true/false. If set to true, will use global queues, false will use server. (default false)  
 * maxQueueSize: Max size of queues.
@@ -90,3 +90,5 @@ music(client, {
   leaveCmd: 'begone'
 });
 ```
+  
+Again if you have any issues, feel free to open one on the repo, or join my [Discord server](https://discordapp.com/invite/fj5jPEn).
