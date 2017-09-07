@@ -78,7 +78,8 @@ The options you can pass in music(client, options) is as followed:
 * resumeCmd: Sets the name for the resume command.
 * volumeCmd: Sets the name for the volume command.
 * leaveCmd: Sets the name for the leave command.
-* clearCmd: Sets the name for the clearqueue command.  
+* clearCmd: Sets the name for the clearqueue command.
+* enableQueueStat: Disables or enables queue status (useful to prevent errors sometimes, defaults true).  
 
 An example of a few custom commands would be:  
 ```javascript

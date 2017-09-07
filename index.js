@@ -29,6 +29,7 @@ const Discord = require('discord.js');
  *							volumeCmd: Sets the name for the volume command.
  *							leaveCmd:  Sets the name for the leave command.
  *							clearCmd: Sets the name for the clear command.
+ *							enableQueueStat: Disables or enables queue status (useful to prevent errors sometimes, defaults true).
  */
 module.exports = function (client, options) {
 	// Get all options.
@@ -47,6 +48,7 @@ module.exports = function (client, options) {
 	let VOLUME_CMD = (options && options.volumeCmd) || 'volume';
 	let LEAVE_CMD = (options && options.leaveCmd) || 'leave';
 	let CLEAR_CMD = (options && options.clearCmd) || 'clearqueue';
+	let ENABLE_Q_STAT = (options && options.enableQueueStat) || true;
 
 	// Create an object of queues.
 	let queues = {};
@@ -305,16 +307,20 @@ module.exports = function (client, options) {
 			(index + 1) + ': ' + video.title
 		)).join('\n');
 
-		// Get the status of the queue.
-		let queueStatus = 'Stopped';
-		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-		if (voiceConnection !== null) {
-			const dispatcher = voiceConnection.player.dispatcher;
-			queueStatus = dispatcher.paused ? 'Paused' : 'Playing';
-		}
+		if (ENABLE_Q_STAT) {
+			//Get the status of the queue.
+			let queueStatus = 'Stopped';
+			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+			if (voiceConnection !== null) {
+				const dispatcher = voiceConnection.player.dispatcher;
+				queueStatus = dispatcher.paused ? 'Paused' : 'Playing';
+			}
 
-		// Send the queue and status.
-		msg.channel.send(':musical_note: | Queue (' + queueStatus + '):\n' + text);
+			// Send the queue and status.
+			msg.channel.send(':musical_note: | Queue ('+ queueStatus +'):\n' + text);
+		} else {
+			msg.channel.send(':musical_note: | Queue:\n' + text);
+		}
 	}
 
 	/**
