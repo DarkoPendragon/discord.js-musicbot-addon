@@ -18,6 +18,7 @@ const Discord = require('discord.js');
  * 							global: Whether to use a global queue instead of a server-specific queue (default false).
  * 							maxQueueSize: The maximum queue size (default 20).
  * 							anyoneCanSkip: Allow anybody to skip the song.
+ *							anyoneCanAdjust: Allow anyone to adjust volume.
  * 							clearInvoker: Clear the command message.
  * 							volume: The default volume of the player.
  *							helpCmd: Name of the help command (defualt: musichelp).
@@ -33,22 +34,23 @@ const Discord = require('discord.js');
  */
 module.exports = function (client, options) {
 	// Get all options.
-	let PREFIX = (options && options.prefix) || '!';
-	let GLOBAL = (options && options.global) || false;
-	let MAX_QUEUE_SIZE = (options && options.maxQueueSize) || 20;
-	let DEFAULT_VOLUME = (options && options.volume) || 50;
-	let ALLOW_ALL_SKIP = (options && options.anyoneCanSkip) || false;
-	let CLEAR_INVOKER = (options && options.clearInvoker) || false;
-	let HELP_CMD = (options && options.helpCmd) || 'musichelp';
-	let PLAY_CMD = (options && options.playCmd) || 'play';
-	let SKIP_CMD = (options && options.skipCmd) || 'skip';
-	let QUEUE_CMD = (options && options.queueCmd) || 'queue';
-	let PAUSE_CMD = (options && options.pauseCmd) || 'pause';
-	let RESUME_CMD = (options && options.resumeCmd) || 'resume';
-	let VOLUME_CMD = (options && options.volumeCmd) || 'volume';
-	let LEAVE_CMD = (options && options.leaveCmd) || 'leave';
-	let CLEAR_CMD = (options && options.clearCmd) || 'clearqueue';
-	let ENABLE_Q_STAT = (options && options.enableQueueStat) || true;
+	const PREFIX = (options && options.prefix) || '!';
+	const GLOBAL = (options && options.global) || false;
+	const MAX_QUEUE_SIZE = (options && options.maxQueueSize) || 20;
+	const DEFAULT_VOLUME = (options && options.volume) || 50;
+	const ALLOW_ALL_SKIP = (options && options.anyoneCanSkip) || false;
+	const CLEAR_INVOKER = (options && options.clearInvoker) || false;
+	const HELP_CMD = (options && options.helpCmd) || 'musichelp';
+	const PLAY_CMD = (options && options.playCmd) || 'play';
+	const SKIP_CMD = (options && options.skipCmd) || 'skip';
+	const QUEUE_CMD = (options && options.queueCmd) || 'queue';
+	const PAUSE_CMD = (options && options.pauseCmd) || 'pause';
+	const RESUME_CMD = (options && options.resumeCmd) || 'resume';
+	const VOLUME_CMD = (options && options.volumeCmd) || 'volume';
+	const LEAVE_CMD = (options && options.leaveCmd) || 'leave';
+	const CLEAR_CMD = (options && options.clearCmd) || 'clearqueue';
+	const ENABLE_Q_STAT = (options && options.enableQueueStat) || true;
+	const ALLOW_ALL_VOL = (options && options.anyoneCanAdjust) || false;
 
 	// Create an object of queues.
 	let queues = {};
@@ -110,6 +112,18 @@ module.exports = function (client, options) {
 	function canSkip(member, queue) {
 		if (ALLOW_ALL_SKIP) return true;
 		else if (queue[0].requester === member.id) return true;
+		else if (isAdmin(member)) return true;
+		else return false;
+	}
+
+	/**
+	 * Checks if the user can adjust volume.
+	 *
+	 * @param {GuildMember} member - The guild member
+	 * @returns {boolean} - If the user can adjust
+	 */
+	function canAdjust(member) {
+		if (ALLOW_ALL_VOL) return true;
 		else if (isAdmin(member)) return true;
 		else return false;
 	}
@@ -417,7 +431,7 @@ module.exports = function (client, options) {
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection === null) return msg.channel.send(':musical_note: | No music being played.');
 
-		if (!isAdmin(msg.member))
+		if (!canAdjust(msg.member))
 			return msg.channel.send(':musical_note: | You are not authorized to use this. Only admins are.');
 
 		// Get the dispatcher
