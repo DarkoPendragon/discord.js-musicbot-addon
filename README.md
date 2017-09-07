@@ -78,6 +78,7 @@ The options you can pass in music(client, options) is as followed:
 * global: true/false. If set to true, will use global queues, false will use server. (default false)  
 * maxQueueSize: Max size of queues.
 * anyoneCanSkip: Whether or not anyone can skip, true/false. Defaults false.
+* anyoneCanAdjust: Whether or not anyone can set volume. Defaults false.
 * clearInvoker: Whether or not to clear the command message.
 * volume: Default volume. Anywhere from 1 to 200, default is 50.
 * helpCmd: Name of the help command.

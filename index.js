@@ -120,10 +120,12 @@ module.exports = function (client, options) {
 	 * Checks if the user can adjust volume.
 	 *
 	 * @param {GuildMember} member - The guild member
+	 * @param {array} queue - The current queue
 	 * @returns {boolean} - If the user can adjust
 	 */
 	function canAdjust(member) {
 		if (ALLOW_ALL_VOL) return true;
+		else if (queue[0].requester === member.id) return true;
 		else if (isAdmin(member)) return true;
 		else return false;
 	}
