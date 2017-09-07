@@ -1,4 +1,6 @@
-# Discord.js Music Plugin
+# Discord.js Music Bot Addon  
+
+[![npm package](https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/discord.js-musicbot-addon/)  
 
 This module way be buggy and need some fine tuning. Feel free to let me know what problems you encounter by opening an issue on the repo.
 This was originaly an update of the original by [ruiqimao](https://github.com/ruiqimao/discord.js-music), but is now a updated version by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11) for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks.
