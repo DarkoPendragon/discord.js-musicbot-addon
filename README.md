@@ -18,7 +18,7 @@ __The commands available are: (default names)__
 
 __Permissions:__  
 * If `anyoneCanSkip` is false then only admins and the user that requested the song can skip it.
-* Only admins can change volume or resume/pause music.
+* If `anyoneCanAdjust` is true, anyone can adjust the volume. False is only admins.
 
 __Things I added & Changed:__  
 * Videos won't (or are otherwise less likely to) end before the song stops.
