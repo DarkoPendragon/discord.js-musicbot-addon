@@ -6,7 +6,10 @@
 const YoutubeDL = require('youtube-dl');
 const ytdl = require('ytdl-core');
 const Discord = require('discord.js');
-// const stream = require('youtube-audio-stream');
+const EventEmitter = require('events');
+
+class Emitter extends EventEmitter {}
+const emitter = new Emitter();
 
 /**
  * Takes a discord.js client and turns it into a music bot.
@@ -36,8 +39,8 @@ module.exports = function (client, options) {
 	// Get all options.
 	const PREFIX = (options && options.prefix) || '!';
 	const GLOBAL = (options && options.global) || false;
-	const MAX_QUEUE_SIZE = (options && options.maxQueueSize) || 20;
-	const DEFAULT_VOLUME = (options && options.volume) || 50;
+	const MAX_QUEUE_SIZE = parseInt((options && options.maxQueueSize) || 20);
+	const DEFAULT_VOLUME = parseInt((options && options.volume) || 50);
 	const ALLOW_ALL_SKIP = (options && options.anyoneCanSkip) || false;
 	const CLEAR_INVOKER = (options && options.clearInvoker) || false;
 	const HELP_CMD = (options && options.helpCmd) || 'musichelp';
@@ -52,6 +55,106 @@ module.exports = function (client, options) {
 	const ENABLE_Q_STAT = (options && options.enableQueueStat) || true;
 	const ALLOW_ALL_VOL = (options && options.anyoneCanAdjust) || false;
 
+	//PREFIX errors.
+	if (typeof PREFIX !== 'string') {
+		console.log(new TypeError(`prefix must be a string`));
+		process.exit(1);
+	};
+	if (PREFIX.length < 1 || PREFIX.length > 10) {
+		console.log(new RangeError(`prefix length must be between 1 and 10`));
+		process.exit(1);
+	};
+
+	//GLOBAL errors.
+	if (typeof GLOBAL !== 'boolean') {
+		console.log(new TypeError(`global must be a boolean`));
+		process.exit(1);
+	};
+
+	//MAX_QUEUE_SIZE errors.
+	if (typeof MAX_QUEUE_SIZE !== 'number') {
+		console.log(new TypeError(`maxQueueSize must be a number`));
+		process.exit(1);
+	};
+	if (!Number.isInteger(MAX_QUEUE_SIZE) || MAX_QUEUE_SIZE < 1) {
+		console.log(new TypeError(`maxQueueSize must be an integer more than 0`));
+		process.exit(1);
+	};
+
+	//DEFAULT_VOLUME errors.
+	if (typeof DEFAULT_VOLUME !== 'number') {
+		console.log(new TypeError(`defaultVolume must be a number`));
+		process.exit(1);
+	}
+	if (!Number.isInteger(DEFAULT_VOLUME) || DEFAULT_VOLUME < 1 || DEFAULT_VOLUME > 200) {
+		console.log(new TypeError(`defaultVolume must be an integer between 1 and 200`));
+		process.exit(1);
+	}
+	//ALLOW_ALL_SKIP errors.
+	if (typeof ALLOW_ALL_SKIP !== 'boolean') {
+		console.log(new TypeError(`anyoneCanSkip must be a boolean`));
+		process.exit(1);
+	}
+
+	//CLEAR_INVOKER errors.
+	if (typeof CLEAR_INVOKER !== 'boolean') {
+		console.log(new TypeError(`clearInvoker must be a boolean`));
+		process.exit(1);
+	}
+
+	//Command name errors.
+	if (typeof HELP_CMD !== 'string') {
+		console.log(new TypeError(`helpCmd must be a string`));
+		process.exit(1);
+	}
+	if (typeof PLAY_CMD !== 'string') {
+		console.log(new TypeError(`playCmd must be a string`));
+		process.exit(1);
+	}
+	if (typeof SKIP_CMD !== 'string') {
+		console.log(new TypeError(`skipCmd must be a string`));
+		process.exit(1);
+	}
+	if (typeof QUEUE_CMD !== 'string') {
+		console.log(new TypeError(`queueCmd must be a string`));
+		process.exit(1);
+	}
+	if (typeof PAUSE_CMD !== 'string') {
+		console.log(new TypeError(`pauseCmd must be a string`));
+		process.exit(1);
+	}
+	if (typeof RESUME_CMD !== 'string') {
+		console.log(new TypeError(`resumeCmd must be a string`));
+		process.exit(1);
+	}
+	if (typeof VOLUME_CMD !== 'string') {
+		console.log(new TypeError(`volumeCmd must be a string`));
+		process.exit(1);
+	}
+	if (typeof LEAVE_CMD !== 'string') {
+		console.log(new TypeError(`leaveCmd must be a string`));
+		process.exit(1);
+	}
+	if (typeof CLEAR_CMD !== 'string') {
+		console.log(new TypeError(`clearCmd must be a string`));
+		process.exit(1);
+	}
+
+	//ENABLE_Q_STAT errors.
+	if (typeof ENABLE_Q_STAT !== 'boolean') {
+		console.log(new TypeError(`enableQueueStat must be a boolean`));
+		process.exit(1);
+	}
+
+	//ALLOW_ALL_VOL errors.
+	if (typeof ALLOW_ALL_VOL !== 'boolean') {
+		console.log(new TypeError(`anyoneCanAdjust must be a boolean`));
+		process.exit(1);
+	}
+
+	//Misc.
+	if (GLOBAL && MAX_QUEUE_SIZE < 50) console.warn(`global queues are enabled while maxQueueSize is below 50! Recommended to use a higher size.`);
+	
 	// Create an object of queues.
 	let queues = {};
 
@@ -123,7 +226,7 @@ module.exports = function (client, options) {
 	 * @param {array} queue - The current queue
 	 * @returns {boolean} - If the user can adjust
 	 */
-	function canAdjust(member) {
+	function canAdjust(member, queue)  {
 		if (ALLOW_ALL_VOL) return true;
 		else if (queue[0].requester === member.id) return true;
 		else if (isAdmin(member)) return true;
@@ -432,6 +535,9 @@ module.exports = function (client, options) {
 		// Get the voice connection.
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection === null) return msg.channel.send(':musical_note: | No music being played.');
+
+		//Get the queue.
+		const queue = getQueue(msg.guild.id);
 
 		if (!canAdjust(msg.member))
 			return msg.channel.send(':musical_note: | You are not authorized to use this. Only admins are.');

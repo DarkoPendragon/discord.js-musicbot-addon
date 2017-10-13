@@ -1,10 +1,12 @@
 # Discord.js Music Bot Addon  
 [![npm package](https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/discord.js-musicbot-addon/)  
-[![Discord Server](https://discordapp.com/api/guilds/350862388385546241/embed.png)](https://discord.gg/fj5jPEn)  [![Downlaods](https://img.shields.io/npm/dt/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)  [![Version](https://img.shields.io/npm/v/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)  
+[![Discord Server](https://discordapp.com/api/guilds/360519133219127297/embed.png)](https://discord.gg/cADwxKs)  [![Downlaods](https://img.shields.io/npm/dt/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)  [![Version](https://img.shields.io/npm/v/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)
 ***
-This module way be buggy and need some fine tuning. Feel free to let me know what problems you encounter by opening an issue on the repo.
-This was originally an update of the original bot from [ruiqimao](https://github.com/ruiqimao/discord.js-music) by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11), but is now a updated version for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks to the priors.
-***
+This module may be buggy and need some fine tuning. Feel free to let me know what problems you encounter by opening an issue on the repo.
+This was originally an update of the original bot from [ruiqimao](https://github.com/ruiqimao/discord.js-music) by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11), but is now a updated version for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks to the priors.  
+
+_Note: the 1.3.0 update requires a code change, see the examples below._  
+
 __The commands available are: (default names)__  
 * `musichelp [command]`: Displays help text for commands by this addon, or help for a specific command.
 * `play <url>|<search string>`: Play audio from YouTube.
@@ -20,18 +22,18 @@ __Permissions:__
 * If `anyoneCanSkip` is false then only admins and the user that requested the song can skip it.
 * If `anyoneCanAdjust` is true, anyone can adjust the volume. False is only admins.
 
-__Things I added & Changed:__  
-* Videos won't (or are otherwise less likely to) end before the song stops.
-* Help command added.
-* Text replies were changed.
-* Added more options.  
 ***
 # Installation
 ***  
 __Pre-installation:__  
-1. `npm install discord.js` // The core discord.js framework (recommended stable > dev branch).  
-2. `npm install ffmpeg-binaries` or `ffmpeg installed` // Allows the bot to join voice.  
-3. `npm install node-opus` or `npm install opusscript` // Required to stream audio. Discord.js prefers node-opus.
+1. `npm install discord.js`  
+It is recommended to have the stable over dev branch.  
+
+2. `npm install ffmpeg-binaries`  or  `ffmpeg installed`   
+Allows the bot to join voice as well as speak.  
+
+3. `npm install node-opus` or `npm install opusscript`  
+Discoed prefers node-opus, but it is your choice.
 
 __Installation:__  
 * `npm install discord.js-musicbot-addon`
@@ -61,18 +63,14 @@ More examples can be found on the repo in `examples` or once downloaded.
 __Example basic code, standalone:__
 ```javascript
 const Discord = require('discord.js');
-const music = require('discord.js-musicbot-addon');
-const <client> = new Discord.Client(); //replace <client> with what you want your Discord Client to be. Don't include < > on your client.
+const Music = require('discord.js-musicbot-addon');
+const <client> = new Discord.Client();
 
-<client>.on('ready', () => {
-    console.log(`[Start] ${new Date()}`);
-});
-
-music(<client>);
+const music = new Music(<client>);
 <client>.login(token);
 ```
 
-All options are optional and thus not needed.  
+__All options are optional and thus not needed.__  
 The options you can pass in music(client, options) is as followed:  
 * prefix: Prefix to set for commands.  
 * global: true/false. If set to true, will use global queues, false will use server. (default false)  
@@ -94,7 +92,7 @@ The options you can pass in music(client, options) is as followed:
 
 An example of a few custom commands would be:  
 ```javascript
-music(client, {
+const music = new Music(client, {
   prefix: ">",
   maxQueueSize: "10",
   anyoneCanSkip: false,
@@ -104,4 +102,21 @@ music(client, {
 });
 ```
 
-Again if you have any issues, feel free to open one on the repo, or join my [Discord server](https://discordapp.com/invite/fj5jPEn).
+Again if you have any issues, feel free to open one on the repo, or join my [Discord server](https://discord.gg/cADwxKs).
+
+***
+# Changelog
+***  
+
+## 1.3.0:  
+* Added errors.
+* Fixed volume crashing the bot (thanks TheTimmaeh).
+* Added future support for events.
+* Minor bug fixes.
+
+## 1.2.0:  
+* Marked "stable".
+* Finished module for full public access.  
+
+## 1.1.0 and lower:
+* No idea.

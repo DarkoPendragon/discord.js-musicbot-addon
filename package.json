@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "discord.js": "^11.2.1",
-    "youtube-dl": "^1.11.1",
+    "youtube-dl": "^1.12.2",
     "ytdl-core": "^0.9.1"
   },
   "repository": {

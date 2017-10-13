@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
-const music = require('discord.js-musicbot-addon');
+const Music = require('discord.js-musicbot-addon');
 const client = new Discord.Client(); //replace client with what you want your Discord Client to be.
-const token = 'bot-app-token' //You should load this from a .json file.
+const token = 'bot-app-token' //You should load this from a .json file or something, just saying.
 const prefix = '!'; //You could also load this from a .json file as well.
 
 /*
@@ -29,14 +29,14 @@ client.on('message', message => {
   };
 });
 
-music(client, {
-	prefix: prefix,          // Prefix for the commands.
-	global: false,        // Server-specific queues.
-	maxQueueSize: 25,     // Maximum queue size of 25.
-	clearInvoker: true,   // If permissions applicable, allow the bot to delete the messages that invoke it (start with prefix).
- helpCmd: 'mhelp',     //Sets the name for the help command.
+const music = new Music(client, {
+  prefix: prefix,       // Prefix for the commands.
+  global: true,         // Non-server-specific queues.
+  maxQueueSize: 25,     // Maximum queue size of 25.
+  clearInvoker: true,   // If permissions applicable, allow the bot to delete the messages that invoke it (start with prefix).
+  helpCmd: 'mhelp',     //Sets the name for the help command.
   playCmd: 'music',     //Sets the name for the 'play' command.
- volumeCmd: 'adjust',  //Sets the name for the 'volume' command.
- leaveCmd: 'begone'    //Sets the name for the 'leave' command.
+  volumeCmd: 'adjust',  //Sets the name for the 'volume' command.
+  leaveCmd: 'begone'    //Sets the name for the 'leave' command.
 });
 client.login(token);
