@@ -123,7 +123,7 @@ module.exports = function (client, options) {
 	 * @param {array} queue - The current queue
 	 * @returns {boolean} - If the user can adjust
 	 */
-	function canAdjust(member) {
+	function canAdjust(member, queue) {
 		if (ALLOW_ALL_VOL) return true;
 		else if (queue[0].requester === member.id) return true;
 		else if (isAdmin(member)) return true;
@@ -433,7 +433,10 @@ module.exports = function (client, options) {
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection === null) return msg.channel.send(':musical_note: | No music being played.');
 
-		if (!canAdjust(msg.member))
+		// Get the queue.
+		const queue = getQueue(msg.guild.id);
+
+		if (!canAdjust(msg.member, queue))
 			return msg.channel.send(':musical_note: | You are not authorized to use this. Only admins are.');
 
 		// Get the dispatcher
