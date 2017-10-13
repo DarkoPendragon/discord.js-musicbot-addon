@@ -5,7 +5,7 @@
 This module may be buggy and need some fine tuning. Feel free to let me know what problems you encounter by opening an issue on the repo.
 This was originally an update of the original bot from [ruiqimao](https://github.com/ruiqimao/discord.js-music) by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11), but is now a updated version for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks to the priors.  
 
-_Note: the 1.3.0 update requires a code change, see the examples below._  
+_Note: the 1.3.x+ update requires a code change from 1.2.0, see the examples below._  
 
 __The commands available are: (default names)__  
 * `musichelp [command]`: Displays help text for commands by this addon, or help for a specific command.
@@ -88,7 +88,9 @@ The options you can pass in music(client, options) is as followed:
 * volumeCmd: Sets the name for the volume command.
 * leaveCmd: Sets the name for the leave command.
 * clearCmd: Sets the name for the clearqueue command.
-* enableQueueStat: Disables or enables queue status (useful to prevent errors sometimes, defaults true).  
+* enableQueueStat: Disables or enables queue status (useful to prevent errors sometimes, defaults true).
+* ownerOverMember: Makes it so you bypass restrictions from the bot.
+* botOwner: ID of your account, required if using ownerOverMember.
 
 An example of a few custom commands would be:  
 ```javascript
@@ -98,7 +100,9 @@ const music = new Music(client, {
   anyoneCanSkip: false,
   helpCmd: 'mhelp',
   playCmd: 'music',
-  leaveCmd: 'begone'
+  leaveCmd: 'begone',
+  ownerOverMember: true,
+  botOwner: '1234567890'
 });
 ```
 
@@ -107,6 +111,10 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
+## 1.4.0  
+* Added wrapping.
+* Added owner over member options.
+* Fixed errors.  
 
 ## 1.3.0:  
 * Added errors.
