@@ -3,8 +3,11 @@
  * Tweeked by Demise.
  */
 
-const YoutubeDL = require('youtube-dl');
-const ytdl = require('ytdl-core');
+// const YoutubeDL = require('youtube-dl');
+// const ytdl = require('ytdl-core');
+
+const stream = require('youtube-audio-stream');
+const search = require('youtube-search');
 const Discord = require('discord.js');
 const EventEmitter = require('events');
 
@@ -37,6 +40,7 @@ const emitter = new Emitter();
  */
 module.exports = function (client, options) {
 	// Get all options.
+	const YOUTUBE_KEY = (options && options.youtubeKey);
 	const PREFIX = (options && options.prefix) || '!';
 	const GLOBAL = (options && options.global) || false;
 	const MAX_QUEUE_SIZE = parseInt((options && options.maxQueueSize) || 20);
@@ -56,16 +60,28 @@ module.exports = function (client, options) {
 	const ALLOW_ALL_VOL = (options && options.anyoneCanAdjust) || false;
 	const OWNER_OVER = (options && options.ownerOverMember) || false;
 	const BOT_OWNER_ID = (options && options.botOwner) || null;
+	const LOGGING = (options && options.logging) || true;
+
+	//Init errors.
+	if (process.version.slice(1).split('.')[0] < 8) throw new Error('Node 8.0.0 or higher was not found, please update Node.js.');
+	if (!YOUTUBE_KEY) {
+		console.log(new Error(`youtubeKey is required but missing`));
+		process.exit(1);
+	};
+	if (YOUTUBE_KEY && typeof YOUTUBE_KEY !== 'string') {
+		console.log(new TypeError(`youtubeKey must be a string`));
+		process.exit(1);
+	};
 
 	//Owner errors.
 	if (typeof OWNER_OVER !== 'boolean') {
 		console.log(new TypeError(`ownerOverMember must be a boolean`));
 		process.exit(1);
-	}
+	};
 	if (OWNER_OVER && typeof BOT_OWNER_ID !== 'string') {
 		console.log(new TypeError(`botOwner must be a string`));
 		process.exit(1);
-	}
+	};
 
 	//PREFIX errors.
 	if (typeof PREFIX !== 'string') {
@@ -97,75 +113,87 @@ module.exports = function (client, options) {
 	if (typeof DEFAULT_VOLUME !== 'number') {
 		console.log(new TypeError(`defaultVolume must be a number`));
 		process.exit(1);
-	}
+	};
 	if (!Number.isInteger(DEFAULT_VOLUME) || DEFAULT_VOLUME < 1 || DEFAULT_VOLUME > 200) {
 		console.log(new TypeError(`defaultVolume must be an integer between 1 and 200`));
 		process.exit(1);
-	}
+	};
+
 	//ALLOW_ALL_SKIP errors.
 	if (typeof ALLOW_ALL_SKIP !== 'boolean') {
 		console.log(new TypeError(`anyoneCanSkip must be a boolean`));
 		process.exit(1);
-	}
+	};
 
 	//CLEAR_INVOKER errors.
 	if (typeof CLEAR_INVOKER !== 'boolean') {
 		console.log(new TypeError(`clearInvoker must be a boolean`));
 		process.exit(1);
-	}
+	};
 
 	//Command name errors.
 	if (typeof HELP_CMD !== 'string') {
 		console.log(new TypeError(`helpCmd must be a string`));
 		process.exit(1);
-	}
+	};
 	if (typeof PLAY_CMD !== 'string') {
 		console.log(new TypeError(`playCmd must be a string`));
 		process.exit(1);
-	}
+	};
 	if (typeof SKIP_CMD !== 'string') {
 		console.log(new TypeError(`skipCmd must be a string`));
 		process.exit(1);
-	}
+	};
 	if (typeof QUEUE_CMD !== 'string') {
 		console.log(new TypeError(`queueCmd must be a string`));
 		process.exit(1);
-	}
+	};
 	if (typeof PAUSE_CMD !== 'string') {
 		console.log(new TypeError(`pauseCmd must be a string`));
 		process.exit(1);
-	}
+	};
 	if (typeof RESUME_CMD !== 'string') {
 		console.log(new TypeError(`resumeCmd must be a string`));
 		process.exit(1);
-	}
+	};
 	if (typeof VOLUME_CMD !== 'string') {
 		console.log(new TypeError(`volumeCmd must be a string`));
 		process.exit(1);
-	}
+	};
 	if (typeof LEAVE_CMD !== 'string') {
 		console.log(new TypeError(`leaveCmd must be a string`));
 		process.exit(1);
-	}
+	};
 	if (typeof CLEAR_CMD !== 'string') {
 		console.log(new TypeError(`clearCmd must be a string`));
 		process.exit(1);
-	}
+	};
 
 	//ENABLE_Q_STAT errors.
 	if (typeof ENABLE_Q_STAT !== 'boolean') {
 		console.log(new TypeError(`enableQueueStat must be a boolean`));
 		process.exit(1);
-	}
+	};
 
 	//ALLOW_ALL_VOL errors.
 	if (typeof ALLOW_ALL_VOL !== 'boolean') {
 		console.log(new TypeError(`anyoneCanAdjust must be a boolean`));
 		process.exit(1);
+	};
+
+	if (typeof LOGGING !== 'boolean') {
+		console.log(new TypeError(`logging must be a boolean`));
+		process.exit(1);
 	}
 
 	//Misc.
 	if (GLOBAL && MAX_QUEUE_SIZE < 50) console.warn(`global queues are enabled while maxQueueSize is below 50! Recommended to use a higher size.`);
+
+	//Set the YouTube API key.
+	const opts = {
+		maxResults: 1,
+		key: YOUTUBE_KEY
+	};
 
 	// Create an object of queues.
 	let queues = {};
@@ -365,21 +393,18 @@ module.exports = function (client, options) {
 		// Get the video information.
 		msg.channel.send(note('note', 'Searching...')).then(response => {
 			var searchstring = suffix
-			if (!suffix.toLowerCase().startsWith('http')) {
-				searchstring = 'gvsearch1:' + suffix;
-			}
+			search(searchstring, opts, function(err, results) {
+				if (err) {
+					if (LOGGING) console.log(err);
+					const nerr = err.toString().split(':');
+					return response.edit(note('fail', `error occoured!\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
+				};
 
-			YoutubeDL.getInfo(searchstring, ['-q', '--no-warnings', '--force-ipv4'], (err, info) => {
-				// Verify the info.
-				if (err || info.format_id === undefined || info.format_id.startsWith('0')) {
-					return response.edit(note('fail', 'Invalid video!'));
-				}
-
-				info.requester = msg.author.id;
-
-				// Queue the video.
-				response.edit(note('note', 'Queued: ' + info.title)).then(() => {
-					queue.push(info);
+				// console.log(results[0]);
+				results[0].requester = msg.author.id;
+				
+				response.edit(note('note', 'Queued: ' + results[0].title)).then(() => {
+					queue.push(results[0]);
 					// Play if only one element in the queue.
 					if (queue.length === 1) executeQueue(msg, queue);
 				}).catch(console.log);
@@ -612,17 +637,7 @@ module.exports = function (client, options) {
 
 			// Play the video.
 			msg.channel.send(note('note', 'Now Playing: ' + video.title)).then(() => {
-
-				// const stream = require('youtube-audio-stream')
-				// let dispatcher = connection.playStream(stream(video.webpage_url))
-				// let volumeNum = DEFAULT_VOLUME / 100;
-				// let dispatcher = connection.playStream(ytdl(video.webpage_url, {filter: 'audioonly'}));
-				// let dispatcher = connection.playStream(ytdl(video.webpage_url), {highWaterMark: 163840, retries: 100}, {seek: 1, volume: (DEFAULT_VOLUME/100)});
-				// let dispatcher = connection.playStream(ytdl(video.webpage_url), {seek: 0, volume: (DEFAULT_VOLUME/100)});
-				//The above is me trying to fix the issue of stopping in the middle of a song.
-				//Removing the "aduioonly" filter and changing seek to 1 seemed to fix it.
-
-				let dispatcher = connection.playStream(ytdl(video.webpage_url), {seek: 1, volume: (DEFAULT_VOLUME/100)});
+				let dispatcher = connection.playStream(stream(video.link), {seek: 0, volume: (DEFAULT_VOLUME/100)});
 
 				connection.on('error', (error) => {
 					// Skip to the next song.

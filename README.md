@@ -5,7 +5,7 @@
 This module may be buggy and need some fine tuning. Feel free to let me know what problems you encounter by opening an issue on the repo.
 This was originally an update of the original bot from [ruiqimao](https://github.com/ruiqimao/discord.js-music) by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11), but is now a updated version for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks to the priors.  
 
-_Note: the 1.3.x+ update requires a code change from 1.2.0, see the examples below._  
+_Note: the 1.3.x+ update(S) requires a code change from 1.2.0, see the examples/notes below._  
 
 __The commands available are: (default names)__  
 * `musichelp [command]`: Displays help text for commands by this addon, or help for a specific command.
@@ -21,6 +21,7 @@ __The commands available are: (default names)__
 __Permissions:__  
 * If `anyoneCanSkip` is false then only admins and the user that requested the song can skip it.
 * If `anyoneCanAdjust` is true, anyone can adjust the volume. False is only admins.
+* If `ownerOverMember` is true, the set ID of the user (your ID) will over-ride CanAjust and CanSkip.
 
 ***
 # Installation
@@ -33,7 +34,7 @@ It is recommended to have the stable over dev branch.
 Allows the bot to join voice as well as speak.  
 
 3. `npm install node-opus` or `npm install opusscript`  
-Discoed prefers node-opus, but it is your choice.
+Required for voice. Discord _prefers_ node-opus, but it is your choice.
 
 __Installation:__  
 * `npm install discord.js-musicbot-addon`
@@ -44,6 +45,9 @@ __Fix:__ `npm install ffmpeg-binaries`
 
 __Issue:__ Couldn't find an Opus engine.  
 __Fix:__ `npm install node-opus` or `npm install opusscript`  
+
+__Issue:__ [NPM] ERR Cannot read property '0' of undefined
+__Fix:__ `npm i -g npm@4.6.1` or another lower version of npm.  
 
 __Issue:__ Any node-gyp errors. (build fail, missing cl.exe, etc.)  
 __Fix:__ This one is a little more complicated.  
@@ -66,11 +70,13 @@ const Discord = require('discord.js');
 const Music = require('discord.js-musicbot-addon');
 const <client> = new Discord.Client();
 
-const music = new Music(<client>);
+const music = new Music(<client>,
+  youtubeKey: 'sum-key_hhereas'
+);
 <client>.login(token);
 ```
 
-__All options are optional and thus not needed.__  
+__Most options are optional and thus not needed.__  
 The options you can pass in music(client, options) is as followed:  
 * prefix: Prefix to set for commands.  
 * global: true/false. If set to true, will use global queues, false will use server. (default false)  
@@ -91,6 +97,8 @@ The options you can pass in music(client, options) is as followed:
 * enableQueueStat: Disables or enables queue status (useful to prevent errors sometimes, defaults true).
 * ownerOverMember: Makes it so you bypass restrictions from the bot.
 * botOwner: ID of your account, required if using ownerOverMember.
+* logging: Disable/enable some extra, none need logging. Defaults to true. Useful but not needed.
+* __youtubeKey:__ This is __REQUIRED__. Something [like this article](https://elfsight.com/help/how-to-get-youtube-api-key/) should help with that, or google how to get a YouTube API3 key.  
 
 An example of a few custom commands would be:  
 ```javascript
@@ -102,19 +110,29 @@ const music = new Music(client, {
   playCmd: 'music',
   leaveCmd: 'begone',
   ownerOverMember: true,
-  botOwner: '1234567890'
+  botOwner: '1234567890',
+  youtubeKey: 'some-key_here'
 });
 ```
 
-Again if you have any issues, feel free to open one on the repo, or join my [Discord server](https://discord.gg/cADwxKs).
+Again if you have any issues, feel free to open one on the repo, or join my [Discord server](https://discord.gg/cADwxKs) for personal help.
 
 ***
 # Changelog
 ***  
+
 ## 1.4.0  
 * Added wrapping.
 * Added owner over member options.
 * Fixed errors.  
+* Reworked the the playing music method.
+* Fixed (probably) UnknownSpawn errors.
+* Bot now requires your own YouTube Data API3 key for searching.
+* Music is less likely yo cut out now.
+* Volume works again (again).
+
+## 1.3.1 - 1.3.6
+* These were testing updates to just see how it would work on different platforms, which code still needed to be fixed, error testing, etc.  
 
 ## 1.3.0:  
 * Added errors.
