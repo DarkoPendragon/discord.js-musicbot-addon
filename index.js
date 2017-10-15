@@ -8,6 +8,7 @@
 
 const stream = require('youtube-audio-stream');
 const search = require('youtube-search');
+const ypi = require('youtube-playlist-info');
 const Discord = require('discord.js');
 const EventEmitter = require('events');
 
@@ -375,7 +376,7 @@ module.exports = function (client, options) {
 	 * @param {string} suffix - Command suffix.
 	 * @returns {<promise>} - The response edit.
 	 */
-	function play(msg, suffix) {
+	async function play(msg, suffix) {
 		// Make sure the user is in a voice channel.
 		if (msg.member.voiceChannel === undefined) return msg.channel.send(note('fail', 'You\'re not in a voice channel~'));
 
@@ -393,22 +394,61 @@ module.exports = function (client, options) {
 		// Get the video information.
 		msg.channel.send(note('note', 'Searching...')).then(response => {
 			var searchstring = suffix
-			search(searchstring, opts, function(err, results) {
-				if (err) {
-					if (LOGGING) console.log(err);
-					const nerr = err.toString().split(':');
-					return response.edit(note('fail', `error occoured!\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
-				};
+			if (searchstring.includes('/playlist?list=')) {
+				response.edit(note('note', 'Playlist detected! Fetching...')).then(response => {
+					//Get the playlist ID.
+					const playid = searchstring.toString().split('playlist?list=')[1];
 
-				// console.log(results[0]);
-				results[0].requester = msg.author.id;
-				
-				response.edit(note('note', 'Queued: ' + results[0].title)).then(() => {
-					queue.push(results[0]);
-					// Play if only one element in the queue.
-					if (queue.length === 1) executeQueue(msg, queue);
-				}).catch(console.log);
-			});
+					//Get info on the playlist.
+					ypi.playlistInfo(YOUTUBE_KEY, playid, function(playlistItems) {
+						const newItems = Array.from(playlistItems);
+						var skippedVideos = new Array();
+						var queuedVids = new Array();
+
+						for (var i = 0; i < newItems.length; i++) {
+							var results = newItems[i];
+							if (queue.length > MAX_QUEUE_SIZE) {
+								skippedVideos.push(results.title);
+							} else {
+								results.link = `https://www.youtube.com/watch?v=` + newItems[i].resourceId.videoId;
+								results.description = " ";
+								results.requester = msg.author.id;
+
+								queue.push(results);
+								queuedVids.push(results.title);
+								if (queue.length === 1) executeQueue(msg, queue);
+							};
+						};
+						function endrun() {
+							var qvids = queuedVids.toString().replace(/,/g, '\n');
+							var svids = skippedVideos.toString().replace(/,/g, '\n');
+							if (qvids.length > 1000) qvids = 'Over character count, replaced...';
+							if (svids.length > 1000) svids = 'Over character count, replaced...';
+
+							msg.channel.send(note('wrap', `Queued:\n${qvids}\nSkipped: (Max Queue)\n${svids}`), {split: true});
+						};
+						setTimeout(endrun, 5000);
+					});
+
+				})
+		  } else {
+		    search(searchstring, opts, function(err, results) {
+					if (err) {
+						if (LOGGING) console.log(err);
+						const nerr = err.toString().split(':');
+						return response.edit(note('fail', `error occoured!\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
+					};
+
+					// console.log(results[0]);
+					results[0].requester = msg.author.id;
+
+					response.edit(note('note', 'Queued: ' + results[0].title)).then(() => {
+						queue.push(results[0]);
+						// Play if only one element in the queue.
+						if (queue.length === 1) executeQueue(msg, queue);
+					}).catch(console.log);
+		    });
+		  };
 		}).catch(console.log);
 	}
 
@@ -534,9 +574,14 @@ module.exports = function (client, options) {
 	function clearqueue(msg, suffix) {
 		if (isAdmin(msg.member)) {
 			const queue = getQueue(msg.guild.id);
+			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+			if (voiceConnection === null) return msg.channel.send(note('fail', 'I\'m not in any channel!.'));
 
 			queue.splice(0, queue.length);
 			msg.channel.send(note('note', 'Queue cleared~'));
+
+			voiceConnection.player.dispatcher.end();
+			voiceConnection.disconnect();
 		} else {
 			msg.channel.send(note('fail', 'You don\'t have permission to use that command! Only admins may!'));
 		}
