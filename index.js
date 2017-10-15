@@ -425,7 +425,11 @@ module.exports = function (client, options) {
 							if (qvids.length > 1000) qvids = 'Over character count, replaced...';
 							if (svids.length > 1000) svids = 'Over character count, replaced...';
 
-							msg.channel.send(note('wrap', `Queued:\n${qvids}\nSkipped: (Max Queue)\n${svids}`), {split: true});
+							if (svids != ""){
+								msg.channel.send(note('wrap', `Queued:\n${qvids}\nSkipped: (Max Queue)\n${svids}`), {split: true});
+							} else {
+								msg.channel.send(note('wrap', `Queued:\n${qvids}`), {split: true});	
+							};
 						};
 						setTimeout(endrun, 5000);
 					});
