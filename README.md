@@ -136,7 +136,7 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 * Reworked the the playing music method.
 * Fixed (probably) UnknownSpawn errors.
 * Bot now requires your own YouTube Data API3 key for searching.
-* Music is less likely yo cut out now.
+* Music is less likely to cut out now.
 * Volume works again (again).
 
 ## 1.3.1 - 1.3.6
