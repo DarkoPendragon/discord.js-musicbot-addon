@@ -30,9 +30,12 @@ __Pre-installation:__
 1. `npm install discord.js`  
 It is recommended to have the stable over dev branch.  
 
-2. `npm install ffmpeg-binaries`  or  `ffmpeg installed`   
-Allows the bot to join voice as well as speak.  
-
+2. `ffmpeg installed` and in your PATH.  
+Allows the bot to join voice as well as speak. 
+* Download the ffmpeg package for your system.
+* Extract it to the proper place.
+* Set it to your PATH environment variables. 
+  
 3. `npm install node-opus` or `npm install opusscript`  
 Required for voice. Discord _prefers_ node-opus, but it is your choice.
 
@@ -40,8 +43,8 @@ __Installation:__
 * `npm install discord.js-musicbot-addon`
 
 __Common installation issues:__  
-__Issue:__ FFMPEG was not found on your system, so audio cannot be played. Please make sure FFMPEG is installed and in your PATH.  
-__Fix:__ `npm install ffmpeg-binaries`  
+__Issue:__ FFMPEG was not found on your system. 
+__Fix:__ Make sure ffmpeg is installed correctly and set in your PATH variable.  
 
 __Issue:__ Couldn't find an Opus engine.  
 __Fix:__ `npm install node-opus` or `npm install opusscript`  
@@ -96,7 +99,7 @@ The options you can pass in music(client, options) is as followed:
 * clearCmd: Sets the name for the clearqueue command.
 * enableQueueStat: Disables or enables queue status (useful to prevent errors sometimes, defaults true).
 * ownerOverMember: Makes it so you bypass restrictions from the bot.
-* botOwner: ID of your account, required if using ownerOverMember.
+* botOwner: ID of your account, __required__ if using ownerOverMember.
 * logging: Disable/enable some extra, none need logging. Defaults to true. Useful but not needed.
 * __youtubeKey:__ This is __REQUIRED__. Something [like this article](https://elfsight.com/help/how-to-get-youtube-api-key/) should help with that, or google how to get a YouTube API3 key.  
 
@@ -120,7 +123,12 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
-
+## 1.5.1
+* Added playlist support (thanks Rodabaugh for reminding me).
+* Fixed `clearqueue` crashing if queue is empty.
+* Fixed `skip` crashing if the queue is empty.
+* Now requires `ffmpeg` installed over `ffmpeg-binaries`.  
+  
 ## 1.4.0  
 * Added wrapping.
 * Added owner over member options.

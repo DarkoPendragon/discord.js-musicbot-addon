@@ -1,6 +1,6 @@
 {
   "name": "discord.js-musicbot-addon",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A music bot addon for an already made Discord.js bot to run with or simply run by itself.",
   "main": "index.js",
   "scripts": {
