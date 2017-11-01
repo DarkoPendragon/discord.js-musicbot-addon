@@ -576,7 +576,7 @@ module.exports = function (client, options) {
 	 * @param {string} suffix - Command suffix.
 	 */
 	function clearqueue(msg, suffix) {
-		if (isAdmin(msg.member)) {
+		if (canSkip(msg.member)) {
 			const queue = getQueue(msg.guild.id);
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 			if (voiceConnection === null) return msg.channel.send(note('fail', 'I\'m not in any channel!.'));
