@@ -7,5 +7,7 @@ client.on('ready', () => {
     console.log(`[Start] ${new Date()}`);
 });
 
-const music = new Music(client);
+const music = new Music(client, {
+  youtubeKey: "some-key_here"
+});
 client.login(token);
