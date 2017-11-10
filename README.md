@@ -51,6 +51,9 @@ __Fix:__ `npm install node-opus` or `npm install opusscript`
 __Issue:__ [NPM] ERR Cannot read property '0' of undefined
 __Fix:__ `npm i -g npm@4.6.1` or another lower version of npm.  
 
+__Issue:__ TypeError: Invalid non-string/buffer chunk  
+__Fix:__ `ffmpeg` is required, if you installed `ffmpeg-binaries` uninstall that and install `ffmpeg`. If that isn't your problem make sure you have it installed correctly.  
+
 __Issue:__ Any node-gyp errors. (build fail, missing cl.exe, etc.)  
 __Fix:__ This one is a little more complicated.  
 1. Download and install [Visual Studio 2015](https://www.visualstudio.com/downloads/)  

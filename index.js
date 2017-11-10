@@ -491,10 +491,10 @@ module.exports = function (client, options) {
 		// Get the video information.
 		msg.channel.send(note('note', 'Searching...')).then(response => {
 			var searchstring = suffix
-			if (searchstring.includes('/playlist?list=')) {
+			if (searchstring.includes('?list=')) {
 				response.edit(note('note', 'Playlist detected! Fetching...')).then(response => {
 					//Get the playlist ID.
-					const playid = searchstring.toString().split('playlist?list=')[1];
+					const playid = searchstring.toString().split('?list=')[1];
 
 					//Get info on the playlist.
 					ypi.playlistInfo(musicbot.youtubeKey, playid, function(playlistItems) {
@@ -593,7 +593,7 @@ module.exports = function (client, options) {
 			if (voiceConnection.paused) dispatcher.resume();
 			dispatcher.end();
 		} catch (e) {
-			if (musicbot.logging) console.log(new Error(`Play command error from userID ${msg.author.id} in guildID ${msg.guild.id}\n${e}`));
+			if (musicbot.logging) console.log(new Error(`Play command error from userID ${msg.author.id} in guildID ${msg.guild.id}\n${e.stack}`));
 			return msg.channel.send(note('fail', 'An error occoured, sorry!'));
 		};
 
@@ -718,7 +718,7 @@ module.exports = function (client, options) {
 			voiceConnection.player.dispatcher.end();
 			voiceConnection.disconnect();
 		} else {
-			msg.channel.send(note('fail', `You don't have permission to use that command! Only admins may!`));
+			msg.channel.send(note('fail', `You don't have permission to use that command, only admins may!`));
 		}
 	}
 
