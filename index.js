@@ -1,11 +1,10 @@
 /**
  * Original code nexu-dev, https://github.com/nexu-dev/discord.js-client
- * Tweeked by Demise.
+ * Tweaked by Demise.
+ * Contributor: Michael/ASIANBOI
  */
-
 // const YoutubeDL = require('youtube-dl');
 // const ytdl = require('ytdl-core');
-
 const stream = require('youtube-audio-stream');
 const search = require('youtube-search');
 const ypi = require('youtube-playlist-info');
@@ -16,33 +15,35 @@ const EventEmitter = require('events');
 class Emitter extends EventEmitter {}
 const emitter = new Emitter();
 
- /**
-  * Takes a discord.js client and turns it into a client bot.
-  * Thanks to Rodabaugh for helping with some tweaks and ideas.
-  *
-  * @param {Client} client - The discord.js client.
-  * @param {object} options - Options to configure the client bot. Acceptable options are:
-  * 							prefix: The prefix to use for the commands (default '!').
-  * 							global: Whether to use a global queue instead of a server-specific queue (default false).
-  * 							maxQueueSize: The maximum queue size (default 20).
-  * 							anyoneCanSkip: Allow anybody to skip the song.
-  *							anyoneCanAdjust: Allow anyone to adjust volume.
-  * 							clearInvoker: Clear the command message.
-  * 							volume: The default volume of the player.
-  *							helpCmd: Name of the help command (defualt: clienthelp).
-  *							playCmd: Sets the play command name.
-  *							skipCmd: Sets the skip command name.
-  *							queueCmd: Sets the queue command name.
-  *							pauseCmd: Sets the name for the pause command.
-  *							resumeCmd: Sets the name for the resume command.
-  *							volumeCmd: Sets the name for the volume command.
-  *							leaveCmd:  Sets the name for the leave command.
-  *							clearCmd: Sets the name for the clear command.
-  *							enableQueueStat: Disables or enables queue status (useful to prevent errors sometimes, defaults true).
-  */
-	//note that I'm too lazy to update those ^, refer to the readme.md instead.
+const noPermsError = "Only Administrators may use this command!"
 
-module.exports = function (client, options) {
+/**
+ * Takes a discord.js client and turns it into a client bot.
+ * Thanks to Rodabaugh for helping with some tweaks and ideas.
+ *
+ * @param {Client} client - The discord.js client.
+ * @param {object} options - Options to configure the client bot. Acceptable options are:
+ * 							prefix: The prefix to use for the commands (default '!').
+ * 							global: Whether to use a global queue instead of a server-specific queue (default false).
+ * 							maxQueueSize: The maximum queue size (default 20).
+ * 							anyoneCanSkip: Allow anybody to skip the song.
+ *							anyoneCanAdjust: Allow anyone to adjust volume.
+ * 							clearInvoker: Clear the command message.
+ * 							volume: The default volume of the player.
+ *							helpCmd: Name of the help command (defualt: clienthelp).
+ *							playCmd: Sets the play command name.
+ *							skipCmd: Sets the skip command name.
+ *							queueCmd: Sets the queue command name.
+ *							pauseCmd: Sets the name for the pause command.
+ *							resumeCmd: Sets the name for the resume command.
+ *							volumeCmd: Sets the name for the volume command.
+ *							leaveCmd:  Sets the name for the leave command.
+ *							clearCmd: Sets the name for the clear command.
+ *							enableQueueStat: Disables or enables queue status (useful to prevent errors sometimes, defaults true).
+ */
+//note that I'm too lazy to update those ^, refer to the readme.md instead.
+
+module.exports = function(client, options) {
 	// Get all options.
 	class Music {
 		constructor(client, options) {
@@ -280,7 +281,7 @@ module.exports = function (client, options) {
 
 		// Check if the message is a command.
 		if (message.toLowerCase().startsWith(musicbot.botPrefix.toLowerCase())) {
-			// Get the command, suffix and bot.
+			// Get the command and suffix.
 			const command = message.substring(musicbot.botPrefix.length).split(/[ \n]/)[0].toLowerCase().trim();
 			const suffix = message.substring(musicbot.botPrefix.length + command.length).trim();
 
@@ -316,15 +317,15 @@ module.exports = function (client, options) {
 	/**
 	 * Live message function.
 	 */
-	 if (musicbot.enableAliveMessage) {
-		 setInterval(function liveMessage() {
-			 if (musicbot.aliveMessage.length < 2) {
-				 musicbot.aliveMessage = "----------------------------------\n"+client.user.username+" online since "+client.readyAt+"!"+"\n----------------------------------";
-			 }
+	if (musicbot.enableAliveMessage) {
+		setInterval(function liveMessage() {
+			if (musicbot.aliveMessage.length < 2) {
+				musicbot.aliveMessage = "----------------------------------\n" + client.user.username + " online since " + client.readyAt + "!" + "\n----------------------------------";
+			}
 
-			 console.log(musicbot.aliveMessage);
-		 }, musicbot.aliveMessageTime);
-	 };
+			console.log(musicbot.aliveMessage);
+		}, musicbot.aliveMessageTime);
+	};
 
 	/**
 	 * Checks if a user is an admin.
@@ -388,83 +389,101 @@ module.exports = function (client, options) {
 	 * @param {string} suffix - Command suffix.
 	 * @returns {<promise>} - The response edit.
 	 */
-	 function musicbothelp(msg, suffix) {
-		 if (!suffix || suffix.includes('help')) {
-			 console.log(musicbot);
-			 const embed = new Discord.RichEmbed();
-			 embed.setAuthor("Commands", msg.author.displayAvatarURL)
-			 embed.setDescription(`Commands with a * require Admin perms. Use \`${musicbot.botPrefix}musicbothelp command\` for help on usage.`)
-			 embed.addField(musicbot.helpCmd, `Displays this text.`)
-			 embed.addField(musicbot.playCmd, `Queue a song by url or search.`)
-			 embed.addField(musicbot.skipCmd, `Skip a song or mutli songs.`)
-			 embed.addField(musicbot.queueCmd, `Shows the current queue`)
-			 embed.addField(musicbot.pauseCmd, `* Pauses the queue.`)
-			 embed.addField(musicbot.resumeCmd, `* Resume the queue.`)
-			 embed.addField(musicbot.volumeCmd, `* Adjusts the volume of the bot.`)
-			 embed.addField(musicbot.leaveCmd, `Leave and clear the queue`)
-			 embed.addField(musicbot.clearCmd, `Clears the current queue.`)
-			 embed.setColor(0x27e33d)
-			 msg.channel.send({embed});
-		 } else {
-		 	if (suffix.includes(musicbot.playCmd)) {
-				const embed = new Discord.RichEmbed();
-				embed.setAuthor(`${musicbot.botPrefix}${musicbot.playCmd}`, musicbot.user.avatarURL);
-				embed.setDescription(`Addes a song to the queue.\n**__Usage:__** ${musicbot.botPrefix}${musicbot.playCmd} Video URL | Playlist URL | search for something.`);
-				embed.setColor(0x27e33d);
-				msg.channel.send({embed});
-			} else if (suffix.includes(musicbot.skipCmd)) {
-				const embed = new Discord.RichEmbed();
-	 		 embed.setAuthor(`${musicbot.botPrefix}${musicbot.skipCmd}`, musicbot.user.avatarURL);
-	 		 embed.setDescription(`Skips the playing song or mutli songs. You must be the person that queued the song to skip it, or admin.\n**__Usage:__** ${musicbot.botPrefix}${musicbot.skipCmd} [numer of songs]`);
-			 embed.setColor(0x27e33d);
-	 		 msg.channel.send({embed});
-		 } else if (suffix.includes(musicbot.queueCmd)) {
-			 const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.queueCmd}`, musicbot.user.avatarURL);
+	function musicbothelp(msg, suffix) {
+		console.log(suffix);
+		if (!suffix || suffix == "") {
+			const embed = new Discord.RichEmbed();
+			embed.setAuthor("Commands", msg.author.displayAvatarURL)
+			embed.setDescription(`Commands with a * require Administrator perms. Use \`${musicbot.botPrefix}${musicbot.helpCmd} command\` for help on usage.`)
+			embed.addField(musicbot.helpCmd, `Displays this text.`)
+			embed.addField(musicbot.playCmd, `Queue a song by url or search.`)
+			embed.addField(musicbot.skipCmd, `Skip a song or multi songs.`)
+			embed.addField(musicbot.queueCmd, `Shows the current queue`)
+			embed.addField(musicbot.pauseCmd, `* Pauses the queue.`)
+			embed.addField(musicbot.resumeCmd, `* Resume the queue.`)
+			embed.addField(musicbot.volumeCmd, `* Adjusts the volume of the bot.`)
+			embed.addField(musicbot.leaveCmd, `Leave and clear the queue`)
+			embed.addField(musicbot.clearCmd, `Clears the current queue.`)
+			embed.setColor(0x27e33d)
+			msg.channel.send({
+				embed
+			});
+		} else if (suffix.includes(musicbot.playCmd)) {
+			const embed = new Discord.RichEmbed();
+			embed.setAuthor(`${musicbot.botPrefix}${musicbot.playCmd}`, client.user.avatarURL);
+			embed.setDescription(`Addes a song to the queue.\n**__Usage:__** ${musicbot.botPrefix}${musicbot.playCmd} Video URL | Playlist URL | search for something.`);
+			embed.setColor(0x27e33d);
+			msg.channel.send({
+				embed
+			});
+		} else if (suffix.includes(musicbot.skipCmd)) {
+			const embed = new Discord.RichEmbed();
+			embed.setAuthor(`${musicbot.botPrefix}${musicbot.skipCmd}`, client.user.avatarURL);
+			embed.setDescription(`Skips the playing song or mutli songs. You must be the person that queued the song to skip it, or admin.\n**__Usage:__** ${musicbot.botPrefix}${musicbot.skipCmd} [numer of songs]`);
+			embed.setColor(0x27e33d);
+			msg.channel.send({
+				embed
+			});
+		} else if (suffix.includes(musicbot.queueCmd)) {
+			const embed = new Discord.RichEmbed();
+			embed.setAuthor(`${musicbot.botPrefix}${musicbot.queueCmd}`, client.user.avatarURL);
 			embed.setDescription(`Displays the current queue.`);
 			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+			msg.channel.send({
+				embed
+			});
 		} else if (suffix.includes(musicbot.pauseCmd)) {
-			 const embed = new Discord.RichEmbed();
+			const embed = new Discord.RichEmbed();
 			embed.setAuthor(`${musicbot.botPrefix}${musicbot.pauseCmd}`, musicbot.user.avatarURL);
 			embed.setDescription(`Pauses the current queue.`);
 			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+			msg.channel.send({
+				embed
+			});
 		} else if (suffix.includes(musicbot.resumeCmd)) {
-			 const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.resumeCmd}`, musicbot.user.avatarURL);
+			const embed = new Discord.RichEmbed();
+			embed.setAuthor(`${musicbot.botPrefix}${musicbot.resumeCmd}`, client.user.avatarURL);
 			embed.setDescription(`Resumes the current queue if paused.`);
 			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+			msg.channel.send({
+				embed
+			});
 		} else if (suffix.includes(musicbot.volumeCmd)) {
-			 const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.volumeCmd}`, musicbot.user.avatarURL);
-			embed.setDescription(`Adjusts the streams volume. Must be admin.\n**__Usage:__** ${musicbot.botPrefix}${musicbot.volumeCmd} <1 to 200>`);
+			const embed = new Discord.RichEmbed();
+			embed.setAuthor(`${musicbot.botPrefix}${musicbot.volumeCmd}`, client.user.avatarURL);
+			embed.setDescription(`Adjusts the streams volume. (Must be Administrator)\n**__Usage:__** ${musicbot.botPrefix}${musicbot.volumeCmd} <1 to 200>`);
 			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+			msg.channel.send({
+				embed
+			});
 		} else if (suffix.includes(musicbot.leaveCmd)) {
-			 const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.leaveCmd}`, musicbot.user.avatarURL);
+			const embed = new Discord.RichEmbed();
+			embed.setAuthor(`${musicbot.botPrefix}${musicbot.leaveCmd}`, client.user.avatarURL);
 			embed.setDescription(`Leaves the voice channel and clears the queue.`);
 			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+			msg.channel.send({
+				embed
+			});
 		} else if (suffix.includes(musicbot.clearCmd)) {
-			 const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.clearCmd}`, musicbot.user.avatarURL);
+			const embed = new Discord.RichEmbed();
+			embed.setAuthor(`${musicbot.botPrefix}${musicbot.clearCmd}`, client.user.avatarURL);
 			embed.setDescription(`Clears the current queue playing.`);
 			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+			msg.channel.send({
+				embed
+			});
 		} else if (suffix.includes(musicbot.loopCmd)) {
 			const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.loopCmd}`, musicbot.user.avatarURL);
+			embed.setAuthor(`${musicbot.botPrefix}${musicbot.loopCmd}`, client.user.avatarURL);
 			embed.setDescription(`Enables/disables looping of the currently being played song.`);
 			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+			msg.channel.send({
+				embed
+			});
 		} else {
-			msg.channel.send(note('fail', `${suffix} is not a vlaid command!`));
+			msg.channel.send(note('fail', `${suffix} is not a valid command!`));
 		};
 	};
-};
 
 	/**
 	 * The command for adding a song to the queue.
@@ -516,24 +535,29 @@ module.exports = function (client, options) {
 								if (queue.length === 1) executeQueue(msg, queue);
 							};
 						};
+
 						function endrun() {
 							var qvids = queuedVids.toString().replace(/,/g, '\n');
 							var svids = skippedVideos.toString().replace(/,/g, '\n');
 							if (qvids.length > 1000) qvids = 'Over character count, replaced...';
 							if (svids.length > 1000) svids = 'Over character count, replaced...';
 
-							if (svids != ""){
-								msg.channel.send(note('wrap', `Queued:\n${qvids}\nSkipped: (Max Queue)\n${svids}`), {split: true});
+							if (svids != "") {
+								msg.channel.send(note('wrap', `Queued:\n${qvids}\nSkipped: (Max Queue)\n${svids}`), {
+									split: true
+								});
 							} else {
-								msg.channel.send(note('wrap', `Queued:\n${qvids}`), {split: true});
+								msg.channel.send(note('wrap', `Queued:\n${qvids}`), {
+									split: true
+								});
 							};
 						};
 						setTimeout(endrun, 5000);
 					});
 
 				})
-		  } else {
-		    search(searchstring, opts, function(err, results) {
+			} else {
+				search(searchstring, opts, function(err, results) {
 					if (err) {
 						if (musicbot.logging) console.log(err);
 						const nerr = err.toString().split(':');
@@ -548,8 +572,8 @@ module.exports = function (client, options) {
 						// Play if only one element in the queue.
 						if (queue.length === 1) executeQueue(msg, queue);
 					}).catch(console.log);
-		    });
-		  };
+				});
+			};
 		}).catch(console.log);
 	}
 
@@ -561,7 +585,7 @@ module.exports = function (client, options) {
 	 * @param {string} suffix - Command suffix.
 	 * @returns {<promise>} - The response message.
 	 */
-	 function skip(msg, suffix) {
+	function skip(msg, suffix) {
 		// Get the voice connection.
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music being played.'));
@@ -618,7 +642,7 @@ module.exports = function (client, options) {
 			const newText = text.substr(0, 1899);
 			const otherText = text.substr(1900, text.length);
 			if (otherText.length > 1900) {
-				msg.channel.send(note('wrap', 'Queue ('+ queueStatus +'):\n' + "Past character limit..."));
+				msg.channel.send(note('wrap', 'Queue (' + queueStatus + '):\n' + "Past character limit..."));
 			} else {
 				if (musicbot.enableQueueStat) {
 					//Get the status of the queue.
@@ -630,8 +654,8 @@ module.exports = function (client, options) {
 					}
 
 					// Send the queue and status.
-					msg.channel.send(note('wrap', 'Queue ('+ queueStatus +'):\n' + newText));
-					msg.channel.send(note('wrap', 'Queue (2) ('+ queueStatus +'):\n' + otherText));
+					msg.channel.send(note('wrap', 'Queue (' + queueStatus + '):\n' + newText));
+					msg.channel.send(note('wrap', 'Queue (2) (' + queueStatus + '):\n' + otherText));
 				} else {
 					msg.channel.send(note('wrap', 'Queue:\n' + newText));
 					msg.channel.send(note('wrap', 'Queue (2):\n' + otherText));
@@ -648,7 +672,7 @@ module.exports = function (client, options) {
 				}
 
 				// Send the queue and status.
-				msg.channel.send(note('wrap', 'Queue ('+ queueStatus +'):\n' + text));
+				msg.channel.send(note('wrap', 'Queue (' + queueStatus + '):\n' + text));
 			} else {
 				msg.channel.send(note('wrap', 'Queue:\n' + text));
 			}
@@ -668,7 +692,7 @@ module.exports = function (client, options) {
 		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music being played.'));
 
 		if (!isAdmin(msg.member))
-			return msg.channel.send(note('fail', 'You are not authorized to use this.'));
+			return msg.channel.send(note('fail', noPermsError));
 
 		// Pause.
 		msg.channel.send(note('note', 'Playback paused.'));
@@ -696,7 +720,7 @@ module.exports = function (client, options) {
 			voiceConnection.disconnect();
 			msg.channel.send(note('note', 'Left voice channel.'));
 		} else {
-			msg.channel.send(note('fail', 'You don\'t have permission to use that command!'));
+			msg.channel.send(note('fail', noPermsError));
 		}
 	}
 
@@ -718,7 +742,7 @@ module.exports = function (client, options) {
 			voiceConnection.player.dispatcher.end();
 			voiceConnection.disconnect();
 		} else {
-			msg.channel.send(note('fail', `You don't have permission to use that command, only admins may!`));
+			msg.channel.send(note('fail', noPermsError));
 		}
 	}
 
@@ -735,7 +759,7 @@ module.exports = function (client, options) {
 		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music being played.'));
 
 		if (!isAdmin(msg.member))
-			return msg.channel.send(note('fail', 'You are not authorized to use this.'));
+			return msg.channel.send(note('fail', noPermsError));
 
 		// Resume.
 		msg.channel.send(note('note', 'Playback resumed.'));
@@ -759,7 +783,7 @@ module.exports = function (client, options) {
 		const queue = getQueue(msg.guild.id);
 
 		if (!canAdjust(msg.member, queue))
-			return msg.channel.send(note('fail', 'You are not authorized to use this. Only admins are.'));
+			return msg.channel.send(note('fail', noPermsError));
 
 		// Get the dispatcher
 		const dispatcher = voiceConnection.player.dispatcher;
@@ -769,7 +793,7 @@ module.exports = function (client, options) {
 		});
 
 		msg.channel.send(note('note', 'Volume set to ' + suffix));
-		dispatcher.setVolume((suffix/100));
+		dispatcher.setVolume((suffix / 100));
 	}
 
 	/**
@@ -834,7 +858,10 @@ module.exports = function (client, options) {
 
 			// Play the video.
 			msg.channel.send(note('note', 'Now Playing: ' + video.title)).then(() => {
-				let dispatcher = connection.playStream(stream(video.link), {seek: 0, volume: (musicbot.defVolume/100)});
+				let dispatcher = connection.playStream(stream(video.link), {
+					seek: 0,
+					volume: (musicbot.defVolume / 100)
+				});
 
 				connection.on('error', (error) => {
 					// Skip to the next song.
@@ -874,12 +901,12 @@ module.exports = function (client, options) {
 	}
 
 	//Text wrapping and cleaning.
-	 function note(type, text) {
+	function note(type, text) {
 		if (type === 'wrap') {
 			ntext = text
-			.replace(/`/g, '`' + String.fromCharCode(8203))
-			.replace(/@/g, '@' + String.fromCharCode(8203))
-			.replace(client.token, 'REMOVEDT');
+				.replace(/`/g, '`' + String.fromCharCode(8203))
+				.replace(/@/g, '@' + String.fromCharCode(8203))
+				.replace(client.token, 'REMOVEDT');
 
 			return '```\n' + ntext + '\n```';
 		} else if (type === 'note') {
@@ -890,5 +917,5 @@ module.exports = function (client, options) {
 			const harp = new Error(`${type} was an invalid type; note function`);
 			console.log(harp);
 		}
-  };
+	};
 }
