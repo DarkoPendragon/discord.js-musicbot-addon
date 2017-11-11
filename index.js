@@ -1,6 +1,6 @@
 /**
  * Original code nexu-dev, https://github.com/nexu-dev/discord.js-client
- * Tweeked by Demise.
+ * Tweaked by Demise.
  */
 
 // const YoutubeDL = require('youtube-dl');
@@ -667,7 +667,7 @@ module.exports = function (client, options) {
 			dispatcher.end();
 		} catch (e) {
 			if (musicbot.logging) console.log(new Error(`Play command error from userID ${msg.author.id} in guildID ${msg.guild.id}\n${e.stack}`));
-			return msg.channel.send(note('fail', 'An error occoured, sorry!'));
+			return msg.channel.send(note('fail', 'An error has occoured!'));
 		};
 
 		msg.channel.send(note('note', 'Skipped **' + toSkip + '**!'));
@@ -741,7 +741,7 @@ module.exports = function (client, options) {
 		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music being played.'));
 
 		if (!isAdmin(msg.member))
-			return msg.channel.send(note('fail', 'You are not authorized to use this.'));
+			return msg.channel.send(note('fail', 'Only Admins are allowed to use this command.'));
 
 		// Pause.
 		msg.channel.send(note('note', 'Playback paused.'));
@@ -759,7 +759,7 @@ module.exports = function (client, options) {
 	function leave(msg, suffix) {
 		if (isAdmin(msg.member)) {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-			if (voiceConnection === null) return msg.channel.send(note('fail', 'I\'m not in any channel!.'));
+			if (voiceConnection === null) return msg.channel.send(note('fail', 'I\'m not in a voice channel!.'));
 			// Clear the queue.
 			const queue = getQueue(msg.guild.id);
 			queue.splice(0, queue.length);
@@ -767,9 +767,9 @@ module.exports = function (client, options) {
 			// End the stream and disconnect.
 			voiceConnection.player.dispatcher.end();
 			voiceConnection.disconnect();
-			msg.channel.send(note('note', 'Left voice channel.'));
+			msg.channel.send(note('note', 'Successfully left your voice channel!'));
 		} else {
-			msg.channel.send(note('fail', 'You don\'t have permission to use that command!'));
+			msg.channel.send(note('fail', 'Only Admins are allowed to use this command.'));
 		}
 	}
 
@@ -783,7 +783,7 @@ module.exports = function (client, options) {
 		if (isAdmin(msg.member)) {
 			const queue = getQueue(msg.guild.id);
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-			if (voiceConnection === null) return msg.channel.send(note('fail', 'I\'m not in any channel!.'));
+			if (voiceConnection === null) return msg.channel.send(note('fail', 'I\'m not in a channel!'));
 
 			queue.splice(0, queue.length);
 			msg.channel.send(note('note', 'Queue cleared~'));
@@ -791,7 +791,7 @@ module.exports = function (client, options) {
 			voiceConnection.player.dispatcher.end();
 			voiceConnection.disconnect();
 		} else {
-			msg.channel.send(note('fail', `You don't have permission to use that command, only admins may!`));
+			msg.channel.send(note('fail', `Only Admins are allowed to use this command.`));
 		}
 	}
 
@@ -805,10 +805,10 @@ module.exports = function (client, options) {
 	function resume(msg, suffix) {
 		// Get the voice connection.
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music being played.'));
+		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music is being played.'));
 
 		if (!isAdmin(msg.member))
-			return msg.channel.send(note('fail', 'You are not authorized to use this.'));
+			return msg.channel.send(note('fail', 'Only Admins are allowed to use this command.'));
 
 		// Resume.
 		msg.channel.send(note('note', 'Playback resumed.'));
@@ -826,13 +826,13 @@ module.exports = function (client, options) {
 	function volume(msg, suffix) {
 		// Get the voice connection.
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music being played.'));
+		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music is being played.'));
 
 		// Get the queue.
 		const queue = getQueue(msg.guild.id);
 
 		if (!canAdjust(msg.member, queue))
-			return msg.channel.send(note('fail', 'You are not authorized to use this. Only admins are.'));
+			return msg.channel.send(note('fail', 'Only Admins are allowed to use this command.'));
 
 		// Get the dispatcher
 		const dispatcher = voiceConnection.player.dispatcher;
@@ -955,7 +955,7 @@ module.exports = function (client, options) {
 			ntext = text
 			.replace(/`/g, '`' + String.fromCharCode(8203))
 			.replace(/@/g, '@' + String.fromCharCode(8203))
-			.replace(client.token, 'REMOVEDT');
+			.replace(client.token, 'REMOVED');
 
 			return '```\n' + ntext + '\n```';
 		} else if (type === 'note') {
