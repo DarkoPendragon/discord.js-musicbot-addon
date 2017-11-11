@@ -42,13 +42,13 @@ __Installation:__
 * `npm install discord.js-musicbot-addon`
 
 __Common installation issues:__  
-__Issue:__ FFMPEG was not found on your system.
+__Issue:__ FFMPEG was not found on your system.  
 __Fix:__ Make sure ffmpeg is installed correctly and set in your PATH variable.  
 
 __Issue:__ Couldn't find an Opus engine.  
 __Fix:__ `npm install node-opus` or `npm install opusscript`  
 
-__Issue:__ [NPM] ERR Cannot read property '0' of undefined
+__Issue:__ [NPM] ERR Cannot read property '0' of undefined  
 __Fix:__ `npm i -g npm@4.6.1` or another lower version of npm.  
 
 __Issue:__ TypeError: Invalid non-string/buffer chunk  
@@ -95,15 +95,25 @@ The options you can pass in `music(client, {options})` and their types is as fol
 * anyoneCanSkip: Boolean, whether or not anyone can skip. Defaults false.
 * clearInvoker: Boolean, whether to delete command messages. Defaults false.
 * helpCmd: String, name of the help command.
+* disableHelp: Boolean, disable the help command.
 * playCmd: String, name of the play command.
+* disablePlay: Boolean, disable the play command.
 * skipCmd: String, name of the skip command.
+* disableSkip: Boolean, disable the skip command.
 * queueCmd: String, name of the queue command.
+* disableQueue: Boolean, disable the queue command.
 * pauseCmd: String, name of the pause command.
+* disablePause: Boolean, disable the pause command.
 * resumeCmd: String, name of the resume command.
+* disableResume: Boolean, disable the resume command.
 * volumeCmd: String, name of the volume command.
+* disableVolume: Boolean, disable the volume command.
 * leaveCmd: String, name of the leave command.
+* disableLeave: Boolean, disable the leave command.
 * clearCmd: String, name of the clear command.
+* disableClear: Boolean, disable the clear command.
 * loopCmd: String, name of the loop command.
+* disableLoop: Boolean, disable the loop command.
 * enableQueueStat: Boolean, whether to enable the queue status, old fix for an error that probably won't occur.
 * anyoneCanAdjust: Boolean, whether anyone can adjust volume. Defaults false.
 * ownerOverMember: Boolean, whether the owner over-rides CanAdjust and CanSkip. Defaults false.
@@ -126,13 +136,13 @@ An example of a few custom options would be:
 ```javascript
 const music = new Music(client, {
   prefix: ">",
-  maxQueueSize: "10",
-  anyoneCanSkip: false,
+  maxQueueSize: "100",
+  disableLoop: true,
+  disableClear: true,
   helpCmd: 'mhelp',
   playCmd: 'music',
   leaveCmd: 'begone',
   ownerOverMember: true,
-  enableClear: false,
   botOwner: '1234567890',
   youtubeKey: 'some-key_here'
 });
@@ -143,6 +153,13 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
+# 1.6.3
+* Brought back disabling commands.\
+* Fixed help function.
+
+# 1.6.2
+* Nothing notable.  
+
 # 1.6.1
 * Fixed some typos and minor errors.  
 

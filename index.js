@@ -54,15 +54,25 @@ module.exports = function (client, options) {
 			this.anyoneCanSkip = (options && options.anyoneCanSkip) || false;
 			this.clearInvoker = (options && options.clearInvoker) || false;
 			this.helpCmd = (options && options.helpCmd) || 'musichelp';
+			this.disableHelp = (options && options.disableHelp) || false;
 			this.playCmd = (options && options.playCmd) || 'play';
+			this.disablePlay = (options && options.disablePlay) || false;
 			this.skipCmd = (options && options.skipCmd) || 'skip';
+			this.disableSkip = (options && options.disableSkip) || false;
 			this.queueCmd = (options && options.queueCmd) || 'queue';
+			this.disableQueue = (options && options.disableQueue) || false;
 			this.pauseCmd = (options && options.pauseCmd) || 'pause';
+			this.disablePause = (options && options.disablePause) || false;
 			this.resumeCmd = (options && options.resumeCmd) || 'resume';
+			this.disableResume = (options && options.disableResume) || false;
 			this.volumeCmd = (options && options.volumeCmd) || 'volume';
+			this.disableVolume = (options && options.disableVolume) || false;
 			this.leaveCmd = (options && options.leaveCmd) || 'leave';
+			this.disableLeave = (options && options.disableLeave) || false;
 			this.clearCmd = (options && options.clearCmd) || 'clearqueue';
+			this.disableClear = (options && options.disableClear) || false;
 			this.loopCmd = (options && options.loopCmd) || 'loop';
+			this.disableLoop = (options && options.disableLoop) || false;
 			this.enableQueueStat = (options && options.enableQueueStat) || true;
 			this.anyoneCanAdjust = (options && options.anyoneCanAdjust) || false;
 			this.ownerOverMember = (options && options.ownerOverMember) || false;
@@ -88,6 +98,44 @@ module.exports = function (client, options) {
 			console.log(new TypeError(`youtubeKey must be a string`));
 			process.exit(1);
 		};
+
+		//Disable commands erros.
+		if (typeof musicbot.disableHelp !== 'boolean') {
+			console.log(new TypeError(`disableHelp must be a boolean`));
+			process.exit(1);
+		}
+		if (typeof musicbot.disablePlay !== 'boolean') {
+			console.log(new TypeError(`disablePlay must be a boolean`));
+			process.exit(1);
+		}
+		if (typeof musicbot.disableSkip !== 'boolean') {
+			console.log(new TypeError(`disableSkip must be a boolean`));
+			process.exit(1);
+		}
+		if (typeof musicbot.disableQueue !== 'boolean') {
+			console.log(new TypeError(`disableQueue must be a boolean`));
+			process.exit(1);
+		}
+		if (typeof musicbot.disablePause !== 'boolean') {
+			console.log(new TypeError(`disablePause must be a boolean`));
+			process.exit(1);
+		}
+		if (typeof musicbot.disableResume !== 'boolean') {
+			console.log(new TypeError(`disableResume must be a boolean`));
+			process.exit(1);
+		}
+		if (typeof musicbot.disableLeave !== 'boolean') {
+			console.log(new TypeError(`disableLeave must be a boolean`));
+			process.exit(1);
+		}
+		if (typeof musicbot.disableClear !== 'boolean') {
+			console.log(new TypeError(`disableClear must be a boolean`));
+			process.exit(1);
+		}
+		if (typeof musicbot.disableLoop !== 'boolean') {
+			console.log(new TypeError(`disableLoop must be a boolean`));
+			process.exit(1);
+		}
 
 		//Owner errors.
 		if (typeof musicbot.ownerOverMember !== 'boolean') {
@@ -144,6 +192,12 @@ module.exports = function (client, options) {
 		//CLEAR_INVOKER errors.
 		if (typeof musicbot.clearInvoker !== 'boolean') {
 			console.log(new TypeError(`clearInvoker must be a boolean`));
+			process.exit(1);
+		};
+
+		//disabledCmds errors.
+		if (typeof musicbot.disabledCmds !== 'arry') {
+			console.log(new TypeError(`disabledCmds must be an array`));
 			process.exit(1);
 		};
 
@@ -287,24 +341,34 @@ module.exports = function (client, options) {
 			// Process the commands.
 			switch (command) {
 				case musicbot.helpCmd:
+					if (musicbot.disableHelp) return;
 					return musicbothelp(msg, suffix);
 				case musicbot.playCmd:
+					if (musicbot.disablePlay) return;
 					return play(msg, suffix);
 				case musicbot.skipCmd:
+					if (musicbot.disableSkip) return;
 					return skip(msg, suffix);
 				case musicbot.queueCmd:
+					if (musicbot.disableQueue) return;
 					return queue(msg, suffix);
 				case musicbot.pauseCmd:
+					if (musicbot.disablePause) return;
 					return pause(msg, suffix);
 				case musicbot.resumeCmd:
+					if (musicbot.disableResume) return;
 					return resume(msg, suffix);
 				case musicbot.volumeCmd:
+					if (musicbot.disableVolume) return;
 					return volume(msg, suffix);
 				case musicbot.leaveCmd:
+					if (musicbot.disableLeave) return;
 					return leave(msg, suffix);
 				case musicbot.clearCmd:
+					if (musicbot.disableClear) return;
 					return clearqueue(msg, suffix);
 				case musicbot.loopCmd:
+					if (musicbot.disableLoop) return;
 					return loop(msg, suffix);
 			}
 			if (musicbot.clearInvoker) {
@@ -390,78 +454,86 @@ module.exports = function (client, options) {
 	 */
 	 function musicbothelp(msg, suffix) {
 		 if (!suffix || suffix.includes('help')) {
-			 console.log(musicbot);
 			 const embed = new Discord.RichEmbed();
 			 embed.setAuthor("Commands", msg.author.displayAvatarURL)
-			 embed.setDescription(`Commands with a * require Admin perms. Use \`${musicbot.botPrefix}musicbothelp command\` for help on usage.`)
+			 embed.setDescription(`Commands with a * require Admin perms. Use \`${musicbot.botPrefix}${musicbot.helpCmd} command\` for help on usage.`)
 			 embed.addField(musicbot.helpCmd, `Displays this text.`)
-			 embed.addField(musicbot.playCmd, `Queue a song by url or search.`)
-			 embed.addField(musicbot.skipCmd, `Skip a song or mutli songs.`)
-			 embed.addField(musicbot.queueCmd, `Shows the current queue`)
-			 embed.addField(musicbot.pauseCmd, `* Pauses the queue.`)
-			 embed.addField(musicbot.resumeCmd, `* Resume the queue.`)
-			 embed.addField(musicbot.volumeCmd, `* Adjusts the volume of the bot.`)
-			 embed.addField(musicbot.leaveCmd, `Leave and clear the queue`)
-			 embed.addField(musicbot.clearCmd, `Clears the current queue.`)
+			 if (!musicbot.disablePlay) embed.addField(musicbot.playCmd, `Queue a song/playlist by url or search for a song.`)
+			 if (!musicbot.disableSkip) embed.addField(musicbot.skipCmd, `Skip a song or multi songs.`)
+			 if (!musicbot.disableQueue) embed.addField(musicbot.queueCmd, `Shows the current queue`)
+			 if (!musicbot.disablePause) embed.addField(musicbot.pauseCmd, `* Pauses the queue.`)
+			 if (!musicbot.disableResume) embed.addField(musicbot.resumeCmd, `* Resume the queue.`)
+			 if (!musicbot.disableVolume) embed.addField(musicbot.volumeCmd, `* Adjusts the volume of the bot.`)
+			 if (!musicbot.disableLeave) embed.addField(musicbot.leaveCmd, `Leave and clear the queue`)
+			 if (!musicbot.disableClear) embed.addField(musicbot.clearCmd, `Clears the current queue.`)
 			 embed.setColor(0x27e33d)
 			 msg.channel.send({embed});
 		 } else {
 		 	if (suffix.includes(musicbot.playCmd)) {
+				if (musicbot.disablePlay) return msg.channel.send(note('fail', `${suffix} is not a valid command!`));
 				const embed = new Discord.RichEmbed();
-				embed.setAuthor(`${musicbot.botPrefix}${musicbot.playCmd}`, musicbot.user.avatarURL);
+				embed.setAuthor(`${musicbot.botPrefix}${musicbot.playCmd}`, client.user.displayAvatarURL);
 				embed.setDescription(`Addes a song to the queue.\n**__Usage:__** ${musicbot.botPrefix}${musicbot.playCmd} Video URL | Playlist URL | search for something.`);
 				embed.setColor(0x27e33d);
 				msg.channel.send({embed});
 			} else if (suffix.includes(musicbot.skipCmd)) {
+				if (musicbot.disableSkip) return msg.channel.send(note('fail', `${suffix} is not a valid command!`));
 				const embed = new Discord.RichEmbed();
-	 		 embed.setAuthor(`${musicbot.botPrefix}${musicbot.skipCmd}`, musicbot.user.avatarURL);
-	 		 embed.setDescription(`Skips the playing song or mutli songs. You must be the person that queued the song to skip it, or admin.\n**__Usage:__** ${musicbot.botPrefix}${musicbot.skipCmd} [numer of songs]`);
-			 embed.setColor(0x27e33d);
-	 		 msg.channel.send({embed});
+	 			embed.setAuthor(`${musicbot.botPrefix}${musicbot.skipCmd}`, client.user.displayAvatarURL);
+	 			embed.setDescription(`Skips the playing song or multi songs. You must be the person that queued the song to skip it, or admin.\n**__Usage:__** ${musicbot.botPrefix}${musicbot.skipCmd} [numer of songs]`);
+				embed.setColor(0x27e33d);
+	 			msg.channel.send({embed});
 		 } else if (suffix.includes(musicbot.queueCmd)) {
-			 const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.queueCmd}`, musicbot.user.avatarURL);
-			embed.setDescription(`Displays the current queue.`);
-			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+				if (musicbot.disableQueue) return msg.channel.send(note('fail', `${suffix} is not a valid command!`));
+				const embed = new Discord.RichEmbed();
+				embed.setAuthor(`${musicbot.botPrefix}${musicbot.queueCmd}`, client.user.displayAvatarURL);
+				embed.setDescription(`Displays the current queue.`);
+				embed.setColor(0x27e33d);
+				msg.channel.send({embed});
 		} else if (suffix.includes(musicbot.pauseCmd)) {
-			 const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.pauseCmd}`, musicbot.user.avatarURL);
-			embed.setDescription(`Pauses the current queue.`);
-			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+				if (musicbot.disablePause) return msg.channel.send(note('fail', `${suffix} is not a valid command!`));
+				const embed = new Discord.RichEmbed();
+				embed.setAuthor(`${musicbot.botPrefix}${musicbot.pauseCmd}`, client.user.displayAvatarURL);
+				embed.setDescription(`Pauses the current queue.`);
+				embed.setColor(0x27e33d);
+				msg.channel.send({embed});
 		} else if (suffix.includes(musicbot.resumeCmd)) {
-			 const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.resumeCmd}`, musicbot.user.avatarURL);
-			embed.setDescription(`Resumes the current queue if paused.`);
-			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+				if (musicbot.disableResume) return msg.channel.send(note('fail', `${suffix} is not a valid command!`));
+				const embed = new Discord.RichEmbed();
+				embed.setAuthor(`${musicbot.botPrefix}${musicbot.resumeCmd}`, client.user.displayAvatarURL);
+				embed.setDescription(`Resumes the current queue if paused.`);
+				embed.setColor(0x27e33d);
+				msg.channel.send({embed});
 		} else if (suffix.includes(musicbot.volumeCmd)) {
-			 const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.volumeCmd}`, musicbot.user.avatarURL);
-			embed.setDescription(`Adjusts the streams volume. Must be admin.\n**__Usage:__** ${musicbot.botPrefix}${musicbot.volumeCmd} <1 to 200>`);
-			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+				if (musicbot.disableVolume) return msg.channel.send(note('fail', `${suffix} is not a valid command!`));
+				const embed = new Discord.RichEmbed();
+				embed.setAuthor(`${musicbot.botPrefix}${musicbot.volumeCmd}`, client.user.displayAvatarURL);
+				embed.setDescription(`Adjusts the streams volume. Must be admin.\n**__Usage:__** ${musicbot.botPrefix}${musicbot.volumeCmd} <1 to 200>`);
+				embed.setColor(0x27e33d);
+				msg.channel.send({embed});
 		} else if (suffix.includes(musicbot.leaveCmd)) {
-			 const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.leaveCmd}`, musicbot.user.avatarURL);
-			embed.setDescription(`Leaves the voice channel and clears the queue.`);
-			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+				if (musicbot.disableLeave) return msg.channel.send(note('fail', `${suffix} is not a valid command!`));
+				const embed = new Discord.RichEmbed();
+				embed.setAuthor(`${musicbot.botPrefix}${musicbot.leaveCmd}`, client.user.displayAvatarURL);
+				embed.setDescription(`Leaves the voice channel and clears the queue.`);
+				embed.setColor(0x27e33d);
+				msg.channel.send({embed});
 		} else if (suffix.includes(musicbot.clearCmd)) {
-			 const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.clearCmd}`, musicbot.user.avatarURL);
-			embed.setDescription(`Clears the current queue playing.`);
-			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+				if (musicbot.disableClear) return msg.channel.send(note('fail', `${suffix} is not a valid command!`));
+				const embed = new Discord.RichEmbed();
+				embed.setAuthor(`${musicbot.botPrefix}${musicbot.clearCmd}`, client.user.displayAvatarURL);
+				embed.setDescription(`Clears the current queue playing.`);
+				embed.setColor(0x27e33d);
+				msg.channel.send({embed});
 		} else if (suffix.includes(musicbot.loopCmd)) {
-			const embed = new Discord.RichEmbed();
-			embed.setAuthor(`${musicbot.botPrefix}${musicbot.loopCmd}`, musicbot.user.avatarURL);
-			embed.setDescription(`Enables/disables looping of the currently being played song.`);
-			embed.setColor(0x27e33d);
-			msg.channel.send({embed});
+				if (musicbot.disableLoop) return msg.channel.send(note('fail', `${suffix} is not a valid command!`));
+				const embed = new Discord.RichEmbed();
+				embed.setAuthor(`${musicbot.botPrefix}${musicbot.loopCmd}`, client.user.displayAvatarURL);
+				embed.setDescription(`Enables/disables looping of the currently being played song.`);
+				embed.setColor(0x27e33d);
+				msg.channel.send({embed});
 		} else {
-			msg.channel.send(note('fail', `${suffix} is not a vlaid command!`));
+			msg.channel.send(note('fail', `${suffix} is not a valid command!`));
 		};
 	};
 };
