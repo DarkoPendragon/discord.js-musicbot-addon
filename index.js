@@ -22,13 +22,13 @@ const emitter = new Emitter();
   *
   * @param {Client} client - The discord.js client.
   * @param {object} options - Options to configure the client bot. Acceptable options are:
-  * 							prefix: The prefix to use for the commands (default '!').
-  * 							global: Whether to use a global queue instead of a server-specific queue (default false).
-  * 							maxQueueSize: The maximum queue size (default 20).
-  * 							anyoneCanSkip: Allow anybody to skip the song.
+  * 						prefix: The prefix to use for the commands (default '!').
+  * 						global: Whether to use a global queue instead of a server-specific queue (default false).
+  * 						maxQueueSize: The maximum queue size (default 20).
+  * 						anyoneCanSkip: Allow anybody to skip the song.
   *							anyoneCanAdjust: Allow anyone to adjust volume.
-  * 							clearInvoker: Clear the command message.
-  * 							volume: The default volume of the player.
+  * 						clearInvoker: Clear the command message.
+  * 						volume: The default volume of the player.
   *							helpCmd: Name of the help command (defualt: clienthelp).
   *							playCmd: Sets the play command name.
   *							skipCmd: Sets the skip command name.
@@ -82,6 +82,7 @@ module.exports = function (client, options) {
 			this.aliveMessage = (options && options.aliveMessage) || "";
 			this.aliveMessageTime = (options && options.aliveMessageTime) || 600000;
 			this.loop = "false";
+			this.disabledCmds = (options && options.disabledCmds) || [];
 		}
 	}
 
@@ -196,7 +197,7 @@ module.exports = function (client, options) {
 		};
 
 		//disabledCmds errors.
-		if (typeof musicbot.disabledCmds !== 'arry') {
+		if (typeof musicbot.disabledCmds !== 'array') {
 			console.log(new TypeError(`disabledCmds must be an array`));
 			process.exit(1);
 		};
