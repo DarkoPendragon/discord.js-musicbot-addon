@@ -908,7 +908,7 @@ module.exports = function (client, options) {
 			//removed currently.
 
 			// Play the video.
-			msg.channel.send(note('note', 'Now Playing: ' + video.title)).then(() => {
+			msg.channel.send(note('note', `Now Playing: **${video.title}**`)).then(() => {
 				let dispatcher = connection.playStream(stream(video.link), {seek: 0, volume: (musicbot.defVolume/100)});
 
 				connection.on('error', (error) => {
