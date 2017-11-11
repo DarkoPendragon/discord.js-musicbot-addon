@@ -639,7 +639,6 @@ module.exports = function (client, options) {
 			};
 			if (voiceConnection.paused) dispatcher.resume();
 			dispatcher.end();
-			executeQueue(msg, queue);
 		} catch (e) {
 			if (musicbot.logging) console.log(new Error(`Play command error from userID ${msg.author.id} in guildID ${msg.guild.id}\n${e.stack}`));
 			return msg.channel.send(note('fail', 'An error has occoured!'));
