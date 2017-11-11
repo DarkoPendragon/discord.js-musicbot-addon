@@ -140,6 +140,10 @@ module.exports = function (client, options) {
 			console.log(new TypeError(`disableLoop must be a boolean`));
 			process.exit(1);
 		}
+		if (typeof musicbot.disableNp !== 'boolean') {
+			console.log(new TypeError(`disableNp must be a boolean`));
+			process.exit(1);
+		}
 
 		//Owner errors.
 		if (typeof musicbot.ownerOverMember !== 'boolean') {
@@ -224,89 +228,45 @@ module.exports = function (client, options) {
 			console.log(new TypeError(`helpCmd must be a string`));
 			process.exit(1);
 		};
-		if (typeof musicbot.enableHelp !== 'boolean') {
-		 	console.log(new TypeError(`enableHelp must be a boolean`));
-			process.exit(1);
-		};
 		if (typeof musicbot.playCmd !== 'string') {
 			console.log(new TypeError(`playCmd must be a string`));
 			process.exit(1);
-		};
-		if (typeof musicbot.enablePlay !== 'boolean') {
-		 	console.log(new TypeError(`enablePlay must be a boolean`));
-		 	process.exit(1);
 		};
 		if (typeof musicbot.skipCmd !== 'string') {
 			console.log(new TypeError(`skipCmd must be a string`));
 			process.exit(1);
 		};
-		if (typeof musicbot.enableSkip !== 'boolean') {
-		 	console.log(new TypeError(`enableSkip must be a boolean`));
-		 	process.exit(1);
-		};
 		if (typeof musicbot.queueCmd !== 'string') {
 			console.log(new TypeError(`queueCmd must be a string`));
 			process.exit(1);
-		};
-		if (typeof musicbot.enableQueue !== 'boolean') {
-		 	console.log(new TypeError(`enableQueue must be a boolean`));
-		 	process.exit(1);
 		};
 		if (typeof musicbot.pauseCmd !== 'string') {
 			console.log(new TypeError(`pauseCmd must be a string`));
 			process.exit(1);
 		};
-		if (typeof musicbot.enablePause !== 'boolean') {
-		 	console.log(new TypeError(`enablePause must be a boolean`));
-		 	process.exit(1);
-		};
 		if (typeof musicbot.npCmd !== 'string') {
 			console.log(new TypeError(`npCmd must be a string`));
 			process.exit(1);
-		};
-		if (typeof musicbot.enableNp !== 'boolean') {
-		 	console.log(new TypeError(`enableNp must be a boolean`));
-		 	process.exit(1);
 		};
 		if (typeof musicbot.resumeCmd !== 'string') {
 			console.log(new TypeError(`resumeCmd must be a string`));
 			process.exit(1);
 		};
-		if (typeof musicbot.enableResume !== 'boolean') {
-			console.log(new TypeError(`enableResume must be a boolean`));
-		 	process.exit(1);
-		};
 		if (typeof musicbot.volumeCmd !== 'string') {
 			console.log(new TypeError(`volumeCmd must be a string`));
-			process.exit(1);
-		};
-		if (typeof musicbot.enableVolume !== 'boolean') {
-			console.log(new TypeError(`enableVolume must be a boolean`));
 			process.exit(1);
 		};
 		if (typeof musicbot.leaveCmd !== 'string') {
 			console.log(new TypeError(`leaveCmd must be a string`));
 			process.exit(1);
 		};
-		if (typeof musicbot.enableLeave !== 'boolean') {
-			console.log(new TypeError(`enableLeave must be a boolean`));
-		 	process.exit(1);
-		};
 		if (typeof musicbot.clearCmd !== 'string') {
 			console.log(new TypeError(`clearCmd must be a string`));
-			process.exit(1);
-		};
-		if (typeof musicbot.enableClear !== 'boolean') {
-			console.log(new TypeError(`enableClear must be a boolean`));
 			process.exit(1);
 		};
 		if (typeof musicbot.loopCmd !== 'string') {
 			console.log(new TypeError(`loopCmd must be a string`));
 			process.exit(1);
-		};
-		if (typeof musicbot.enableLoop !== 'boolean') {
-		 	console.log(new TypeError(`enableLoop must be a boolean`));
-		 	process.exit(1);
 		};
 
 		//musicbot.enableQueueStat errors.
