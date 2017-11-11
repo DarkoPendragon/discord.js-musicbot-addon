@@ -38,6 +38,7 @@ const emitter = new Emitter();
   *							volumeCmd: Sets the name for the volume command.
   *							leaveCmd:  Sets the name for the leave command.
   *							clearCmd: Sets the name for the clear command.
+  *							npCmd: Sets the name for the now playing command.
   *							enableQueueStat: Disables or enables queue status (useful to prevent errors sometimes, defaults true).
   */
 	//note that I'm too lazy to update those ^, refer to the readme.md instead.
@@ -73,6 +74,8 @@ module.exports = function (client, options) {
 			this.disableClear = (options && options.disableClear) || false;
 			this.loopCmd = (options && options.loopCmd) || 'loop';
 			this.disableLoop = (options && options.disableLoop) || false;
+			this.npCmd = (options && options.npCmd) || 'np';
+			this.disableNp = (options && options.disableNp) || false;
 			this.enableQueueStat = (options && options.enableQueueStat) || true;
 			this.anyoneCanAdjust = (options && options.anyoneCanAdjust) || false;
 			this.ownerOverMember = (options && options.ownerOverMember) || false;
@@ -221,82 +224,90 @@ module.exports = function (client, options) {
 			console.log(new TypeError(`helpCmd must be a string`));
 			process.exit(1);
 		};
-		// if (typeof musicbot.enableHelp !== 'boolean') {
-		// 	console.log(new TypeError(`enableHelp must be a boolean`));
-		// 	process.exit(1);
-		// };
+		if (typeof musicbot.enableHelp !== 'boolean') {
+		 	console.log(new TypeError(`enableHelp must be a boolean`));
+			process.exit(1);
+		};
 		if (typeof musicbot.playCmd !== 'string') {
 			console.log(new TypeError(`playCmd must be a string`));
 			process.exit(1);
 		};
-		// if (typeof musicbot.enablePlay !== 'boolean') {
-		// 	console.log(new TypeError(`enablePlay must be a boolean`));
-		// 	process.exit(1);
-		// };
+		if (typeof musicbot.enablePlay !== 'boolean') {
+		 	console.log(new TypeError(`enablePlay must be a boolean`));
+		 	process.exit(1);
+		};
 		if (typeof musicbot.skipCmd !== 'string') {
 			console.log(new TypeError(`skipCmd must be a string`));
 			process.exit(1);
 		};
-		// if (typeof musicbot.enableSkip !== 'boolean') {
-		// 	console.log(new TypeError(`enableSkip must be a boolean`));
-		// 	process.exit(1);
-		// };
+		if (typeof musicbot.enableSkip !== 'boolean') {
+		 	console.log(new TypeError(`enableSkip must be a boolean`));
+		 	process.exit(1);
+		};
 		if (typeof musicbot.queueCmd !== 'string') {
 			console.log(new TypeError(`queueCmd must be a string`));
 			process.exit(1);
 		};
-		// if (typeof musicbot.enableQueue !== 'boolean') {
-		// 	console.log(new TypeError(`enableQueue must be a boolean`));
-		// 	process.exit(1);
-		// };
+		if (typeof musicbot.enableQueue !== 'boolean') {
+		 	console.log(new TypeError(`enableQueue must be a boolean`));
+		 	process.exit(1);
+		};
 		if (typeof musicbot.pauseCmd !== 'string') {
 			console.log(new TypeError(`pauseCmd must be a string`));
 			process.exit(1);
 		};
-		// if (typeof musicbot.enablePause !== 'boolean') {
-		// 	console.log(new TypeError(`enablePause must be a boolean`));
-		// 	process.exit(1);
-		// };
+		if (typeof musicbot.enablePause !== 'boolean') {
+		 	console.log(new TypeError(`enablePause must be a boolean`));
+		 	process.exit(1);
+		};
+		if (typeof musicbot.npCmd !== 'string') {
+			console.log(new TypeError(`npCmd must be a string`));
+			process.exit(1);
+		};
+		if (typeof musicbot.enableNp !== 'boolean') {
+		 	console.log(new TypeError(`enableNp must be a boolean`));
+		 	process.exit(1);
+		};
 		if (typeof musicbot.resumeCmd !== 'string') {
 			console.log(new TypeError(`resumeCmd must be a string`));
 			process.exit(1);
 		};
-		// if (typeof musicbot.enableResume !== 'boolean') {
-		// 	console.log(new TypeError(`enableResume must be a boolean`));
-		// 	process.exit(1);
-		// };
+		if (typeof musicbot.enableResume !== 'boolean') {
+			console.log(new TypeError(`enableResume must be a boolean`));
+		 	process.exit(1);
+		};
 		if (typeof musicbot.volumeCmd !== 'string') {
 			console.log(new TypeError(`volumeCmd must be a string`));
 			process.exit(1);
 		};
-		// if (typeof musicbot.enableVolume !== 'boolean') {
-		// 	console.log(new TypeError(`enableVolume must be a boolean`));
-		// 	process.exit(1);
-		// };
+		if (typeof musicbot.enableVolume !== 'boolean') {
+			console.log(new TypeError(`enableVolume must be a boolean`));
+			process.exit(1);
+		};
 		if (typeof musicbot.leaveCmd !== 'string') {
 			console.log(new TypeError(`leaveCmd must be a string`));
 			process.exit(1);
 		};
-		// if (typeof musicbot.enableLeave !== 'boolean') {
-		// 	console.log(new TypeError(`enableLeave must be a boolean`));
-		// 	process.exit(1);
-		// };
+		if (typeof musicbot.enableLeave !== 'boolean') {
+			console.log(new TypeError(`enableLeave must be a boolean`));
+		 	process.exit(1);
+		};
 		if (typeof musicbot.clearCmd !== 'string') {
 			console.log(new TypeError(`clearCmd must be a string`));
 			process.exit(1);
 		};
-		// if (typeof musicbot.enableClear !== 'boolean') {
-		// 	console.log(new TypeError(`enableClear must be a boolean`));
-		// 	process.exit(1);
-		// };
+		if (typeof musicbot.enableClear !== 'boolean') {
+			console.log(new TypeError(`enableClear must be a boolean`));
+			process.exit(1);
+		};
 		if (typeof musicbot.loopCmd !== 'string') {
 			console.log(new TypeError(`loopCmd must be a string`));
 			process.exit(1);
 		};
-		// if (typeof musicbot.enableLoop !== 'boolean') {
-		// 	console.log(new TypeError(`enableLoop must be a boolean`));
-		// 	process.exit(1);
-		// };
+		if (typeof musicbot.enableLoop !== 'boolean') {
+		 	console.log(new TypeError(`enableLoop must be a boolean`));
+		 	process.exit(1);
+		};
 
 		//musicbot.enableQueueStat errors.
 		if (typeof musicbot.enableQueueStat !== 'boolean') {
@@ -359,6 +370,9 @@ module.exports = function (client, options) {
 				case musicbot.resumeCmd:
 					if (musicbot.disableResume) return;
 					return resume(msg, suffix);
+				case musicbot.npCmd:
+					if (musicbot.disableNp) return;
+					return np(msg, suffix);
 				case musicbot.volumeCmd:
 					if (musicbot.disableVolume) return;
 					return volume(msg, suffix);
@@ -726,6 +740,28 @@ module.exports = function (client, options) {
 				msg.channel.send(note('wrap', 'Queue:\n' + text));
 			}
 		}
+	}
+	
+	/**
+	 * The command for information about the current song.
+	 *
+	 * @param {Message} msg - Original message.
+	 * @param {string} suffix - Command suffix.
+	 * @returns {<promise>} - The response message.
+	 */
+	function np(msg, suffix) {
+		// Get the voice connection.
+		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music is being played.'));
+		const dispatcher = voiceConnection.player.dispatcher;
+		const queue = getQueue(msg.guild.id);
+		var nowplaying = new Discord.RichEmbed()
+			.setAuthor('Now Playing', client.user.avatarURL)
+			.addField(queue[0].channelTitle, `[${queue[0].title}](${queue[0].link})`)
+			.setImage(queue[0].thumbnails.high.url)
+			.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, client.users.get(queue[0].requester).avatarURL)
+			.setTimestamp();
+		msg.channel.send({embed : nowplaying})
 	}
 
 	/**
