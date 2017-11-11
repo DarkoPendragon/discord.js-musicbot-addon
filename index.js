@@ -197,7 +197,7 @@ module.exports = function (client, options) {
 		};
 
 		//disabledCmds errors.
-		if (typeof musicbot.disabledCmds !== 'array') {
+		if (typeof musicbot.disabledCmds !== 'object') {
 			console.log(new TypeError(`disabledCmds must be an array`));
 			process.exit(1);
 		};
