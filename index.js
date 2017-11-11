@@ -616,7 +616,7 @@ module.exports = function (client, options) {
 					// console.log(results[0]);
 					results[0].requester = msg.author.id;
 
-					response.edit(note('note', 'Queued: ' + results[0].title)).then(() => {
+					response.edit(note('note', `Queued **${results[0].title}**`)).then(() => {
 						queue.push(results[0]);
 						// Play if only one element in the queue or if there is no voice connection.
 						if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) executeQueue(msg, queue);
@@ -670,7 +670,7 @@ module.exports = function (client, options) {
 			return msg.channel.send(note('fail', 'An error occoured, sorry!'));
 		};
 
-		msg.channel.send(note('note', 'Skipped ' + toSkip + '!'));
+		msg.channel.send(note('note', 'Skipped **' + toSkip + '**!'));
 	}
 
 	/**
