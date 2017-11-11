@@ -618,8 +618,8 @@ module.exports = function (client, options) {
 
 					response.edit(note('note', 'Queued: ' + results[0].title)).then(() => {
 						queue.push(results[0]);
-						// Play if only one element in the queue.
-						if (queue.length === 1) executeQueue(msg, queue);
+						// Play if only one element in the queue or if there is no voice connection.
+						if (queue.length === 1 || client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) executeQueue(msg, queue);
 					}).catch(console.log);
 		    });
 		  };
