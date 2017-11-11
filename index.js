@@ -685,7 +685,7 @@ module.exports = function (client, options) {
 
 		// Get the queue text.
 		const text = queue.map((video, index) => (
-			(index + 1) + ': ' + video.title
+			(index + 1) + ': ' + video.title + ' (Requested by ' + client.users.get(video.requester).username + ')'
 		)).join('\n');
 		if (text.length > 1900) {
 			const newText = text.substr(0, 1899);
