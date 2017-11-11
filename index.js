@@ -397,7 +397,7 @@ module.exports = function (client, options) {
 	 * @returns {boolean} -
 	 */
 	function isAdmin(member) {
-		if (musicbot.ownerOverMember && member.id === musicbot.botOwner) return member.hasPermission("ADMINISTRATOR");
+		if (musicbot.ownerOverMember && member.id === musicbot.botOwner) return true;
 		return member.hasPermission("ADMINISTRATOR");
 	}
 
@@ -458,7 +458,7 @@ module.exports = function (client, options) {
 			 embed.setAuthor("Commands", msg.author.displayAvatarURL)
 			 embed.setDescription(`Commands with a * require Admin perms. Use \`${musicbot.botPrefix}${musicbot.helpCmd} command\` for help on usage.`)
 			 embed.addField(musicbot.helpCmd, `Displays this text.`)
-			 if (!musicbot.disablePlay) embed.addField(musicbot.playCmd, `Queue a song/playlist by url or search for a song.`)
+			 if (!musicbot.disablePlay) embed.addField(musicbot.playCmd, `Queue a song/playlist by URL or search for a song.`)
 			 if (!musicbot.disableSkip) embed.addField(musicbot.skipCmd, `Skip a song or multi songs.`)
 			 if (!musicbot.disableQueue) embed.addField(musicbot.queueCmd, `Shows the current queue`)
 			 if (!musicbot.disablePause) embed.addField(musicbot.pauseCmd, `* Pauses the queue.`)
@@ -633,7 +633,7 @@ module.exports = function (client, options) {
 	 * @param {string} suffix - Command suffix.
 	 * @returns {<promise>} - The response message.
 	 */
-	 function skip(msg, suffix) {
+	function skip(msg, suffix) {
 		// Get the voice connection.
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music being played.'));
@@ -883,12 +883,15 @@ module.exports = function (client, options) {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 			if (voiceConnection === null) {
 				// Check if the user is in a voice channel.
-				if (msg.member.voiceChannel) {
+				if (msg.member.voiceChannel && msg.member.voiceChannel.joinable) {
 					msg.member.voiceChannel.join().then(connection => {
 						resolve(connection);
 					}).catch((error) => {
 						console.log(error);
 					});
+				} else if(!msg.member.voiceChannel.joinable) {
+					msg.channel.send(note('fail', 'I do not have permission to join your voice channel!'))
+					reject();
 				} else {
 					// Otherwise, clear the queue and do nothing.
 					queue.splice(0, queue.length);
