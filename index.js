@@ -715,12 +715,16 @@ module.exports = function (client, options) {
 		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music is being played.'));
 		const dispatcher = voiceConnection.player.dispatcher;
 		const queue = getQueue(msg.guild.id);
-		var nowplaying = new Discord.RichEmbed()
-			.setAuthor('Now Playing', client.user.avatarURL)
-			.addField(queue[0].channelTitle, `[${queue[0].title}](${queue[0].link})`)
-			.setImage(queue[0].thumbnails.high.url)
-			.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, client.users.get(queue[0].requester).avatarURL)
-		msg.channel.send({embed : nowplaying})
+		if(msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
+			var nowplaying = new Discord.RichEmbed()
+				.setAuthor('Now Playing', client.user.avatarURL)
+				.addField(queue[0].channelTitle, `[${queue[0].title}](${queue[0].link})`)
+				.setImage(queue[0].thumbnails.high.url)
+				.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, client.users.get(queue[0].requester).avatarURL)
+			msg.channel.send({embed : nowplaying})
+		} else {
+			msg.channel.send(`Now Playing: **${queue[0].title}**\nRequested By: ${client.users.get(queue[0].requester).username}`)
+		}
 	}
 
 	/**
