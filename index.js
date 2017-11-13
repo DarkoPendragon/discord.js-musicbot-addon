@@ -195,12 +195,6 @@ module.exports = function (client, options) {
 			process.exit(1);
 		};
 
-		//disabledCmds errors.
-		if (typeof musicbot.disabledCmds !== 'arry') {
-			console.log(new TypeError(`disabledCmds must be an array`));
-			process.exit(1);
-		};
-
 		//aliveMessage erros.
 		if (typeof musicbot.enableAliveMessage !== 'boolean') {
 			console.log(new TypeError(`enableAliveMessage must be a boolean`));
