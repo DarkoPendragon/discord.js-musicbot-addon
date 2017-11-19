@@ -154,6 +154,9 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
+## 1.6.7
+* (probable) Error fix.
+
 ## 1.6.6
 * rocky_road.jpeg  
 

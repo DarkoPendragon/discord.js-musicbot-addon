@@ -587,7 +587,7 @@ module.exports = function (client, options) {
 					if (err) {
 						if (musicbot.logging) console.log(err);
 						const nerr = err.toString().split(':');
-						return response.edit(note('fail', `error occoured!\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
+						return response.edit(note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
 					};
 
 					// console.log(results[0]);
@@ -653,7 +653,8 @@ module.exports = function (client, options) {
 			dispatcher.end();
 		} catch (e) {
 			if (musicbot.logging) console.log(new Error(`Play command error from userID ${msg.author.id} in guildID ${msg.guild.id}\n${e.stack}`));
-			return msg.channel.send(note('fail', 'An error has occoured!'));
+			const nerr = e.toString().split(':');
+			return msg.channel.send(note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
 		};
 
 		msg.channel.send(note('note', 'Skipped **' + toSkip + '**!'));
@@ -672,14 +673,20 @@ module.exports = function (client, options) {
 		// Get the queue text.
 		//Choice added for names to shorten the text a bit if wanted.
 		if (musicbot.requesterName) {
-			const text = queue.map((video, index) => (
-				(index + 1) + ': ' + video.title + ' | Requested by ' + client.users.get(video.requester).username
-			)).join('\n');
-		} else {
-			const text = queue.map((video, index) => (
-				(index + 1) + ': ' + video.title + ' | Requested by ' + client.users.get(video.requester).username
-			)).join('\n');
-		};
+			try {
+				const text = queue.map((video, index) => (
+					(index + 1) + ': ' + video.title + ' | Requested by ' + client.users.get(video.requester).username
+				)).join('\n');
+			} else {
+				const text = queue.map((video, index) => (
+					(index + 1) + ': ' + video.title + ' | Requested by ' + client.users.get(video.requester).username
+				)).join('\n');
+			};
+			} catch (e) {
+				console.log(`[${msg.guild.name}] [queueCmd] ` + e.stack);
+				const nerr = e.toString().split(':');
+				return msg.channel.send(note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
+			};
 
 		if (text.length > 1900) {
 			const newText = text.substr(0, 1899);
@@ -737,6 +744,7 @@ module.exports = function (client, options) {
 		const queue = getQueue(msg.guild.id);
 		if(msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
 			const embed = new Discord.RichEmbed();
+			try {
 				embed.setAuthor('Now Playing', client.user.avatarURL);
 				var songTitle = queue[0].title;
 				if (songTitle.includes('*') || songTitle.includes('_') || songTitle.includes('~')) {
@@ -748,16 +756,23 @@ module.exports = function (client, options) {
 				embed.addField(queue[0].channelTitle, `[${songTitle}](${queue[0].link})`);
 				embed.setImage(queue[0].thumbnails.high.url);
 				embed.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, client.users.get(queue[0].requester).displayAvatarURL);
-			msg.channel.send({embed});
-		} else {
-			var songTitle = queue[0].title;
-			if (songTitle.includes('*') || songTitle.includes('_') || songTitle.includes('~')) {
-				songTitle = songTitle.toString().replace(/\*/g, '\\*');
-				songTitle = songTitle.toString().replace(/_/g, '\\_');
-				songTitle = songTitle.toString().replace(/~/g, '\\~');
+				msg.channel.send({embed});
+			} catch (e) {
+				console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
 			};
+		} else {
+			try {
+				var songTitle = queue[0].title;
+				if (songTitle.includes('*') || songTitle.includes('_') || songTitle.includes('~')) {
+					songTitle = songTitle.toString().replace(/\*/g, '\\*');
+					songTitle = songTitle.toString().replace(/_/g, '\\_');
+					songTitle = songTitle.toString().replace(/~/g, '\\~');
+				};
 
-			msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(queue[0].requester).username}`)
+				msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(queue[0].requester).username}`)
+			} catch (e) {
+				console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
+			};
 		}
 	}
 
