@@ -503,7 +503,7 @@ module.exports = function (client, options) {
 				embed.setDescription(`Enables/disables looping of the currently being played song.`);
 				embed.setColor(0x27e33d);
 				msg.channel.send({embed});
-		} else if (suffix.includes(musicbot.npCmd) {
+		} else if (suffix.includes(musicbot.npCmd)) {
 			if (musicbot.disableNp) return msg.channel.send(note('fail', `${suffix} is not a valid command!`));
 			const embed = new Discord.RichEmbed();
 			embed.setAuthor(`${musicbot.botPrefix}${musicbot.npCmd}`, client.user.displayAvatarURL);
