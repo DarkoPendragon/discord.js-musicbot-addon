@@ -669,16 +669,16 @@ module.exports = function (client, options) {
 	function queue(msg, suffix) {
 		// Get the queue.
 		const queue = getQueue(msg.guild.id);
-
+		let text;
 		// Get the queue text.
 		//Choice added for names to shorten the text a bit if wanted.
 		try {
 			if (musicbot.requesterName) {
-				const text = queue.map((video, index) => (
+				text = queue.map((video, index) => (
 					(index + 1) + ': ' + video.title + ' | Requested by ' + client.users.get(video.requester).username
 				)).join('\n');
 			} else {
-				const text = queue.map((video, index) => (
+				text = queue.map((video, index) => (
 					(index + 1) + ': ' + video.title
 				)).join('\n');
 			};
@@ -686,13 +686,32 @@ module.exports = function (client, options) {
 			console.log(`[${msg.guild.name}] [queueCmd] ` + e.stack);
 			const nerr = e.toString().split(':');
 			return msg.channel.send(note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
-		};
 
-		if (text.length > 1900) {
-			const newText = text.substr(0, 1899);
-			const otherText = text.substr(1900, text.length);
-			if (otherText.length > 1900) {
-				msg.channel.send(note('wrap', 'Queue ('+ queueStatus +'):\n' + "Past character limit..."));
+		} finally {
+			
+			if (text.length > 1900) {
+				const newText = text.substr(0, 1899);
+				const otherText = text.substr(1900, text.length);
+				if (otherText.length > 1900) {
+					msg.channel.send(note('wrap', 'Queue ('+ queueStatus +'):\n' + "Past character limit..."));
+				} else {
+					if (musicbot.enableQueueStat) {
+						//Get the status of the queue.
+						let queueStatus = 'Stopped';
+						const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+						if (voiceConnection !== null) {
+							const dispatcher = voiceConnection.player.dispatcher;
+							queueStatus = dispatcher.paused ? 'Paused' : 'Playing';
+						}
+
+						// Send the queue and status.
+						msg.channel.send(note('wrap', 'Queue ('+ queueStatus +'):\n' + newText));
+						msg.channel.send(note('wrap', 'Queue (2) ('+ queueStatus +'):\n' + otherText));
+					} else {
+						msg.channel.send(note('wrap', 'Queue:\n' + newText));
+						msg.channel.send(note('wrap', 'Queue (2):\n' + otherText));
+					}
+				};
 			} else {
 				if (musicbot.enableQueueStat) {
 					//Get the status of the queue.
@@ -704,27 +723,10 @@ module.exports = function (client, options) {
 					}
 
 					// Send the queue and status.
-					msg.channel.send(note('wrap', 'Queue ('+ queueStatus +'):\n' + newText));
-					msg.channel.send(note('wrap', 'Queue (2) ('+ queueStatus +'):\n' + otherText));
+					msg.channel.send(note('wrap', 'Queue ('+ queueStatus +'):\n' + text));
 				} else {
-					msg.channel.send(note('wrap', 'Queue:\n' + newText));
-					msg.channel.send(note('wrap', 'Queue (2):\n' + otherText));
+					msg.channel.send(note('wrap', 'Queue:\n' + text));
 				}
-			};
-		} else {
-			if (musicbot.enableQueueStat) {
-				//Get the status of the queue.
-				let queueStatus = 'Stopped';
-				const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-				if (voiceConnection !== null) {
-					const dispatcher = voiceConnection.player.dispatcher;
-					queueStatus = dispatcher.paused ? 'Paused' : 'Playing';
-				}
-
-				// Send the queue and status.
-				msg.channel.send(note('wrap', 'Queue ('+ queueStatus +'):\n' + text));
-			} else {
-				msg.channel.send(note('wrap', 'Queue:\n' + text));
 			}
 		}
 	}
