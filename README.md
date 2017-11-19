@@ -5,6 +5,7 @@ This module may be buggy and need some fine tuning. Feel free to let me know wha
 This was originally an update of the original bot from [ruiqimao](https://github.com/ruiqimao/discord.js-music) by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11), but is now a updated version for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks to the priors.  
 
 _Note: the 1.3.x+ update(S) requires a code change from 1.2.0, see the examples/notes below._  
+_Some commands/features of the bot require to be able to embed links in messages to work correctly since update 1.6.10+._  
 
 __The commands available are: (default names)__  
 * `musichelp [command]`: Displays help text for commands by this addon, or help for a specific command.
@@ -42,19 +43,19 @@ __Installation:__
 * `npm install discord.js-musicbot-addon`
 
 __Common installation issues:__  
-__Issue:__ FFMPEG was not found on your system.  
+__Issue: (Rare)__ FFMPEG was not found on your system.  
 __Fix:__ Make sure ffmpeg is installed correctly and set in your PATH variable.  
 
-__Issue:__ Couldn't find an Opus engine.  
+__Issue: (Uncommon)__ Couldn't find an Opus engine.  
 __Fix:__ `npm install node-opus` or `npm install opusscript`  
 
-__Issue:__ [NPM] ERR Cannot read property '0' of undefined  
+__Issue: (Rare)__ [NPM] ERR Cannot read property '0' of undefined  
 __Fix:__ `npm i -g npm@4.6.1` or another lower version of npm.  
 
-__Issue:__ TypeError: Invalid non-string/buffer chunk  
+__Issue: (Uncommon)__ TypeError: Invalid non-string/buffer chunk  
 __Fix:__ `ffmpeg` is required, if you installed `ffmpeg-binaries` uninstall that and install `ffmpeg`. If that isn't your problem make sure you have it installed correctly.  
 
-__Issue:__ Any node-gyp errors. (build fail, missing cl.exe, etc.)  
+__Issue: (Trivial)__ Any node-gyp errors. (build fail, missing cl.exe, etc.)  
 __Fix:__ This one is a little more complicated.  
 1. Download and install [Visual Studio 2015](https://www.visualstudio.com/downloads/)  
 2. New project -> Visual C++  
@@ -63,7 +64,7 @@ __Fix:__ This one is a little more complicated.
 If that doesn't fix your issue;  
 1. Download and install the [Windows 8.1 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-8-1-sdk)  
 
-__Issue:__ `ffluent-ffmpeg` errors.
+__Issue: (Uncommon)__ `ffluent-ffmpeg` errors.
 1. Download and install ffmpeg correctly for your OS.
 2. Make sure it's in your PATH/exported.  
 
@@ -87,6 +88,7 @@ const music = new Music(<client>,
 
 __Most options are optional and thus not needed.__  
 The options you can pass in `music(client, {options})` and their types is as followed:  
+_Note: All boolean options default false._  
 * youtubeKey: *Required*, string, a YouTube API3 key.
 * botPrefix: String, the prefix of the bot. Defaults to "!".
 * global: Boolean, whether to use one global queue or server specific ones. Defaults false.
@@ -118,11 +120,12 @@ The options you can pass in `music(client, {options})` and their types is as fol
 * anyoneCanAdjust: Boolean, whether anyone can adjust volume. Defaults false.
 * ownerOverMember: Boolean, whether the owner over-rides CanAdjust and CanSkip. Defaults false.
 * botOwner: String, the ID of the Discord user to be seen as the owner. Required if using ownerOverMember.
-* logging: Boolean, some extra none needed logging (such as caught errors that didn't crash the bot, etc). Defaults false.  
+* logging: Boolean, some extra none needed logging (such as caught errors that didn't crash the bot, etc).  
 * enableAliveMessage: Boolean, enables the bot to log a message in the console every x milliseconds.
 * aliveMessage: String, the message to be logged.\*_note_
 * aliveMessageTime: Number, time in _**milliseconds**_ the bot logs the message. Defaults to 600000 (5 minutes).
-* requesterName: Boolean, whether or not to display the username of the song requester.
+* *\*New!\** requesterName: Boolean, whether or not to display the username of the song requester.
+* *\*New!\** inlineEmbeds: Boolean, whether or not to make embed fields inline (help command and some fields are excluded).
 
 \* defaut for aliveMessage looks like:
 ```
@@ -154,9 +157,21 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
+# 1.7  
+* Added fancy embeds to some commands.
+* Able to use `!queue [songNumber]` to view info on a specific song in the queue.
+* Checks whether the requester of the song is available for the bot.
+* Stores the avi-url of the requester for the song.
+* Prevents some errors from crashing the bot.
+* Fixed the alive messages, along with a startup message (console).
+* Added option (inlineEmbeds) to make embeds by the bot inline. See the [embed field documention](https://discord.js.org/#/docs/main/stable/class/RichEmbed?scrollTo=addField) for info.
+* Fixed playlist fetching when the link had something like `&list=RDOeJKsrD791A&t=66` to prevent throwing errors or crashes.
+* Looping force disables on `clearQueue`, `leave` and `skip`.
+* Removed events/emitters because I forgot what the hell I was doing with them.
+
 ## 1.6.10
 * Fixed queue, NowPlaying's.
-  
+
 ## 1.6.8
 * Added error catching for new features to help prevent bot crashing and error logging.
 * Put random shit in so I could call this a real update.
@@ -184,7 +199,7 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ## 1.6.1
 * Fixed some typos and minor errors.  
 
-## 1.6
+# 1.6
 * Removed asynchronous functions since some people don't like using the latest and greatest.
 * Added enabling/disabling commands.
 * Added looping.
@@ -195,13 +210,13 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 * Added all additions from pull requests to the main npm module.
 * Updated examples.
 
-## 1.5.1
+# 1.5.1
 * Added playlist support (thanks Rodabaugh for reminding me).
 * Fixed `clearqueue` crashing if queue is empty.
 * Fixed `skip` crashing if the queue is empty.
 * Now requires `ffmpeg` installed over `ffmpeg-binaries`.  
 
-## 1.4.0  
+# 1.4.0  
 * Added wrapping.
 * Added owner over member options.
 * Fixed errors.  
@@ -214,13 +229,13 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ## 1.3.1 - 1.3.6
 * These were testing updates to just see how it would work on different platforms, which code still needed to be fixed, error testing, etc.  
 
-## 1.3.0:  
+# 1.3.0:  
 * Added errors.
 * Fixed volume crashing the bot (thanks TheTimmaeh).
 * Added future support for events.
 * Minor bug fixes.
 
-## 1.2.0:  
+# 1.2.0:  
 * Marked "stable".
 * Finished module for full public access.  
 
