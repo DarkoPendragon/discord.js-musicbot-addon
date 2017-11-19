@@ -122,6 +122,7 @@ The options you can pass in `music(client, {options})` and their types is as fol
 * enableAliveMessage: Boolean, enables the bot to log a message in the console every x milliseconds.
 * aliveMessage: String, the message to be logged.\*_note_
 * aliveMessageTime: Number, time in _**milliseconds**_ the bot logs the message. Defaults to 600000 (5 minutes).
+* requesterName: Boolean, whether or not to display the username of the song requester.
 
 \* defaut for aliveMessage looks like:
 ```
@@ -153,14 +154,18 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
-# 1.6.3
-* Brought back disabling commands.\
+## 1.6.4
+* Pull requests merged/edited (mcao, Erik). For most changes, take a look at their pull requests.
+* Added requesterName.
+
+## 1.6.3
+* Brought back disabling commands.
 * Fixed help function.
 
-# 1.6.2
+## 1.6.2
 * Nothing notable.  
 
-# 1.6.1
+## 1.6.1
 * Fixed some typos and minor errors.  
 
 ## 1.6

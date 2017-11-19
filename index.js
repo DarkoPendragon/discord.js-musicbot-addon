@@ -84,8 +84,8 @@ module.exports = function (client, options) {
 			this.enableAliveMessage = (options && options.enableAliveMessage) || false;
 			this.aliveMessage = (options && options.aliveMessage) || "";
 			this.aliveMessageTime = (options && options.aliveMessageTime) || 600000;
+			this.requesterName = (options && options.requesterName) || false;
 			this.loop = "false";
-			this.disabledCmds = (options && options.disabledCmds) || [];
 		}
 	}
 
@@ -436,6 +436,7 @@ module.exports = function (client, options) {
 			 if (!musicbot.disableVolume) embed.addField(musicbot.volumeCmd, `* Adjusts the volume of the bot.`)
 			 if (!musicbot.disableLeave) embed.addField(musicbot.leaveCmd, `Leave and clear the queue`)
 			 if (!musicbot.disableClear) embed.addField(musicbot.clearCmd, `Clears the current queue.`)
+			 if (!musicbot.disableNp) embed.addField(musibot.npCmd, `Shows the currenlty playing song.`)
 			 embed.setColor(0x27e33d)
 			 msg.channel.send({embed});
 		 } else {
@@ -502,6 +503,13 @@ module.exports = function (client, options) {
 				embed.setDescription(`Enables/disables looping of the currently being played song.`);
 				embed.setColor(0x27e33d);
 				msg.channel.send({embed});
+		} else if (suffix.includes(musicbot.npCmd) {
+			if (musicbot.disableNp) return msg.channel.send(note('fail', `${suffix} is not a valid command!`));
+			const embed = new Discord.RichEmbed();
+			embed.setAuthor(`${musicbot.botPrefix}${musicbot.npCmd}`, client.user.displayAvatarURL);
+			embed.setDescription(`Shows the currently playing song (first song in the queue), with a link to it and the thumbnail as well.`);
+			embed.setColor(0x27e33d);
+			msg.channel.send({embed});
 		} else {
 			msg.channel.send(note('fail', `${suffix} is not a valid command!`));
 		};
@@ -551,7 +559,7 @@ module.exports = function (client, options) {
 							} else {
 								results.link = `https://www.youtube.com/watch?v=` + newItems[i].resourceId.videoId;
 								results.description = " ";
-								results.requester = msg.author.id;
+								if (musicbot.requesterName) results.requester = msg.author.id;
 
 								queue.push(results);
 								queuedVids.push(results.title);
@@ -584,8 +592,17 @@ module.exports = function (client, options) {
 
 					// console.log(results[0]);
 					results[0].requester = msg.author.id;
+					let editMess;
 
-					response.edit(note('note', `Queued **${results[0].title}**`)).then(() => {
+					//Escapes any bolding done by a title including '*'/'**' in it.
+					if (results[0].title.includes('*')) {
+						const newTitle = results[0].title.toString().replace(/\*/g, "\\*");
+						editMess = note('note', `Queued **${newTitle}**`);
+					} else {
+						editMess = note('note', `Queued **${results[0].title}**`);
+					};
+
+					response.edit(editMess).then(() => {
 						queue.push(results[0]);
 						// Play if only one element in the queue or if there is no voice connection.
 						if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) executeQueue(msg, queue);
@@ -653,9 +670,17 @@ module.exports = function (client, options) {
 		const queue = getQueue(msg.guild.id);
 
 		// Get the queue text.
-		const text = queue.map((video, index) => (
-			(index + 1) + ': ' + video.title + ' | Requested by ' + client.users.get(video.requester).username
-		)).join('\n');
+		//Choice added for names to shorten the text a bit if wanted.
+		if (musicbot.requesterName) {
+			const text = queue.map((video, index) => (
+				(index + 1) + ': ' + video.title + ' | Requested by ' + client.users.get(video.requester).username
+			)).join('\n');
+		} else {
+			const text = queue.map((video, index) => (
+				(index + 1) + ': ' + video.title + ' | Requested by ' + client.users.get(video.requester).username
+			)).join('\n');
+		};
+
 		if (text.length > 1900) {
 			const newText = text.substr(0, 1899);
 			const otherText = text.substr(1900, text.length);
@@ -696,7 +721,7 @@ module.exports = function (client, options) {
 			}
 		}
 	}
-	
+
 	/**
 	 * The command for information about the current song.
 	 *
@@ -711,14 +736,28 @@ module.exports = function (client, options) {
 		const dispatcher = voiceConnection.player.dispatcher;
 		const queue = getQueue(msg.guild.id);
 		if(msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
-			var nowplaying = new Discord.RichEmbed()
-				.setAuthor('Now Playing', client.user.avatarURL)
-				.addField(queue[0].channelTitle, `[${queue[0].title}](${queue[0].link})`)
-				.setImage(queue[0].thumbnails.high.url)
-				.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, client.users.get(queue[0].requester).avatarURL)
-			msg.channel.send({embed : nowplaying})
+			const embed = new Discord.RichEmbed();
+				embed.setAuthor('Now Playing', client.user.avatarURL);
+				var songTitle = queue[0].title;
+				if (songTitle.includes('*') || songTitle.includes('_') || songTitle.includes('~')) {
+					songTitle = songTitle.toString().replace(/\*/g, '\\*');
+					songTitle = songTitle.toString().replace(/_/g, '\\_');
+					songTitle = songTitle.toString().replace(/~/g, '\\~');
+				};
+
+				embed.addField(queue[0].channelTitle, `[${songTitle}](${queue[0].link})`);
+				embed.setImage(queue[0].thumbnails.high.url);
+				embed.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, client.users.get(queue[0].requester).displayAvatarURL);
+			msg.channel.send({embed});
 		} else {
-			msg.channel.send(`Now Playing: **${queue[0].title}**\nRequested By: ${client.users.get(queue[0].requester).username}`)
+			var songTitle = queue[0].title;
+			if (songTitle.includes('*') || songTitle.includes('_') || songTitle.includes('~')) {
+				songTitle = songTitle.toString().replace(/\*/g, '\\*');
+				songTitle = songTitle.toString().replace(/_/g, '\\_');
+				songTitle = songTitle.toString().replace(/~/g, '\\~');
+			};
+
+			msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(queue[0].requester).username}`)
 		}
 	}
 
