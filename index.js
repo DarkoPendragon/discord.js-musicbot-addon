@@ -679,7 +679,7 @@ module.exports = function (client, options) {
 				)).join('\n');
 			} else {
 				const text = queue.map((video, index) => (
-					(index + 1) + ': ' + video.title + ' | Requested by ' + client.users.get(video.requester).username
+					(index + 1) + ': ' + video.title
 				)).join('\n');
 			};
 		} catch (e) {
@@ -755,7 +755,7 @@ module.exports = function (client, options) {
 				embed.setColor(0x27e33d);
 				embed.addField(queue[0].channelTitle, `[${songTitle}](${queue[0].link})`);
 				embed.setImage(queue[0].thumbnails.high.url);
-				embed.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, client.users.get(queue[0].requester).displayAvatarURL);
+				if (musicbot.requesterName) embed.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, client.users.get(queue[0].requester).displayAvatarURL);
 				msg.channel.send({embed});
 			} catch (e) {
 				console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
