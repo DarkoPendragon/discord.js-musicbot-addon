@@ -154,6 +154,10 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
+## 1.6.8
+* Added error catching for new features to help prevent bot crashing and error logging.
+* Put random shit in so I could call this a real update.
+  
 ## 1.6.7
 * (probable) Error fix.
 

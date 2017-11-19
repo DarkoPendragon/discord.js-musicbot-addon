@@ -672,8 +672,8 @@ module.exports = function (client, options) {
 
 		// Get the queue text.
 		//Choice added for names to shorten the text a bit if wanted.
-		if (musicbot.requesterName) {
-			try {
+		try {
+			if (musicbot.requesterName) {
 				const text = queue.map((video, index) => (
 					(index + 1) + ': ' + video.title + ' | Requested by ' + client.users.get(video.requester).username
 				)).join('\n');
@@ -682,11 +682,11 @@ module.exports = function (client, options) {
 					(index + 1) + ': ' + video.title + ' | Requested by ' + client.users.get(video.requester).username
 				)).join('\n');
 			};
-			} catch (e) {
-				console.log(`[${msg.guild.name}] [queueCmd] ` + e.stack);
-				const nerr = e.toString().split(':');
-				return msg.channel.send(note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
-			};
+		} catch (e) {
+			console.log(`[${msg.guild.name}] [queueCmd] ` + e.stack);
+			const nerr = e.toString().split(':');
+			return msg.channel.send(note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
+		};
 
 		if (text.length > 1900) {
 			const newText = text.substr(0, 1899);
@@ -752,7 +752,7 @@ module.exports = function (client, options) {
 					songTitle = songTitle.toString().replace(/_/g, '\\_');
 					songTitle = songTitle.toString().replace(/~/g, '\\~');
 				};
-
+				embed.setColor(0x27e33d);
 				embed.addField(queue[0].channelTitle, `[${songTitle}](${queue[0].link})`);
 				embed.setImage(queue[0].thumbnails.high.url);
 				embed.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, client.users.get(queue[0].requester).displayAvatarURL);
