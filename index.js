@@ -436,7 +436,7 @@ module.exports = function (client, options) {
 			 if (!musicbot.disableVolume) embed.addField(musicbot.volumeCmd, `* Adjusts the volume of the bot.`)
 			 if (!musicbot.disableLeave) embed.addField(musicbot.leaveCmd, `Leave and clear the queue`)
 			 if (!musicbot.disableClear) embed.addField(musicbot.clearCmd, `Clears the current queue.`)
-			 if (!musicbot.disableNp) embed.addField(musibot.npCmd, `Shows the currenlty playing song.`)
+			 if (!musicbot.disableNp) embed.addField(musicbot.npCmd, `Shows the currenlty playing song.`)
 			 embed.setColor(0x27e33d)
 			 msg.channel.send({embed});
 		 } else {

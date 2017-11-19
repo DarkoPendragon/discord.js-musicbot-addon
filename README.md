@@ -154,9 +154,12 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
+## 1.6.6
+* rocky_road.jpeg  
+
 ## 1.6.5
 * Fixed a typo from 1.6.4 that crashes the bot.
-  
+
 ## 1.6.4
 * Pull requests merged/edited (mcao, Erik). For most changes, take a look at their pull requests.
 * Added requesterName.
