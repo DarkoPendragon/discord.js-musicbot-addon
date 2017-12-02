@@ -78,12 +78,13 @@ __Example basic code, standalone:__
 ```javascript
 const Discord = require('discord.js');
 const Music = require('discord.js-musicbot-addon');
-const <client> = new Discord.Client();
+const client = new Discord.Client();
 
-const music = new Music(<client>,
+const music = new Music(client, {
   youtubeKey: 'sum-key_hhereas'
-);
-<client>.login(token);
+});
+
+client.login(token);
 ```
 
 __Most options are optional and thus not needed.__  
@@ -91,11 +92,11 @@ The options you can pass in `music(client, {options})` and their types is as fol
 _Note: All boolean options default false._  
 * youtubeKey: *Required*, string, a YouTube API3 key.
 * botPrefix: String, the prefix of the bot. Defaults to "!".
-* global: Boolean, whether to use one global queue or server specific ones. Defaults false.
+* global: Boolean, whether to use one global queue or server specific ones.
 * maxQueueSize: Number, max queue size allowed. Defaults 20.
 * defVolume: Number, the default volume of music. 1 - 200, defaults 50.
-* anyoneCanSkip: Boolean, whether or not anyone can skip. Defaults false.
-* clearInvoker: Boolean, whether to delete command messages. Defaults false.
+* anyoneCanSkip: Boolean, whether or not anyone can skip.
+* clearInvoker: Boolean, whether to delete command messages.
 * helpCmd: String, name of the help command.
 * disableHelp: Boolean, disable the help command.
 * playCmd: String, name of the play command.
@@ -117,17 +118,18 @@ _Note: All boolean options default false._
 * loopCmd: String, name of the loop command.
 * disableLoop: Boolean, disable the loop command.
 * enableQueueStat: Boolean, whether to enable the queue status, old fix for an error that probably won't occur.
-* anyoneCanAdjust: Boolean, whether anyone can adjust volume. Defaults false.
-* ownerOverMember: Boolean, whether the owner over-rides CanAdjust and CanSkip. Defaults false.
-* botOwner: String, the ID of the Discord user to be seen as the owner. Required if using ownerOverMember.
+* anyoneCanAdjust: Boolean, whether anyone can adjust volume.
+* ownerOverMember: Boolean, whether the owner over-rides `CanAdjust` and `CanSkip`.
+* botOwner: String, the ID of the Discord user to be seen as the owner. Required if using `ownerOverMember`.
 * logging: Boolean, some extra none needed logging (such as caught errors that didn't crash the bot, etc).  
 * enableAliveMessage: Boolean, enables the bot to log a message in the console every x milliseconds.
-* aliveMessage: String, the message to be logged.\*_note_
+* aliveMessage: String, the message to be logged. \*_note_
 * aliveMessageTime: Number, time in _**milliseconds**_ the bot logs the message. Defaults to 600000 (5 minutes).
-* *\*New!\** requesterName: Boolean, whether or not to display the username of the song requester.
-* *\*New!\** inlineEmbeds: Boolean, whether or not to make embed fields inline (help command and some fields are excluded).
+* requesterName: Boolean, whether or not to display the username of the song requester.
+* inlineEmbeds: Boolean, whether or not to make embed fields inline (help command and some fields are excluded).
+* *\*New!\** maxChecks: Number, the number of checks to run for the results of searching with the play command to make sure it plays a video.
 
-\* defaut for aliveMessage looks like:
+\* default for aliveMessage looks like:
 ```
 ----------------------------------
 'BotUsername' online since 'lastReadyTime'!
@@ -157,6 +159,13 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
+## 1.7.2
+* Added `maxChecks` option.
+* Now checks after searching for videos if the link to be played is a video.
+
+## 1.7.1
+* Fixed `clearInvoker`. I think.
+
 # 1.7  
 * Added fancy embeds to some commands.
 * Able to use `!queue [songNumber]` to view info on a specific song in the queue.

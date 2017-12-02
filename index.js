@@ -1,7 +1,7 @@
 /**
  * Original code nexu-dev, https://github.com/nexu-dev/discord.js-client
  * Tweaked by Demise.
- * Other contributors:
+ * Other contributors: Rodabaugh, mcao.
  */
 
 const stream = require('youtube-audio-stream');
@@ -98,6 +98,7 @@ module.exports = function (client, options) {
 			this.aliveMessageTime = (options && options.aliveMessageTime) || 600000;
 			this.requesterName = (options && options.requesterName) || false;
 			this.inlineEmbeds = (options && options.inlineEmbeds) || false;
+			this.maxChecks = parseInt((options && options.maxChecks) || 3);
 			this.loop = "false";
 		}
 	}
@@ -293,6 +294,14 @@ module.exports = function (client, options) {
 		};
 
 		//Misc.
+		if (typeof musicbot.maxChecks !== 'number') {
+			console.log(new TypeError(`maxChecks must be a number`));
+			process.exit(1);
+		};
+		if (musicbot.maxChecks < 2) {
+			console.log(new TypeError(`maxChecks must be an integer 3 or more`));
+			process.exit(1);
+		};
 		if (typeof musicbot.requesterName !== 'boolean') {
 			console.log(new TypeError(`requesterName must be a boolean`));
 			process.exit(1);
@@ -307,7 +316,7 @@ module.exports = function (client, options) {
 
 	//Set the YouTube API key.
 	const opts = {
-		maxResults: 1,
+		maxResults: 3,
 		key: musicbot.youtubeKey
 	};
 
@@ -359,9 +368,6 @@ module.exports = function (client, options) {
 				case musicbot.loopCmd:
 					if (musicbot.disableLoop) return;
 					return loop(msg, suffix);
-			}
-			if (musicbot.clearInvoker) {
-				msg.delete();
 			}
 		}
 	});
@@ -433,6 +439,18 @@ module.exports = function (client, options) {
 	}
 
 	/**
+	 * Deletes the command message if invoker is on.
+	 *
+	 * @param {Message} msg - the message of the command.
+	 */
+	function dInvoker(msg) {
+		if (musicbot.clearInvoker) {
+			if (!msg || msg.length >= 0) return;
+			msg.delete();
+		}
+	};
+
+	/**
 	 * Gets the song queue of the server.
 	 *
 	 * @param {integer} server - The server id.
@@ -455,6 +473,7 @@ module.exports = function (client, options) {
 	 * @returns {<promise>} - The response edit.
 	 */
 	 function musicbothelp(msg, suffix) {
+		 dInvoker(msg)
 		 if (!msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) return msg.channel.send(note('fail', 'The music help command **requires** embed message permissions.'));
 		 if (!suffix || suffix.includes('help')) {
 			 const embed = new Discord.RichEmbed();
@@ -557,6 +576,7 @@ module.exports = function (client, options) {
 	 * @returns {<promise>} - The response edit.
 	 */
 	function play(msg, suffix) {
+		dInvoker(msg)
 		// Make sure the user is in a voice channel.
 		if (msg.member.voiceChannel === undefined) return msg.channel.send(note('fail', 'You\'re not in a voice channel~'));
 
@@ -600,6 +620,8 @@ module.exports = function (client, options) {
 							var results = newItems[i];
 							if (queue.length > musicbot.maxQueueSize) {
 								skippedVideos.push(results.title);
+							} else if (results.kind !== 'youtube#video') {
+								skippedVideos.push("[Channel] "+results.title);
 							} else {
 								results.link = `https://www.youtube.com/watch?v=` + newItems[i].resourceId.videoId;
 								results.channel = results.channelTitle;
@@ -653,28 +675,40 @@ module.exports = function (client, options) {
 		  } else {
 		    search(searchstring, opts, function(err, results) {
 					if (err) {
-						if (musicbot.logging) console.log(err);
+						console.log(`Error on [PlayCmd] from [${msg.guild.name}]\n` + err.stack);
 						const nerr = err.toString().split(':');
 						return response.edit(note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
 					};
 
-					// console.log(results[0]);
-					results[0].requester = msg.author.id;
-					let editMess;
+					function endPlay(resNum) {
+						results[resNum].requester = msg.author.id;
+						let editMess;
 
-					//Escapes any bolding done by a title including '*'/'**' in it.
-					if (results[0].title.includes('*')) {
-						const newTitle = results[0].title.toString().replace(/\*/g, "\\*");
-						editMess = note('note', `Queued **${newTitle}**`);
-					} else {
-						editMess = note('note', `Queued **${results[0].title}**`);
+						if (results[resNum].title.includes('*')) {
+							const newTitle = results[resNum].title.toString().replace(/\*/g, "\\*");
+							editMess = note('note', `Queued **${newTitle}**`);
+						} else {
+							editMess = note('note', `Queued **${results[resNum].title}**`);
+						};
+
+						return response.edit(editMess).then(() => {
+							queue.push(results[resNum]);
+							if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) executeQueue(msg, queue);
+						}).catch(console.log);
 					};
 
-					response.edit(editMess).then(() => {
-						queue.push(results[0]);
-						// Play if only one element in the queue or if there is no voice connection.
-						if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) executeQueue(msg, queue);
-					}).catch(console.log);
+					function errPlay(errMsg) {
+						return response.edit(note('fail', `\`${errMsg}\``));
+					};
+
+					for (var i = 0; i < musicbot.maxChecks + 1; i++) {
+						if (results[i].kind === 'youtube#video') {
+							return endPlay(i);
+						};
+						if (i < musicbot.maxChecks + 1) {
+							return errPlay('Error: Max pass exceded. Try searching something else!');
+						};
+					};
 		    });
 		  };
 		}).catch(console.log);
@@ -689,6 +723,7 @@ module.exports = function (client, options) {
 	 * @returns {<promise>} - The response message.
 	 */
 	function skip(msg, suffix) {
+		dInvoker(msg)
 		// Get the voice connection.
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music being played.'));
@@ -748,6 +783,7 @@ module.exports = function (client, options) {
 	 * @param {string} suffix - Command suffix.
 	 */
 	function queue(msg, suffix) {
+		dInvoker(msg)
 		// Get the queue.
 		const queue = getQueue(msg.guild.id);
 		let text;
@@ -868,6 +904,7 @@ module.exports = function (client, options) {
 	 * @returns {<promise>} - The response message.
 	 */
 	function np(msg, suffix) {
+		dInvoker(msg)
 		// Get the voice connection.
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music is being played.'));
@@ -917,6 +954,7 @@ module.exports = function (client, options) {
 	 * @returns {<promise>} - The response message.
 	 */
 	function pause(msg, suffix) {
+		dInvoker(msg)
 		// Get the voice connection.
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music being played.'));
@@ -938,6 +976,7 @@ module.exports = function (client, options) {
 	 * @returns {<promise>} - The response message.
 	 */
 	function leave(msg, suffix) {
+		dInvoker(msg)
 		if (isAdmin(msg.member)) {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 			if (voiceConnection === null) return msg.channel.send(note('fail', 'I\'m not in a voice channel!.'));
@@ -962,6 +1001,7 @@ module.exports = function (client, options) {
 	 * @param {string} suffix - Command suffix.
 	 */
 	function clearqueue(msg, suffix) {
+		dInvoker(msg)
 		if (isAdmin(msg.member)) {
 			const queue = getQueue(msg.guild.id);
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
@@ -986,6 +1026,7 @@ module.exports = function (client, options) {
 	 * @returns {<promise>} - The response message.
 	 */
 	function resume(msg, suffix) {
+		dInvoker(msg)
 		// Get the voice connection.
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music is being played.'));
@@ -1007,6 +1048,7 @@ module.exports = function (client, options) {
 	 * @returns {<promise>} - The response message.
 	 */
 	function volume(msg, suffix) {
+		dInvoker(msg)
 		// Get the voice connection.
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection === null) return msg.channel.send(note('fail', 'No music is being played.'));
@@ -1036,6 +1078,7 @@ module.exports = function (client, options) {
 	 * @param {string} suffix - Command suffix.
 	 */
 	function loop(msg, suffix) {
+		dInvoker(msg)
 		if (musicbot.loop === "true") {
 			musicbot.loop = "false";
 			msg.channel.send(note('note', 'Looping disabled! :arrow_forward:'));
