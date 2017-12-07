@@ -316,7 +316,7 @@ module.exports = function (client, options) {
 
 	//Set the YouTube API key.
 	const opts = {
-		maxResults: 3,
+		maxResults: 50,
 		key: musicbot.youtubeKey
 	};
 
@@ -576,7 +576,7 @@ module.exports = function (client, options) {
 	 * @returns {<promise>} - The response edit.
 	 */
 	function play(msg, suffix) {
-		dInvoker(msg)
+		dInvoker(msg);
 		// Make sure the user is in a voice channel.
 		if (msg.member.voiceChannel === undefined) return msg.channel.send(note('fail', 'You\'re not in a voice channel~'));
 
@@ -680,35 +680,70 @@ module.exports = function (client, options) {
 						return response.edit(note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
 					};
 
-					function endPlay(resNum) {
-						results[resNum].requester = msg.author.id;
-						let editMess;
+					function playStart(videos) {
+						const text = videos.map((video, index) => (
+							(index + 1) + ': ' + video.title
+						)).join('\n');
 
-						if (results[resNum].title.includes('*')) {
-							const newTitle = results[resNum].title.toString().replace(/\*/g, "\\*");
-							editMess = note('note', `Queued **${newTitle}**`);
+						response.delete();
+						msg.channel.send(`\`\`\`\nPlease enter the song number, or type cancel to cancel.\n${text}\n\`\`\``).then(imsg => {
+							const filter = m => m.author.id === msg.author.id
+							&& m.content.includes('1')
+							|| m.content.includes('2')
+							|| m.content.includes('3')
+							|| m.content.includes('4')
+							|| m.content.includes('5')
+							|| m.content.includes('6')
+							|| m.content.includes('7')
+							|| m.content.includes('8')
+							|| m.content.includes('9')
+							|| m.content.includes('10')
+							|| m.content.includes('cancel');
+							msg.channel.awaitMessages(filter, { max: 1, time: 60000, errors: ['time'] })
+							.then(collected => {
+								const newColl = Array.from(collected);
+								const mcon = newColl[0][1].content;
+
+								if (mcon.includes(`cancel`)) return imsg.edit(note('note', 'Searching canceled.'));
+								const song_number = parseInt(mcon);
+								if (song_number > 0) {
+									results[song_number].requester = msg.author.id;
+									let editMess;
+
+									if (results[song_number].title.includes('*')) {
+										const newTitle = results[song_number].title.toString().replace(/\*/g, "\\*");
+										editMess = note('note', `Queued **${newTitle}**`);
+									} else {
+										editMess = note('note', `Queued **${results[song_number].title}**`);
+									};
+
+									return imsg.edit(editMess).then(() => {
+										queue.push(results[song_number]);
+										if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) executeQueue(msg, queue);
+									}).catch(console.log);
+								};
+							})
+							.catch(collected => {
+								imsg.edit(`\`\`\`\nSearching canceled, timed out after 60 seconds.\n\`\`\``);
+								return;
+							});
+						});
+					};
+
+					var videos = new Array();
+					for (var i = 0; i < 50; i++) {
+						if (videos.length >= 10) {
+							playStart(videos);
+							i = 51;
 						} else {
-							editMess = note('note', `Queued **${results[resNum].title}**`);
-						};
-
-						return response.edit(editMess).then(() => {
-							queue.push(results[resNum]);
-							if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) executeQueue(msg, queue);
-						}).catch(console.log);
+							if (results[i].kind === 'youtube#video') {
+								if (musicbot.requesterName) results.requester = msg.author.id;
+								if (musicbot.requesterName) results.requesterAvatarURL = msg.author.displayAvatarURL;
+								videos.push(results[i]);
+							};
+						}
 					};
 
-					function errPlay(errMsg) {
-						return response.edit(note('fail', `\`${errMsg}\``));
-					};
-
-					for (var i = 0; i < musicbot.maxChecks + 1; i++) {
-						if (results[i].kind === 'youtube#video') {
-							return endPlay(i);
-						};
-						if (i < musicbot.maxChecks + 1) {
-							return errPlay('Error: Max pass exceded. Try searching something else!');
-						};
-					};
 		    });
 		  };
 		}).catch(console.log);

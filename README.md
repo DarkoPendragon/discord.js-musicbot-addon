@@ -37,7 +37,7 @@ Allows the bot to join voice as well as speak.
 * Set it to your PATH environment variables.
 
 3. `npm install node-opus` or `npm install opusscript`  
-Required for voice. Discord _prefers_ node-opus, but it is your choice.
+Required for voice. Discord.js _prefers_ node-opus, but it is your choice.
 
 __Installation:__  
 * `npm install discord.js-musicbot-addon`
@@ -90,44 +90,46 @@ client.login(token);
 __Most options are optional and thus not needed.__  
 The options you can pass in `music(client, {options})` and their types is as followed:  
 _Note: All boolean options default false._  
-* youtubeKey: *Required*, string, a YouTube API3 key.
-* botPrefix: String, the prefix of the bot. Defaults to "!".
-* global: Boolean, whether to use one global queue or server specific ones.
-* maxQueueSize: Number, max queue size allowed. Defaults 20.
-* defVolume: Number, the default volume of music. 1 - 200, defaults 50.
-* anyoneCanSkip: Boolean, whether or not anyone can skip.
-* clearInvoker: Boolean, whether to delete command messages.
-* helpCmd: String, name of the help command.
-* disableHelp: Boolean, disable the help command.
-* playCmd: String, name of the play command.
-* disablePlay: Boolean, disable the play command.
-* skipCmd: String, name of the skip command.
-* disableSkip: Boolean, disable the skip command.
-* queueCmd: String, name of the queue command.
-* disableQueue: Boolean, disable the queue command.
-* pauseCmd: String, name of the pause command.
-* disablePause: Boolean, disable the pause command.
-* resumeCmd: String, name of the resume command.
-* disableResume: Boolean, disable the resume command.
-* volumeCmd: String, name of the volume command.
-* disableVolume: Boolean, disable the volume command.
-* leaveCmd: String, name of the leave command.
-* disableLeave: Boolean, disable the leave command.
-* clearCmd: String, name of the clear command.
-* disableClear: Boolean, disable the clear command.
-* loopCmd: String, name of the loop command.
-* disableLoop: Boolean, disable the loop command.
-* enableQueueStat: Boolean, whether to enable the queue status, old fix for an error that probably won't occur.
-* anyoneCanAdjust: Boolean, whether anyone can adjust volume.
-* ownerOverMember: Boolean, whether the owner over-rides `CanAdjust` and `CanSkip`.
-* botOwner: String, the ID of the Discord user to be seen as the owner. Required if using `ownerOverMember`.
-* logging: Boolean, some extra none needed logging (such as caught errors that didn't crash the bot, etc).  
-* enableAliveMessage: Boolean, enables the bot to log a message in the console every x milliseconds.
-* aliveMessage: String, the message to be logged. \*_note_
-* aliveMessageTime: Number, time in _**milliseconds**_ the bot logs the message. Defaults to 600000 (5 minutes).
-* requesterName: Boolean, whether or not to display the username of the song requester.
-* inlineEmbeds: Boolean, whether or not to make embed fields inline (help command and some fields are excluded).
-* *\*New!\** maxChecks: Number, the number of checks to run for the results of searching with the play command to make sure it plays a video.
+
+| Option | Type | Description |  
+| --- | --- | --- |  
+| youtubeKey | *Required* string | A YouTube API3 key. |
+| botPrefix | String | The prefix of the bot. Defaults to "!". |
+| global | Boolean | Whether to use one global queue or server specific ones. |
+| maxQueueSize | Number | Max queue size allowed. Defaults 20. |
+| defVolume | Number | The default volume of music. 1 - 200, defaults 50. |
+| anyoneCanSkip | Boolean | Whether or not anyone can skip. |
+| clearInvoker | Boolean | Whether to delete command messages. |
+| helpCmd | String | Name of the help command. |
+| disableHelp | Boolean | Disable the help command. |
+| playCmd | String | Name of the play command. |
+| disablePlay | Boolean | Disable the play command. |
+| skipCmd | String | Name of the skip command. |
+| disableSkip | Boolean | Disable the skip command. |
+| queueCmd | String | Name of the queue command. |
+| disableQueue | Boolean | Disable the queue command. |
+| pauseCmd | String | Name of the pause command. |
+| disablePause | Boolean | Disable the pause command. |
+| resumeCmd | String | Name of the resume command. |
+| disableResume | Boolean | Disable the resume command. |
+| volumeCmd | String | Name of the volume command. |
+| disableVolume | Boolean | Disable the volume command. |
+| leaveCmd | String | Name of the leave command. |
+| disableLeave | Boolean | Disable the leave command. |
+| clearCmd | String | Name of the clear command. |
+| disableClear | Boolean | Disable the clear command. |
+| loopCmd | String | Name of the loop command. |
+| disableLoop | Boolean | Disable the loop command. |
+| enableQueueStat | Boolean | Whether to enable the queue status, old fix for an error that probably won't occur. |
+| anyoneCanAdjust | Boolean | Whether anyone can adjust volume. |
+| ownerOverMember | Boolean | Whether the owner over-rides `CanAdjust` and `CanSkip`. |
+| botOwner | String | The ID of the Discord user to be seen as the owner. Required if using `ownerOverMember`. |
+| logging | Boolean | Some extra none needed logging (such as caught errors that didn't crash the bot, etc). |
+| enableAliveMessage | Boolean | Enables the bot to log a message in the console every x milliseconds. |
+| aliveMessage | String | The message to be logged. \*_note_ |
+| aliveMessageTime | Number | Time in _**milliseconds**_ the bot logs the message. Defaults to 600000 (5 minutes). |
+| requesterName | Boolean | Whether or not to display the username of the song requester. |
+| inlineEmbeds | Boolean | Whether or not to make embed fields inline (help command and some fields are excluded). |
 
 \* default for aliveMessage looks like:
 ```
@@ -159,6 +161,12 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
+# 1.8.0
+* Updated the searching for the play command, you can now choose out of 10 results.
+* Tried to fix weird bug with link queueing, still broken.
+* Probably caused more issues than I fixed.
+* Removed maxChecks.
+
 ## 1.7.2
 * Added `maxChecks` option.
 * Now checks after searching for videos if the link to be played is a video.
