@@ -707,18 +707,18 @@ module.exports = function (client, options) {
 								if (mcon.includes(`cancel`)) return imsg.edit(note('note', 'Searching canceled.'));
 								const song_number = parseInt(mcon);
 								if (song_number > 0) {
-									results[song_number].requester = msg.author.id;
+									videos[song_number].requester = msg.author.id;
 									let editMess;
 
-									if (results[song_number].title.includes('*')) {
-										const newTitle = results[song_number].title.toString().replace(/\*/g, "\\*");
+									if (videos[song_number].title.includes('*')) {
+										const newTitle = videos[song_number].title.toString().replace(/\*/g, "\\*");
 										editMess = note('note', `Queued **${newTitle}**`);
 									} else {
-										editMess = note('note', `Queued **${results[song_number].title}**`);
+										editMess = note('note', `Queued **${videos[song_number].title}**`);
 									};
 
 									return imsg.edit(editMess).then(() => {
-										queue.push(results[song_number]);
+										queue.push(videos[song_number]);
 										if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) executeQueue(msg, queue);
 									}).catch(console.log);
 								};

@@ -161,6 +161,9 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
+## 1.8.1
+* Fixed the queueing error within the play function.
+
 # 1.8.0
 * Updated the searching for the play command, you can now choose out of 10 results.
 * Tried to fix weird bug with link queueing, still broken.
