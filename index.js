@@ -705,8 +705,8 @@ module.exports = function (client, options) {
 								const mcon = newColl[0][1].content;
 
 								if (mcon.includes(`cancel`)) return imsg.edit(note('note', 'Searching canceled.'));
-								const song_number = parseInt(mcon);
-								if (song_number > 0) {
+								const song_number = parseInt(mcon) - 1;
+								if (song_number >= 0) {
 									videos[song_number].requester = msg.author.id;
 									let editMess;
 

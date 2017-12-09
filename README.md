@@ -161,6 +161,8 @@ Again if you have any issues, feel free to open one on the repo, or join my [Dis
 ***
 # Changelog
 ***  
+## 1.8.2
+* _Actually_ fixed the play function queueing the wrong song.
 ## 1.8.1
 * Fixed the queueing error within the play function.
 
