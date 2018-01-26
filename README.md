@@ -2,48 +2,43 @@
 [![Discord Server](https://discordapp.com/api/guilds/360519133219127297/embed.png)](https://discord.gg/cADwxKs)  [![Downlaods](https://img.shields.io/npm/dt/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)  [![Version](https://img.shields.io/npm/v/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)
 ***
 This module may be buggy and need some fine tuning. Feel free to let me know what problems you encounter by opening an issue on the repo.
-This was originally an update of the original bot from [ruiqimao](https://github.com/ruiqimao/discord.js-music) by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11), but is now a updated version for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks to the priors.  
-
-_Note: the 1.3.x+ update(S) requires a code change from 1.2.0, see the examples/notes below._  
-_Some commands/features of the bot require to be able to embed links in messages to work correctly since update 1.6.10+._  
+This was originally an update of the original bot from [ruiqimao](https://github.com/ruiqimao/discord.js-music) by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11), but is now a updated version (again) for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks to the priors. For support/questions join the [Discord server](https://discord.gg/cADwxKs) for a faster response than the repo.  
 
 __The commands available are: (default names)__  
 * `musichelp [command]`: Displays help text for commands by this addon, or help for a specific command.
 * `play <url>|<search string>`: Play audio from YouTube.
 * `skip [number]`: Skip a song or multi songs with skip [some number],
 * `queue`: Display the current queue.
-* `pause`: Pause music playback. (requires music manager).
-* `resume`: Resume music playback. (requires music manager).
-* `volume`: Adjust the playback volume between 1 and 200 (requires music manager).
+* `pause`: Pause music playback.
+* `resume`: Resume music playback.
+* `volume`: Adjust the playback volume between 1 and 200.
 * `leave`: Clears the song queue and leaves the channel.
 * `clearqueue`: Clears the song queue.
+* `owner`: Various owner commands/actions. (W.I.P)
 
 __Permissions:__  
-* If `anyoneCanSkip` is false then only admins and the user that requested the song can skip it.
-* If `anyoneCanAdjust` is true, anyone can adjust the volume. False is only admins.
-* If `ownerOverMember` is true, the set ID of the user (your ID) will over-ride CanAjust and CanSkip.
+* If `anyoneCanSkip` is true, anyone can skip songs in the queue.
+* If `anyoneCanAdjust` is true, anyone can adjust the volume.
+* If `ownerOverMember` is true, the set ID of the user (`botOwner`) will over-ride CanAjust and CanSkip.
 
 ***
 # Installation
 ***  
 __Pre-installation:__  
 1. `npm install discord.js`  
-It is recommended to have the stable over dev branch.  
+It is recommended to have the stable branch.  
 
-2. `ffmpeg installed` and in your PATH.  
-Allows the bot to join voice as well as speak.
-* Download the ffmpeg package for your system.
-* Extract it to the proper place.
-* Set it to your PATH environment variables.
+2. `ffmpeg installed` __correctly__ for your OS/env.  
+Allows the bot to join voice as well as speak.  
 
 3. `npm install node-opus` or `npm install opusscript`  
-Required for voice. Discord.js _prefers_ node-opus, but it is your choice.
+Required for voice. Discord.js _prefers_ node-opus.  
 
 __Installation:__  
-* `npm install discord.js-musicbot-addon`
+* `npm install discord.js-musicbot-addon`  
 
 __Common installation issues:__  
-__Issue: (Rare)__ FFMPEG was not found on your system.  
+__Issue: (Trivial)__ FFMPEG was not found on your system.  
 __Fix:__ Make sure ffmpeg is installed correctly and set in your PATH variable.  
 
 __Issue: (Uncommon)__ Couldn't find an Opus engine.  
@@ -52,8 +47,8 @@ __Fix:__ `npm install node-opus` or `npm install opusscript`
 __Issue: (Rare)__ [NPM] ERR Cannot read property '0' of undefined  
 __Fix:__ `npm i -g npm@4.6.1` or another lower version of npm.  
 
-__Issue: (Uncommon)__ TypeError: Invalid non-string/buffer chunk  
-__Fix:__ `ffmpeg` is required, if you installed `ffmpeg-binaries` uninstall that and install `ffmpeg`. If that isn't your problem make sure you have it installed correctly.  
+__Issue: (Rare)__ TypeError: Invalid non-string/buffer chunk  
+__Fix:__ Stop using `ffmpeg-binaries`. Seriously. It's been said enough to use `ffmpeg` itself by now.
 
 __Issue: (Trivial)__ Any node-gyp errors. (build fail, missing cl.exe, etc.)  
 __Fix:__ This one is a little more complicated.  
@@ -65,14 +60,14 @@ If that doesn't fix your issue;
 1. Download and install the [Windows 8.1 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-8-1-sdk)  
 
 __Issue: (Uncommon)__ `ffluent-ffmpeg` errors.
-1. Download and install ffmpeg correctly for your OS.
-2. Make sure it's in your PATH/exported.  
+1. Download and install ffmpeg correctly for your OS/env.
+2. Stop asking and make __sure__ it's installed right.
 
 ***
-# Examples & Options
+# Basic Example.
 ***  
-This addon is easy to use, and doesn't require any configuration.  
-More examples can be found on the repo in `examples` or once downloaded.  
+This addon is easy to use, and doesn't require any extra configuration besides a YouTube Data API key to run.  
+More examples can be found on the repo or once downloaded in `examples`.  
 
 __Example basic code, standalone:__
 ```javascript
@@ -84,43 +79,32 @@ const music = new Music(client, {
   youtubeKey: 'sum-key_hhereas'
 });
 
-client.login(token);
-```
+client.login("token");
+```  
 
+***
+# Options & Config.
+***
 __Most options are optional and thus not needed.__  
 The options you can pass in `music(client, {options})` and their types is as followed:  
 _Note: All boolean options default false._  
 
+## Basic Options.
 | Option | Type | Description |  
 | --- | --- | --- |  
-| youtubeKey | *Required* string | A YouTube API3 key. |
+| youtubeKey | String | A YouTube Data API3 key. Required to run. |
 | botPrefix | String | The prefix of the bot. Defaults to "!". |
 | global | Boolean | Whether to use one global queue or server specific ones. |
 | maxQueueSize | Number | Max queue size allowed. Defaults 20. |
 | defVolume | Number | The default volume of music. 1 - 200, defaults 50. |
 | anyoneCanSkip | Boolean | Whether or not anyone can skip. |
-| clearInvoker | Boolean | Whether to delete command messages. |
-| helpCmd | String | Name of the help command. |
-| disableHelp | Boolean | Disable the help command. |
-| playCmd | String | Name of the play command. |
-| disablePlay | Boolean | Disable the play command. |
-| skipCmd | String | Name of the skip command. |
-| disableSkip | Boolean | Disable the skip command. |
-| queueCmd | String | Name of the queue command. |
-| disableQueue | Boolean | Disable the queue command. |
-| pauseCmd | String | Name of the pause command. |
-| disablePause | Boolean | Disable the pause command. |
-| resumeCmd | String | Name of the resume command. |
-| disableResume | Boolean | Disable the resume command. |
-| volumeCmd | String | Name of the volume command. |
-| disableVolume | Boolean | Disable the volume command. |
-| leaveCmd | String | Name of the leave command. |
-| disableLeave | Boolean | Disable the leave command. |
-| clearCmd | String | Name of the clear command. |
-| disableClear | Boolean | Disable the clear command. |
-| loopCmd | String | Name of the loop command. |
-| disableLoop | Boolean | Disable the loop command. |
-| enableQueueStat | Boolean | Whether to enable the queue status, old fix for an error that probably won't occur. |
+| clearInvoker | Boolean | Whether to delete command messages. |  
+| messageHelp | Boolean | Whether to message the user on help command usage. If it can't, it will send it in the channel like normal. |
+
+## Other Options.  
+| Option | Type | Description |  
+| --- | --- | --- |  
+| enableQueueStat | Boolean | Whether to enable the queue status, old fix for an error that occurs for a few people. |
 | anyoneCanAdjust | Boolean | Whether anyone can adjust volume. |
 | ownerOverMember | Boolean | Whether the owner over-rides `CanAdjust` and `CanSkip`. |
 | botOwner | String | The ID of the Discord user to be seen as the owner. Required if using `ownerOverMember`. |
@@ -129,16 +113,55 @@ _Note: All boolean options default false._
 | aliveMessage | String | The message to be logged. \*_note_ |
 | aliveMessageTime | Number | Time in _**milliseconds**_ the bot logs the message. Defaults to 600000 (5 minutes). |
 | requesterName | Boolean | Whether or not to display the username of the song requester. |
-| inlineEmbeds | Boolean | Whether or not to make embed fields inline (help command and some fields are excluded). |
+| inlineEmbeds | Boolean | Whether or not to make embed fields inline (help command and some fields are excluded). |  
 
-\* default for aliveMessage looks like:
-```
-----------------------------------
-'BotUsername' online since 'lastReadyTime'!
-----------------------------------
-```
-
-For the youtube API3 key, something [like this article](https://elfsight.com/help/how-to-get-youtube-api-key/) should help with that, or google how to get a YouTube API3 key from the Google console.  
+## Command Options.  
+| Option | Type | Description |  
+| --- | --- | --- |  
+| helpCmd | String | Name of the help command. |
+| disableHelp | Boolean | Disable the help command. |
+| helpHelp | String | Help text of the help command. |
+| helpAlt | Array | Alt names (aliases) for the help command. |
+| playCmd | String | Name of the play command. |
+| disablePlay | Boolean | Disable the play command. |
+| playHelp | String | Help text of the play command. |
+| playAlt | Array | Alt names (aliases) for the play command. |
+| skipCmd | String | Name of the skip command. |
+| disableSkip | Boolean | Disable the skip command. |
+| skipHelp | String | Help text of the skip command. |
+| skipAlt | Array | Alt names (aliases) for the skip command. |
+| queueCmd | String | Name of the queue command. |
+| disableQueue | Boolean | Disable the queue command. |
+| queueHelp | String | Help text of the queue command. |
+| queueAlt | Array | Alt names (aliases) for the queue command. |
+| pauseCmd | String | Name of the pause command. |
+| disablePause | Boolean | Disable the pause command. |
+| pauseHelp | String | Help text of the pause command. |
+| pauseAlt | Array | Alt names (aliases) for the pause command. |
+| resumeCmd | String | Name of the resume command. |
+| disableResume | Boolean | Disable the resume command. |
+| resumeHelp | String | Help text of the resume command. |
+| resumeAlt | Array | Alt names (aliases) for the resume command. |
+| volumeCmd | String | Name of the volume command. |
+| disableVolume | Boolean | Disable the volume command. |
+| volumeHelp | String | Help text of the volume command. |
+| volumeAlt | Array | Alt names (aliases) for the volume command. |
+| leaveCmd | String | Name of the leave command. |
+| disableLeave | Boolean | Disable the leave command. |
+| leaveHelp | String | Help text of the leave command. |
+| leaveAlt | Array | Alt names (aliases) for the leave command. |
+| clearCmd | String | Name of the clear command. |
+| disableClear | Boolean | Disable the clear command. |
+| clearHelp | String | Help text of the clear command. |
+| clearAlt | Array | Alt names (aliases) for the clear command. |
+| loopCmd | String | Name of the loop command. |
+| disableLoop | Boolean | Disable the loop command. |
+| loopHelp | String | Help text of the loop command. |
+| loopAlt | Array | Alt names (aliases) for the loop command. |
+| ownerCmd | String | Name of the owner command. |
+| disableOwnerCmd | Boolean | Disable the owner command. |
+| ownerHelp | String | Help text of the owner command. |
+| ownerAlt | Array | Alt names (aliases) for the owner command. |  
 
 An example of a few custom options would be:  
 ```javascript
@@ -146,27 +169,45 @@ const music = new Music(client, {
   prefix: ">",
   maxQueueSize: "100",
   disableLoop: true,
-  disableClear: true,
+  leaveHelp: "Bad help text.",
+  leaveAlt: ["lve","leev","un1c0rns"],
   helpCmd: 'mhelp',
-  playCmd: 'music',
   leaveCmd: 'begone',
   ownerOverMember: true,
-  botOwner: '1234567890',
+  botOwner: '123456789101112',
   youtubeKey: 'some-key_here'
 });
 ```
 
-Again if you have any issues, feel free to open one on the repo, or join my [Discord server](https://discord.gg/cADwxKs) for personal help.
-
 ***
 # Changelog
 ***  
-## 1.8.2
-* _Actually_ fixed the play function queueing the wrong song.
-## 1.8.1
+## 1.9.0  
+* Requires Node 8+.
+* Added aliases support.  
+* Small changes to some code.
+* Started the `owner` command.
+* Commands are now mapped on startup.
+* Added custom help text for commands.
+* Looping & last played are per-server.
+* Looping & last played have new functions.
+* Prefix and command names are now case sensitive.
+* May have fixed some 'undefined' errors with play.
+* Pause now doesn't pause if it's already paused. Yeah...
+* Alive message now replaces `{{username}}` with the bots username.
+* When looping music, no longer shows a "Now Playing" for the same song.
+* Added `messageHelp`, if true will attempt message a user on help usage.
+* Alive message now replaces `{{starttime}}` with the bots `readyAt` time.
+* Help command now sends both embeds and non-embed messages according to permissions.
+* Errors now display when queueing a song rather than showing "timed out" when one actually occurs. Probably.
+
+## 1.8.2  
+* _Actually_ fixed the play function queueing the wrong song. (_update: I lied_)
+
+## 1.8.1  
 * Fixed the queueing error within the play function.
 
-# 1.8.0
+# 1.8.0  
 * Updated the searching for the play command, you can now choose out of 10 results.
 * Tried to fix weird bug with link queueing, still broken.
 * Probably caused more issues than I fixed.

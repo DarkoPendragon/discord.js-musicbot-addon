@@ -19,14 +19,14 @@ client.on('message', message => {
 });
 
 const music = new Music(client, {
-  prefix: settings.prefix,       // Prefix for the commands.
-  global: true,         // Non-server-specific queues.
-  maxQueueSize: 25,     // Maximum queue size of 25.
-  clearInvoker: true,   // If permissions applicable, allow the bot to delete the messages that invoke it.
-  helpCmd: 'mhelp',     //Sets the name for the help command.
-  playCmd: 'music',     //Sets the name for the 'play' command.
-  volumeCmd: 'adjust',  //Sets the name for the 'volume' command.
-  leaveCmd: 'begone'    //Sets the name for the 'leave' command.
-  disableLoop: true
+  prefix: settings.prefix, // Prefix for the commands.
+  global: true,            // Non-server-specific queues.
+  maxQueueSize: 25,        // Maximum queue size of 25.
+  clearInvoker: true,      // If permissions applicable, allow the bot to delete the messages that invoke it.
+  helpCmd: 'mhelp',        // Sets the name for the help command.
+  playCmd: 'music',        // Sets the name for the 'play' command.
+  volumeCmd: 'adjust',     // Sets the name for the 'volume' command.
+  leaveCmd: 'begone',      // Sets the name for the 'leave' command.
+  disableLoop: true        // Disable the loop command.
 });
 client.login(settings.token);
