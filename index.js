@@ -95,6 +95,7 @@ module.exports = function(client, options) {
       this.aliveMessageTime = parseInt((options && options.aliveMessageTime) || 600000);
       this.requesterName = (options && options.requesterName) || false;
       this.inlineEmbeds = (options && options.inlineEmbeds) || false;
+      this.maxWait = parseInt((options && options.maxWait) || 15000);
       this.queues = {};
       this.loops = {};
     }
@@ -490,7 +491,7 @@ module.exports = function(client, options) {
           help: musicbot.clearHelp,
           aliases: musicbot.clearAlt,
           admin: false,
-          run: "clear"
+          run: "clearqueue"
         };
         musicbot.commands.set(musicbot.clearCmd, clear_props);
       };
@@ -689,6 +690,12 @@ module.exports = function(client, options) {
    */
   musicbot.loopState = (server) => {
     if (musicbot.global) return false;
+    if (!musicbot.loops[server]) {
+      musicbot.loops[server] = {
+        looping: false,
+        last: null
+      };
+    };
     if (musicbot.loops[server].looping) return true;
     else if (!musicbot.loops[server].looping) return false;
   };
@@ -723,6 +730,12 @@ module.exports = function(client, options) {
    * @returns {string} - The last played song.
    */
   musicbot.getLast = (server) => {
+    if (!musicbot.loops[server]) {
+      musicbot.loops[server] = {
+        looping: false,
+        last: null
+      };
+    };
     if (!musicbot.loops[server].last) return null;
     else if (musicbot.loops[server].last) return musicbot.loops[server].last;
   };
@@ -869,173 +882,188 @@ module.exports = function(client, options) {
 
     // Get the video information.
     msg.channel.send(musicbot.note('note', 'Searching...')).then(response => {
-      var searchstring = suffix;
-      if (searchstring.includes('list=')) {
-        response.edit(musicbot.note('note', 'Playlist detected! Fetching...')).then(response => {
-          // Get the playlist ID and make sure it's only paylist the ID.
-          var playid = searchstring.toString().split('list=')[1];
-          if (playid.toString().includes('?')) playid = playid.split('?')[0];
-          if (playid.toString().includes('&t=')) playid = playid.split('&t=')[0];
+      try {
+        var searchstring = suffix;
+        if (searchstring.includes('list=')) {
+          response.edit(musicbot.note('note', 'Playlist detected! Fetching...')).then(response => {
+            // Get the playlist ID and make sure it's only paylist the ID.
+            var playid = searchstring.toString().split('list=')[1];
+            if (playid.toString().includes('?')) playid = playid.split('?')[0];
+            if (playid.toString().includes('&t=')) playid = playid.split('&t=')[0];
 
-          // Get info on the playlist.
-          ypi.playlistInfo(musicbot.youtubeKey, playid, function(playlistItems) {
-            const newItems = Array.from(playlistItems);
-            var skippedVideos = [];
-            var queuedVids = [];
+            // Get info on the playlist.
+            ypi.playlistInfo(musicbot.youtubeKey, playid, function(playlistItems) {
+              const newItems = Array.from(playlistItems);
+              var skippedVideos = [];
+              var queuedVids = [];
 
-            for (var i = 0; i < newItems.length; i++) {
-              var results = newItems[i];
-              if (queue.length > musicbot.maxQueueSize) {
-                skippedVideos.push(results.title);
-              } else if (results.kind !== 'youtube#video') {
-                skippedVideos.push("[Channel] " + results.title);
-              } else {
-                if (!results.linnk) results.link = `https://www.youtube.com/watch?v=` + newItems[i].resourceId.videoId;
-                results.channel = results.channelTitle;
-                results.description = null;
-                if (musicbot.requesterName) results.requester = msg.author.id;
-                if (musicbot.requesterName) results.requesterAvatarURL = msg.author.displayAvatarURL;
-                if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
-                  queuedVids.push(results);
+              for (var i = 0; i < newItems.length; i++) {
+                var results = newItems[i];
+                if (queue.length > musicbot.maxQueueSize) {
+                  skippedVideos.push(results.title);
+                } else if (results.kind !== 'youtube#video') {
+                  skippedVideos.push("[Channel] " + results.title);
                 } else {
-                  queuedVids.push(results.title);
-                }
-                queue.push(results);
-                if (queue.length === 1) musicbot.executeQueue(msg, queue);
-              };
-            };
-
-            function endrun() {
-              if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
-                const embed = new Discord.RichEmbed();
-                embed.setAuthor(`Song Queue`, client.user.avatarURL);
-                embed.setTitle(`Queued ${queuedVids.length} | Skipped ${skippedVideos.length}`);
-                if (skippedVideos.length >= queuedVids.length) embed.setDescription(`Looks like a lot of videos where skipped! This can happen for a few reasons. Regional restrictions, private restricions, and other blocks will prevet the bot from queueing songs.`);
-                if (queuedVids.length >= 1) embed.addField(`1) ${queuedVids[0].channel}`, `[${queuedVids[0].title}](${queuedVids[0].link})`, musicbot.inlineEmbeds);
-                if (queuedVids.length >= 2) embed.addField(`2) ${queuedVids[1].channel}`, `[${queuedVids[1].title}](${queuedVids[1].link})`, musicbot.inlineEmbeds);
-                if (queuedVids.length >= 3) embed.addField(`3) ${queuedVids[2].channel}`, `[${queuedVids[2].title}](${queuedVids[2].link})`, musicbot.inlineEmbeds);
-                if (queuedVids.length >= 4) embed.addField(`4) ${queuedVids[3].channel}`, `[${queuedVids[3].title}](${queuedVids[3].link})`, musicbot.inlineEmbeds);
-                if (queuedVids.length >= 5) embed.addField(`5) ${queuedVids[4].channel}`, `[${queuedVids[4].title}](${queuedVids[4].link})`, musicbot.inlineEmbeds);
-                if (queuedVids.length >= 6) embed.addField(`6) ${queuedVids[5].channel}`, `[${queuedVids[5].title}](${queuedVids[5].link})`, musicbot.inlineEmbeds);
-                if (queuedVids.length >= 7) embed.addField(`7) ${queuedVids[6].channel}`, `[${queuedVids[6].title}](${queuedVids[6].link})`, musicbot.inlineEmbeds);
-                if (queuedVids.length >= 8) embed.addField(`8) ${queuedVids[7].channel}`, `[${queuedVids[7].title}](${queuedVids[7].link})`, musicbot.inlineEmbeds);
-                if (queuedVids.length >= 9) embed.addField(`9) ${queuedVids[8].channel}`, `[${queuedVids[8].title}](${queuedVids[8].link})`, musicbot.inlineEmbeds);
-                if (queuedVids.length >= 10) embed.addField(`10) ${queuedVids[9].channel}`, `[${queuedVids[9].title}](${queuedVids[9].link})`, musicbot.inlineEmbeds);
-                if (queuedVids.length >= 11) embed.addField(`And...`, `${queuedVids.length - 10} more songs!`);
-                embed.setColor(0x27e33d);
-                msg.channel.send({
-                  embed
-                });
-              } else {
-                var qvids = queuedVids.join('\n');
-                var svids = skippedVideos.join('\n');
-                if (qvids.toString().length > 1000) qvids = 'Over character count, replaced...';
-                if (svids.toString().length > 1000) svids = 'Over character count, replaced...';
-
-                if (svids != "") {
-                  msg.channel.send(musicbot.note('wrap', `Queued:\n${qvids}\nSkipped: (Max Queue)\n${svids}`), {
-                    split: true
-                  });
-                } else {
-                  msg.channel.send(musicbot.note('wrap', `Queued:\n${qvids}`), {
-                    split: true
-                  });
-                };
-              };
-              if (skippedVideos.length >= queuedVids.length) msg.channel.send(musicbot.note('note', 'Looks like a lot of videos where skipped! This can happen for a few reasons. Regional restrictions, private restricions, and other blocks will prevet the bot from queueing songs.'));
-            };
-            setTimeout(endrun, 1250);
-          });
-
-        })
-      } else {
-        search(searchstring, opts, function(err, results) {
-          if (err) {
-            if (musicbot.logging) musicbot.logger('playCmd', msg, err);
-            const nerr = err.toString().split(':');
-            return response.edit(musicbot.note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
-          };
-
-          if (!results) {
-            if (musicbot.logging) musicbot.logger('playCmd', msg, `${new Error(`results came up empty`)}`);
-            return response.edit(musicbot.note('fail', `Couldn't get results.`));
-          };
-
-          function playStart(videos) {
-            const text = videos.map((video, index) => (
-              (index + 1) + ': ' + video.title
-            )).join('\n');
-
-            response.delete();
-            msg.channel.send(`\`\`\`\nPlease enter the song number, or type cancel to cancel.\n${text}\n\`\`\``).then(imsg => {
-              const filter = m => m.author.id === msg.author.id &&
-                m.content.includes('1') ||
-                m.content.includes('2') ||
-                m.content.includes('3') ||
-                m.content.includes('4') ||
-                m.content.includes('5') ||
-                m.content.includes('6') ||
-                m.content.includes('7') ||
-                m.content.includes('8') ||
-                m.content.includes('9') ||
-                m.content.includes('10') ||
-                m.content.toLowerCase().includes('cancel');
-              msg.channel.awaitMessages(filter, {
-                  max: 1,
-                  time: 60000,
-                  errors: ['time']
-                })
-                .then(collected => {
-                  const newColl = Array.from(collected);
-                  const mcon = newColl[0][1].content;
-
-                  if (mcon.toLowerCase().includes(`cancel`)) return imsg.edit(musicbot.note('note', 'Searching canceled.'));
-                  const song_number = parseInt(mcon) - 1;
-                  if (song_number >= 0) {
-                    videos[song_number].requester = msg.author.id;
-                    let editMess;
-
-                    if (videos[song_number].title.includes('*')) {
-                      const newTitle = videos[song_number].title.toString().replace(/\*/g, "\\*");
-                      editMess = musicbot.note('note', `Queued **${newTitle}**`);
-                    } else {
-                      editMess = musicbot.note('note', `Queued **${videos[song_number].title}**`);
-                    };
-
-                    return imsg.edit(editMess).then(() => {
-                      queue.push(videos[song_number]);
-                      if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
-                    }).catch(console.log);
-                  };
-                })
-                .catch(collected => {
-                  if (collected.toLowerCase().includes('error')) {
-                    imsg.edit(`\`\`\`xl\nSearching canceled, error occoured!\n${collected}\n\`\`\``);
-                  } else {
-                    imsg.edit(`\`\`\`\nSearching canceled, timed out after 60 seconds.\n\`\`\``);
-                  };
-                  return;
-                });
-            });
-          };
-
-          var videos = [];
-          for (var i = 0; i < 50; i++) {
-            if (videos.length >= 10) {
-              playStart(videos);
-              i = 51;
-            } else {
-              if (results[i]) {
-                if (results[i].kind === 'youtube#video') {
+                  if (!results.linnk) results.link = `https://www.youtube.com/watch?v=` + newItems[i].resourceId.videoId;
+                  results.channel = results.channelTitle;
+                  results.description = null;
                   if (musicbot.requesterName) results.requester = msg.author.id;
                   if (musicbot.requesterName) results.requesterAvatarURL = msg.author.displayAvatarURL;
-                  videos.push(results[i]);
+                  if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
+                    queuedVids.push(results);
+                  } else {
+                    queuedVids.push(results.title);
+                  }
+                  queue.push(results);
+                  if (queue.length === 1) musicbot.executeQueue(msg, queue);
+                };
+              };
+
+              function endrun() {
+                if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
+                  const embed = new Discord.RichEmbed();
+                  embed.setAuthor(`Song Queue`, client.user.avatarURL);
+                  embed.setTitle(`Queued ${queuedVids.length} | Skipped ${skippedVideos.length}`);
+                  if (skippedVideos.length >= queuedVids.length) embed.setDescription(`Looks like a lot of videos where skipped! This can happen for a few reasons. Regional restrictions, private restricions, and other blocks will prevet the bot from queueing songs.`);
+                  if (queuedVids.length >= 1) embed.addField(`1) ${queuedVids[0].channel}`, `[${queuedVids[0].title}](${queuedVids[0].link})`, musicbot.inlineEmbeds);
+                  if (queuedVids.length >= 2) embed.addField(`2) ${queuedVids[1].channel}`, `[${queuedVids[1].title}](${queuedVids[1].link})`, musicbot.inlineEmbeds);
+                  if (queuedVids.length >= 3) embed.addField(`3) ${queuedVids[2].channel}`, `[${queuedVids[2].title}](${queuedVids[2].link})`, musicbot.inlineEmbeds);
+                  if (queuedVids.length >= 4) embed.addField(`4) ${queuedVids[3].channel}`, `[${queuedVids[3].title}](${queuedVids[3].link})`, musicbot.inlineEmbeds);
+                  if (queuedVids.length >= 5) embed.addField(`5) ${queuedVids[4].channel}`, `[${queuedVids[4].title}](${queuedVids[4].link})`, musicbot.inlineEmbeds);
+                  if (queuedVids.length >= 6) embed.addField(`6) ${queuedVids[5].channel}`, `[${queuedVids[5].title}](${queuedVids[5].link})`, musicbot.inlineEmbeds);
+                  if (queuedVids.length >= 7) embed.addField(`7) ${queuedVids[6].channel}`, `[${queuedVids[6].title}](${queuedVids[6].link})`, musicbot.inlineEmbeds);
+                  if (queuedVids.length >= 8) embed.addField(`8) ${queuedVids[7].channel}`, `[${queuedVids[7].title}](${queuedVids[7].link})`, musicbot.inlineEmbeds);
+                  if (queuedVids.length >= 9) embed.addField(`9) ${queuedVids[8].channel}`, `[${queuedVids[8].title}](${queuedVids[8].link})`, musicbot.inlineEmbeds);
+                  if (queuedVids.length >= 10) embed.addField(`10) ${queuedVids[9].channel}`, `[${queuedVids[9].title}](${queuedVids[9].link})`, musicbot.inlineEmbeds);
+                  if (queuedVids.length >= 11) embed.addField(`And...`, `${queuedVids.length - 10} more songs!`);
+                  embed.setColor(0x27e33d);
+                  msg.channel.send({
+                    embed
+                  });
+                } else {
+                  var qvids = queuedVids.join('\n');
+                  var svids = skippedVideos.join('\n');
+                  if (qvids.toString().length > 1000) qvids = 'Over character count, replaced...';
+                  if (svids.toString().length > 1000) svids = 'Over character count, replaced...';
+
+                  if (svids != "") {
+                    msg.channel.send(musicbot.note('wrap', `Queued:\n${qvids}\nSkipped: (Max Queue)\n${svids}`), {
+                      split: true
+                    });
+                  } else {
+                    msg.channel.send(musicbot.note('wrap', `Queued:\n${qvids}`), {
+                      split: true
+                    });
+                  };
+                };
+                if (skippedVideos.length >= queuedVids.length) msg.channel.send(musicbot.note('note', 'Looks like a lot of videos where skipped! This can happen for a few reasons. Regional restrictions, private restricions, and other blocks will prevet the bot from queueing songs.'));
+              };
+              setTimeout(endrun, 1250);
+            });
+
+          })
+        } else {
+          search(searchstring, opts, function(err, results) {
+            if (err) {
+              if (musicbot.logging) musicbot.logger('playCmd', msg, err);
+              const nerr = err.toString().split(':');
+              return response.edit(musicbot.note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
+            };
+
+            if (!results) {
+              if (musicbot.logging) musicbot.logger('playCmd', msg, `${new Error(`results came up empty`)}`);
+              return setTimeout(() => {
+                response.edit(musicbot.note('fail', `Couldn't get results.`));
+              }, 600);
+            };
+
+            function playStart(videos) {
+              const text = videos.map((video, index) => (
+                (index + 1) + ': ' + video.title
+              )).join('\n');
+
+              response.delete();
+              msg.channel.send(`\`\`\`\nPlease enter the song number, or type cancel to cancel.\n${text}\n\`\`\``).then(imsg => {
+                const filter = m => m.author.id === msg.author.id &&
+                  m.content.includes('1') ||
+                  m.content.includes('2') ||
+                  m.content.includes('3') ||
+                  m.content.includes('4') ||
+                  m.content.includes('5') ||
+                  m.content.includes('6') ||
+                  m.content.includes('7') ||
+                  m.content.includes('8') ||
+                  m.content.includes('9') ||
+                  m.content.includes('10') ||
+                  m.content.trim() === (`cancel`);
+                msg.channel.awaitMessages(filter, {
+                    max: 1,
+                    time: 60000,
+                    errors: ['time']
+                  })
+                  .then(collected => {
+                    const newColl = Array.from(collected);
+                    const mcon = newColl[0][1].content;
+
+                    if (mcon === "cancel") return imsg.edit(musicbot.note('note', 'Searching canceled.'));
+                    const song_number = parseInt(mcon) - 1;
+                    if (song_number >= 0) {
+                      videos[song_number].requester = msg.author.id;
+                      let editMess;
+
+                      if (videos[song_number].title.includes('*')) {
+                        const newTitle = videos[song_number].title.toString().replace(/\*/g, "\\*");
+                        editMess = musicbot.note('note', `Queued **${newTitle}**`);
+                      } else {
+                        editMess = musicbot.note('note', `Queued **${videos[song_number].title}**`);
+                      };
+
+                      return imsg.edit(editMess).then(() => {
+                        queue.push(videos[song_number]);
+                        if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
+                      }).catch(console.log);
+                    };
+                  })
+                  .catch(collected => {
+                    return imsg.edit(`\`\`\`xl\nSearching canceled. ${collected}\n\`\`\``);
+                  });
+              });
+            };
+
+            var videos = [];
+            var i = 0;
+
+            var interCheck = setInterval(function() {
+              if (videos.length >= 10) return;
+              if (response) {
+                response.edit(musicbot.note("fail", "Couldn't gather enough videos, try searching something else!"));
+                return clearInterval(interCheck);
+              } else {
+                msg.channel.send(musicbot.note("fail", "Couldn't gather enough videos, try searching something else!"));
+                return clearInterval(interCheck);
+              };
+            }, musicbot.maxWait)
+
+            for (i = 0; i < 50; i++) {
+              if (videos.length >= 10) {
+                clearInterval(interCheck);
+                playStart(videos);
+                i = 51;
+              } else {
+                if (results[i]) {
+                  if (results[i].kind === 'youtube#video') {
+                    if (musicbot.requesterName) results.requester = msg.author.id;
+                    if (musicbot.requesterName) results.requesterAvatarURL = msg.author.displayAvatarURL;
+                    videos.push(results[i]);
+                  }
                 }
               }
-            }
-          };
+            };
 
-        });
+          });
+        };
+      } catch (e) {
+        return msg.channel.send(musicbot.note('fail', `Searching Error!\n${e}`));
       };
     }).catch(console.log);
   };

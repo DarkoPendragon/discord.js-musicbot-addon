@@ -100,6 +100,7 @@ _Note: All boolean options default false._
 | anyoneCanSkip | Boolean | Whether or not anyone can skip. |
 | clearInvoker | Boolean | Whether to delete command messages. |  
 | messageHelp | Boolean | Whether to message the user on help command usage. If it can't, it will send it in the channel like normal. |
+| maxWait | Number | *_New_* Max time in milliseconds for checks to wait (checking video search, etc). Defaults `15000`. |
 
 ## Other Options.  
 | Option | Type | Description |  
@@ -182,6 +183,12 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 1.9.1
+* Fixed looping errors.
+* May have fixed some link related errors.
+* Added the `maxWait` option.
+* Fixed command run functions.
+
 ## 1.9.0  
 * Requires Node 8+.
 * Added aliases support.  
