@@ -1,6 +1,6 @@
 {
   "name": "discord.js-musicbot-addon",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "description": "A music bot addon for an already made Discord.js bot to run with or simply run by itself.",
   "main": "index.js",
   "scripts": {
@@ -9,8 +9,9 @@
   },
   "dependencies": {
     "youtube-audio-stream": "0.0.50",
-    "youtube-search": "^1.0.10",
-    "youtube-playlist-info": "^0.1.0"
+    "ytsearcher": "^1.0.3",
+    "youtube-playlist-info": "^0.1.0",
+    "ytdl-core": "^0.20.1"
   },
   "repository": {
     "type": "git",

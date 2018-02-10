@@ -94,6 +94,7 @@ _Note: All boolean options default false._
 | --- | --- | --- |  
 | youtubeKey | String | A YouTube Data API3 key. Required to run. |
 | botPrefix | String | The prefix of the bot. Defaults to "!". |
+| thumbnailType | String | Type of thumbnails to use for videos on embeds. Can equal: default, medium, high. |
 | global | Boolean | Whether to use one global queue or server specific ones. |
 | maxQueueSize | Number | Max queue size allowed. Defaults 20. |
 | defVolume | Number | The default volume of music. 1 - 200, defaults 50. |
@@ -108,13 +109,15 @@ _Note: All boolean options default false._
 | enableQueueStat | Boolean | Whether to enable the queue status, old fix for an error that occurs for a few people. |
 | anyoneCanAdjust | Boolean | Whether anyone can adjust volume. |
 | ownerOverMember | Boolean | Whether the owner over-rides `CanAdjust` and `CanSkip`. |
+| anyoneCanLeave | Boolean | Whether anyone can make the bot leave the currently connected channel. |
 | botOwner | String | The ID of the Discord user to be seen as the owner. Required if using `ownerOverMember`. |
 | logging | Boolean | Some extra none needed logging (such as caught errors that didn't crash the bot, etc). |
 | enableAliveMessage | Boolean | Enables the bot to log a message in the console every x milliseconds. |
 | aliveMessage | String | The message to be logged. \*_note_ |
 | aliveMessageTime | Number | Time in _**milliseconds**_ the bot logs the message. Defaults to 600000 (5 minutes). |
 | requesterName | Boolean | Whether or not to display the username of the song requester. |
-| inlineEmbeds | Boolean | Whether or not to make embed fields inline (help command and some fields are excluded). |  
+| inlineEmbeds | Boolean | Whether or not to make embed fields inline (help command and some fields are excluded). |
+| streamMode | Number | *New!* Sets what to use for streaming. 0 = ytdl-core, 1 = youtube-audio-stream. |  
 
 ## Command Options.  
 | Option | Type | Description |  
@@ -159,6 +162,10 @@ _Note: All boolean options default false._
 | disableLoop | Boolean | Disable the loop command. |
 | loopHelp | String | Help text of the loop command. |
 | loopAlt | Array | Alt names (aliases) for the loop command. |
+| searchCmd | String | Name of the search command. |
+| disableSearch | Boolean | Disable the search command. |
+| searchHelp | String | Help text of the search command. |
+| searchAlt | Array | Alt names (aliases) for the search command. |
 | ownerCmd | String | Name of the owner command. |
 | disableOwnerCmd | Boolean | Disable the owner command. |
 | ownerHelp | String | Help text of the owner command. |
@@ -183,6 +190,16 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 1.10.0
+* Added the search command.
+* Added the `thumbnailType` option.
+* Play command now plays the first result instead of searching.
+* Links might work now.
+* `anyoneCanLeave` allows anyone to use `leave`.
+* Maximum call stack errors should occur less or not at all.
+* You can now change between using `ytdl-core` and `youtube-audio-stream` to stream music with `streamMode`.
+* Small fixes.
+
 ## 1.9.1
 * Fixed looping errors.
 * May have fixed some link related errors.
