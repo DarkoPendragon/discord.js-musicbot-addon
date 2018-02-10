@@ -190,6 +190,9 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 1.10.1
+* Corrected `streamMode` error.
+
 ## 1.10.0
 * Added the search command.
 * Added the `thumbnailType` option.

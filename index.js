@@ -157,7 +157,7 @@ module.exports = function(client, options) {
       console.log(new TypeError(`streamMode must be a number`));
       process.exit(1);
     };
-    if (musicbot.streamMode !== 0 || musicbot.streamMode !== 1) {
+    if (musicbot.streamMode !== 0 && musicbot.streamMode !== 1) {
       console.log(new TypeError(`streamMode must be either 0 or 1`));
       process.exit(1);
     };
