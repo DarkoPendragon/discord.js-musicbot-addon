@@ -34,80 +34,87 @@ module.exports = function(client, options) {
       this.aliases = new Map();
       this.youtubeKey = (options && options.youtubeKey);
       this.botPrefix = (options && options.prefix) || '!';
+      this.botPrefixs = new Map();
       this.thumbnailType = (options && options.thumbnailType) || "high";
-      this.anyoneCanLeave = (options && options.anyoneCanLeave) || false;
+      this.anyoneCanLeave = Boolean((options && options.anyoneCanLeave) || false);
       this.streamMode = parseInt((options && options.streamMode) || 0);
       this.global = (options && options.global) || false;
       this.maxQueueSize = parseInt((options && options.maxQueueSize) || 20);
       this.defVolume = parseInt((options && options.defVolume) || 50);
-      this.anyoneCanSkip = (options && options.anyoneCanSkip) || false;
-      this.clearInvoker = (options && options.clearInvoker) || false;
+      this.anyoneCanSkip = Boolean((options && options.anyoneCanSkip) || false);
+      this.clearInvoker = Boolean((options && options.clearInvoker) || false);
       this.helpCmd = (options && options.helpCmd) || 'musichelp';
-      this.disableHelp = (options && options.disableHelp) || false;
+      this.disableHelp = Boolean((options && options.disableHelp) || false);
       this.helpHelp = (options && options.helpHelp) || "Shows help for commands.";
       this.helpAlt = (options && options.helpAlt) || [];
       this.playCmd = (options && options.playCmd) || 'play';
-      this.disablePlay = (options && options.disablePlay) || false;
+      this.disablePlay = Boolean((options && options.disablePlay) || false);
       this.playHelp = (options && options.playHelp) || "Queue a song/playlist by URL or search for a song.";
       this.playAlt = (options && options.playAlt) || [];
       this.skipCmd = (options && options.skipCmd) || 'skip';
-      this.disableSkip = (options && options.disableSkip) || false;
+      this.disableSkip = Boolean((options && options.disableSkip) || false);
       this.skipHelp = (options && options.skipHelp) || "Skip a song or multi songs.";
       this.skipAlt = (options && options.skipAlt) || [];
       this.queueCmd = (options && options.queueCmd) || 'queue';
-      this.disableQueue = (options && options.disableQueue) || false;
+      this.disableQueue = Boolean((options && options.disableQueue) || false);
       this.queueHelp = (options && options.queueHelp) || "Shows the current queue.";
       this.queueAlt = (options && options.queueAlt) || [];
       this.pauseCmd = (options && options.pauseCmd) || 'pause';
       this.pauseHelp = (options && options.pauseHelp) || "Pauses the queue.";
-      this.disablePause = (options && options.disablePause) || false;
+      this.disablePause = Boolean((options && options.disablePause) || false);
       this.pauseAlt = (options && options.pauseAlt) || [];
       this.resumeCmd = (options && options.resumeCmd) || 'resume';
-      this.disableResume = (options && options.disableResume) || false;
+      this.disableResume = Boolean((options && options.disableResume) || false);
       this.resumeHelp = (options && options.resumeHelp) || "Resume the queue.";
       this.resumeAlt = (options && options.resumeAlt) || [];
       this.volumeCmd = (options && options.volumeCmd) || 'volume';
-      this.disableVolume = (options && options.disableVolume) || false;
+      this.disableVolume = Boolean((options && options.disableVolume) || false);
       this.volumeHelp = (options && options.volumeHelp) || "Adjusts the volume of the bot.";
       this.volumeAlt = (options && options.volumeAlt) || [];
       this.leaveCmd = (options && options.leaveCmd) || 'leave';
-      this.disableLeave = (options && options.disableLeave) || false;
+      this.disableLeave = Boolean((options && options.disableLeave) || false);
       this.leaveHelp = (options && options.leaveHelp) || "Leave and clear the queue.";
       this.leaveAlt = (options && options.leaveAlt) || [];
       this.clearCmd = (options && options.clearCmd) || 'clearqueue';
-      this.disableClear = (options && options.disableClear) || false;
+      this.disableClear = Boolean((options && options.disableClear) || false);
       this.clearHelp = (options && options.clearHelp) || "Clears the current queue.";
       this.clearAlt = (options && options.clearAlt) || [];
-      this.searchCmd = (options && options.npCmd) || 'search';
-      this.disableSearch = (options && options.disableNp) || false;
-      this.searcHelp = (options && options.npHelp) || "Searchs for up to 10 results.";
-      this.searcAlt = (options && options.npAlt) || [];
+      this.searchCmd = (options && options.searchCmd) || 'search';
+      this.disableSearch = Boolean((options && options.disableSearch) || false);
+      this.searcHelp = (options && options.searcHelp) || "Searchs for up to 10 results.";
+      this.searchAlt = (options && options.searchAlt) || [];
       this.loopCmd = (options && options.loopCmd) || 'loop';
-      this.disableLoop = (options && options.disableLoop) || false;
+      this.disableLoop = Boolean((options && options.disableLoop) || false);
       this.loopHelp = (options && options.loopHelp) || "Changes the loop state.";
       this.loopAlt = (options && options.loopAlt) || [];
+      this.setCmd = (options && options.setCmd) || 'set';
+      this.disableSet = Boolean((options && options.disableSet) || false);
+      this.setHelp = (options && options.setHelp) || "Changes settings for the server. Use without specifing a setting to see valid settings.";
+      this.setAlt = (options && options.setAlt) || [];
       this.ownerCmd = (options && options.ownerCmd) || 'owner';
-      this.disableOwnerCmd = (options && options.disableOwnerCmd) || false;
+      this.disableOwnerCmd = Boolean((options && options.disableOwnerCmd) || false);
       this.ownerHelp = (options && options.ownerHelp) || "Owner commands and functions.";
       this.ownerAlt = (options && options.ownerAlt) || [];
       this.npCmd = (options && options.npCmd) || 'np';
-      this.disableNp = (options && options.disableNp) || false;
+      this.disableNp = Boolean((options && options.disableNp) || false);
       this.npHelp = (options && options.npHelp) || "Shows the currently playing song.";
       this.npAlt = (options && options.npAlt) || [];
-      this.enableQueueStat = (options && options.enableQueueStat) || false;
-      this.anyoneCanAdjust = (options && options.anyoneCanAdjust) || false;
-      this.ownerOverMember = (options && options.ownerOverMember) || false;
+      this.enableQueueStat = Boolean((options && options.enableQueueStat) || false);
+      this.anyoneCanAdjust = Boolean((options && options.anyoneCanAdjust) || false);
+      this.ownerOverMember = Boolean((options && options.ownerOverMember) || false);
       this.botOwner = (options && options.botOwner) || null;
-      this.logging = (options && options.logging) || false;
-      this.enableAliveMessage = (options && options.enableAliveMessage) || false;
+      this.logging = Boolean((options && options.logging) || false);
+      this.enableAliveMessage = Boolean((options && options.enableAliveMessage) || false);
       this.aliveMessage = (options && options.aliveMessage) || "";
       this.aliveMessageTime = parseInt((options && options.aliveMessageTime) || 600000);
-      this.requesterName = (options && options.requesterName) || false;
-      this.inlineEmbeds = (options && options.inlineEmbeds) || false;
+      this.requesterName = Boolean((options && options.requesterName) || false);
+      this.inlineEmbeds = Boolean((options && options.inlineEmbeds) || false);
       this.maxWait = parseInt((options && options.maxWait) || 15000);
       this.queues = {};
       this.loops = {};
       this.lockChans = {};
+      this.advancedMode = (options && options.advancedMode) || {};
+      this.botAdmins = [];
     }
 
     logger(cmd, msg, text) {
@@ -117,8 +124,15 @@ module.exports = function(client, options) {
 
   var musicbot = new Music(client, options);
 
-  //Init errors.
-  function musicBotStart() {
+  if (musicbot.advancedMode && musicbot.advancedMode.enabled) {
+    musicbot.advancedMode = {
+      enabled: Boolean((options && options.advancedMode.enabled) || false),
+      multiPrefix: Boolean((options && options.advancedMode.multiPrefix) || false),
+      serverPrefixs: (options && options.advancedMode.serverPrefixs) || {}
+    };
+  };
+
+  async function musicBotStart() {
     if (musicbot.disableLeave &&
       musicbot.disableSkip &&
       musicbot.disablePlay &&
@@ -129,10 +143,33 @@ module.exports = function(client, options) {
       musicbot.disableLoop &&
       musicbot.disableClear &&
       musicbot.disableNp &&
+      musicbot.disableSearch &&
       musicbot.disableVolume) {
-      console.log(new Error(`all commands disabled`));
-      process.exit(1);
+        console.log(new Error(`all commands disabled`));
+        process.exit(1);
     };
+
+    if (typeof musicbot.botAdmins !== 'object') {
+      console.log(new TypeError(`botAdmins must be an object (array)`));
+      process.exit(1);
+    }
+    if (typeof musicbot.advancedMode !== 'object') {
+      console.log(new TypeError(`advancedMode must be an object`));
+      process.exit(1);
+    }
+    if (musicbot.advancedMode.enabled && typeof musicbot.advancedMode.enabled !== 'boolean') {
+      console.log(new TypeError(`advancedMode.enabled must be a boolean`));
+      process.exit(1);
+    }
+    if (musicbot.advancedMode.multiPrefix && typeof musicbot.advancedMode.multiPrefix !== 'boolean') {
+      console.log(new TypeError(`advancedMode.multiPrefix must be a boolean`));
+      process.exit(1);
+    }
+    if (musicbot.advancedMode.serverPrefixs && typeof musicbot.advancedMode.serverPrefixs !== 'object') {
+      console.log(new TypeError(`advancedMode.serverPrefixs must be an object`));
+      process.exit(1);
+    }
+
     if (typeof musicbot.thumbnailType !== 'string') {
       console.log(new TypeError(`thumbnailType must be a string`));
       process.exit(1);
@@ -434,6 +471,7 @@ module.exports = function(client, options) {
     // Set those commands, baby.
     try {
       if (!musicbot.commands.has(musicbot.helpCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.helpCmd} command.`);
         const help_props = {
           name: musicbot.helpCmd,
           usage: `${musicbot.botPrefix}${musicbot.helpCmd} [command]`,
@@ -446,7 +484,8 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.helpCmd, help_props);
       };
       if (!musicbot.commands.has(musicbot.searchCmd)) {
-        const help_props = {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.searchCmd} command.`);
+        const search_props = {
           name: musicbot.searchCmd,
           usage: `${musicbot.botPrefix}${musicbot.searchCmd} <query>`,
           disabled: musicbot.disableSearch,
@@ -455,9 +494,10 @@ module.exports = function(client, options) {
           admin: false,
           run: "search"
         };
-        musicbot.commands.set(musicbot.searchCmd, help_props);
+        musicbot.commands.set(musicbot.searchCmd, search_props);
       };
       if (!musicbot.commands.has(musicbot.playCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.playCmd} command.`);
         const play_props = {
           name: musicbot.playCmd,
           usage: `${musicbot.botPrefix}${musicbot.playCmd} <song to queue>`,
@@ -470,6 +510,7 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.playCmd, play_props);
       };
       if (!musicbot.commands.has(musicbot.skipCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.skipCmd} command.`);
         const skip_props = {
           name: musicbot.skipCmd,
           usage: `${musicbot.botPrefix}${musicbot.skipCmd} [numberOfSongs]`,
@@ -482,6 +523,7 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.skipCmd, skip_props);
       };
       if (!musicbot.commands.has(musicbot.queueCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.queueCmd} command.`);
         const queue_props = {
           name: musicbot.queueCmd,
           usage: `${musicbot.botPrefix}${musicbot.queueCmd} [songNumber]`,
@@ -494,6 +536,7 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.queueCmd, queue_props);
       };
       if (!musicbot.commands.has(musicbot.pauseCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.pauseCmd} command.`);
         const pause_props = {
           name: musicbot.pauseCmd,
           usage: null,
@@ -506,6 +549,7 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.pauseCmd, pause_props);
       };
       if (!musicbot.commands.has(musicbot.resumeCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.resumeCmd} command.`);
         const resume_props = {
           name: musicbot.resumeCmd,
           usage: null,
@@ -518,6 +562,7 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.resumeCmd, resume_props);
       };
       if (!musicbot.commands.has(musicbot.volumeCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.volumeCmd} command.`);
         const volume_props = {
           name: musicbot.volumeCmd,
           usage: `${musicbot.botPrefix}${musicbot.volumeCmd} <1 - 200>`,
@@ -530,6 +575,7 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.volumeCmd, volume_props);
       };
       if (!musicbot.commands.has(musicbot.clearCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.clearCmd} command.`);
         const clear_props = {
           name: musicbot.clearCmd,
           usage: null,
@@ -542,6 +588,7 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.clearCmd, clear_props);
       };
       if (!musicbot.commands.has(musicbot.npCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.npCmd} command.`);
         const np_props = {
           name: musicbot.npCmd,
           usage: null,
@@ -554,6 +601,7 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.npCmd, np_props);
       };
       if (!musicbot.commands.has(musicbot.ownerCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.ownerCmd} command.`);
         const owner_props = {
           name: musicbot.ownerCmd,
           usage: null,
@@ -566,6 +614,7 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.ownerCmd, owner_props);
       };
       if (!musicbot.commands.has(musicbot.leaveCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.leaveCmd} command.`);
         const leave_props = {
           name: musicbot.leaveCmd,
           usage: null,
@@ -578,6 +627,7 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.leaveCmd, leave_props);
       };
       if (!musicbot.commands.has(musicbot.loopCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.loopCmd} command.`);
         const loop_props = {
           name: musicbot.loopCmd,
           usage: null,
@@ -589,12 +639,26 @@ module.exports = function(client, options) {
         };
         musicbot.commands.set(musicbot.loopCmd, loop_props);
       };
+      if (!musicbot.commands.has(musicbot.setCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.setCmd} command.`);
+        const set_props = {
+          name: musicbot.setCmd,
+          usage: `${musicbot.botPrefix}${musicbot.setCmd} <setting>`,
+          disabled: musicbot.disableSet,
+          help: musicbot.setHelp,
+          aliases: musicbot.setAlt,
+          admin: false,
+          run: "set"
+        };
+        musicbot.commands.set(musicbot.setCmd, set_props);
+      };
 
       // Load the aliases. Hopefully.
       for (var i = 0; i < musicbot.commands.length; i++) {
         let command = musicbot.commands[i];
         if (command.aliases.length > 0) {
           for (var a = 0; a < command.aliases.length; a++) {
+            if (musicbot.logging) console.log(`[MUSIC] Mapping aliase for ${command.name}, ${command.aliases[a]}`);
             let props = {
               name: command.name,
               usage: command.usage,
@@ -625,25 +689,83 @@ module.exports = function(client, options) {
   client.on('message', msg => {
     const message = msg.content.trim();
 
-    // Check if the message is a command.
-    if (message.startsWith(musicbot.botPrefix)) {
+    if (musicbot.advancedMode.enabled && musicbot.advancedMode.multiPrefix) {
+      if (musicbot.botPrefixs.has(msg.guild.id)) {
+        // Get the custom prefix.
+        const prefix = musicbot.botPrefixs.get(msg.guild.id).prefix;
+        if (!message.startsWith(prefix)) return;
+
+        // Get the command, suffix.
+        const command = message.substring(prefix.toString().length).split(/[ \n]/)[0].trim();
+        const suffix = message.substring(prefix.toString().length + command.length).trim();
+        const args = message.slice(prefix.toString().length + command.length).trim().split(/ +/g);
+
+        // Process the commands.
+        if (musicbot.commands.has(command)) {
+          let tCmd = musicbot.commands.get(command);
+          if (!tCmd.disabled) return musicbot[tCmd.run](msg, suffix, args);
+        } else if (musicbot.aliases.has(command)) {
+          let aCmd = musicbot.commands.get(command);
+          if (!aCmd.disabled) return musicbot[aCmd.run](msg, suffix, args);
+        };
+      } else if (message.startsWith(musicbot.botPrefix)) {
+        // Get the command, suffix.
+        const command = message.substring(musicbot.botPrefix.length).split(/[ \n]/)[0].trim();
+        const suffix = message.substring(musicbot.botPrefix.length + command.length).trim();
+        const args = message.slice(musicbot.botPrefix.length + command.length).trim().split(/ +/g);
+
+        // Process the commands.
+        if (musicbot.commands.has(command)) {
+          let tCmd = musicbot.commands.get(command);
+          if (!tCmd.disabled) return musicbot[tCmd.run](msg, suffix, args);
+        } else if (musicbot.aliases.has(command)) {
+          let aCmd = musicbot.commands.get(command);
+          if (!aCmd.disabled) return musicbot[aCmd.run](msg, suffix, args);
+        };
+      };
+    } else if (message.startsWith(musicbot.botPrefix)) {
       // Get the command, suffix.
       const command = message.substring(musicbot.botPrefix.length).split(/[ \n]/)[0].trim();
       const suffix = message.substring(musicbot.botPrefix.length + command.length).trim();
+      const args = message.slice(musicbot.botPrefix.length + command.length).trim().split(/ +/g);
 
       // Process the commands.
       if (musicbot.commands.has(command)) {
         let tCmd = musicbot.commands.get(command);
-        if (!tCmd.disabled) return musicbot[tCmd.run](msg, suffix);
+        if (!tCmd.disabled) return musicbot[tCmd.run](msg, suffix, args);
       } else if (musicbot.aliases.has(command)) {
         let aCmd = musicbot.commands.get(command);
-        if (!aCmd.disabled) return musicbot[aCmd.run](msg, suffix);
+        if (!aCmd.disabled) return musicbot[aCmd.run](msg, suffix, args);
       };
     };
   });
 
   // Client ready event for some extra stuff.
   client.on("ready", () => {
+
+    if (musicbot.advancedMode && musicbot.advancedMode.enabled === true) {
+      if (musicbot.advancedMode && musicbot.advancedMode.multiPrefix === true) {
+        if (typeof musicbot.advancedMode.serverPrefixs === 'object') {
+          client.guilds.forEach(server => {
+            if (musicbot.advancedMode.serverPrefixs.has(server.id)) {
+              var thisServer = musicbot.advancedMode.serverPrefixs.get(server.id)
+              let props = {
+                id: server.id,
+                prefix: thisServer.prefix
+              };
+              musicbot.botPrefixs.set(server.id, props);
+            } else {
+              let props = {
+                id: server.id,
+                prefix: musicbot.botPrefix
+              };
+              musicbot.botPrefixs.set(server.id, props);
+            };
+          });
+        };
+      };
+    };
+
     if (musicbot.enableAliveMessage) {
       setInterval(function liveMessage() {
         if (musicbot.aliveMessage.length < 3) {
@@ -661,6 +783,30 @@ module.exports = function(client, options) {
     if (!musicbot.enableQueueStat) console.log(`[MUSIC] enableQueueStat is 'false'. Queue will not have a Playing/Paused indicator.`);
   });
 
+  musicbot.updatePrefix = (server, prefix) => {
+    if (musicbot && musicbot.advancedMode.enabled && musicbot.advancedMode.multiPrefix) {
+      return new Promise((resolve, reject) => {
+        if (typeof server !== 'string') reject(`server was not a string`);
+        if (typeof prefix !== 'string') reject(`prefix was not a string`);
+
+        let props;
+        if (musicbot.botPrefixs.has(server)) {
+          props = musicbot.botPrefixs.get(server);
+          props.prefix = prefix;
+          musicbot.botPrefixs.set(server, props);
+          resolve(`Prefix updated to \`${prefix}\`!`);
+        } else {
+          let props = {
+            id: server,
+            prefix: prefix
+          };
+          musicbot.botPrefixs.set(server, props);
+          resolve(`Prefix updated to \`${prefix}\`!`);
+        }
+      })
+    };
+  };
+
   /**
    * Checks if a user is an admin.
    *
@@ -669,6 +815,7 @@ module.exports = function(client, options) {
    */
   musicbot.isAdmin = (member) => {
     if (musicbot.ownerOverMember && member.id === musicbot.botOwner) return true;
+    if (musicbot.botAdmins.includes(member.id)) return true;
     return member.hasPermission("ADMINISTRATOR");
   };
 
@@ -681,6 +828,7 @@ module.exports = function(client, options) {
    */
   musicbot.canSkip = (member, queue) => {
     if (musicbot.anyoneCanSkip) return true;
+    else if (musicbot.botAdmins.includes(member.id)) return true;
     else if (musicbot.ownerOverMember && member.id === musicbot.botOwner) return true;
     else if (queue[0].requester === member.id) return true;
     else if (musicbot.isAdmin(member)) return true;
@@ -696,6 +844,7 @@ module.exports = function(client, options) {
    */
   musicbot.canAdjust = (member, queue) => {
     if (musicbot.anyoneCanAdjust) return true;
+    else if (musicbot.botAdmins.includes(member.id)) return true;
     else if (queue[0].requester === member.id) return true;
     else if (musicbot.isAdmin(member)) return true;
     else return false;
@@ -978,15 +1127,15 @@ module.exports = function(client, options) {
               index++;
             };
             if (ran == newItems.length) {
-              if (index = 0) msg.channel.send(note('fail', `Coudln't get any songs from that play list.`))
-              else if (index == 1) msg.channel.send(note('note', `Queued one song.`));
-              else if (index > 1) msg.channel.send(note('note', `Queued ${index} songs.`));
+              if (index = 0) msg.channel.send(musicbot.note('fail', `Coudln't get any songs from that play list.`))
+              else if (index == 1) msg.channel.send(musicbot.note('note', `Queued one song.`));
+              else if (index > 1) msg.channel.send(musicbot.note('note', `Queued ${index} songs.`));
             }
           });
         });
       } else {
         search.search(searchstring, { type: 'video' }).then(searchResult => {
-          if (!searchResult.totalResults || searchResult.totalResults === 0) return response.edit(note('fail', 'Failed to get search results.'));
+          if (!searchResult.totalResults || searchResult.totalResults === 0) return response.edit(musicbot.note('fail', 'Failed to get search results.'));
           var result = searchResult.first;
           result.requester = msg.author.id;
           result.channelURL = `https://www.youtube.com/channel/${result.channelId}`;
@@ -1024,7 +1173,7 @@ module.exports = function(client, options) {
     var searchstring = suffix.trim();
     msg.channel.send(musicbot.note('search', `Searching: \`${searchstring}\``)).then(response => {
         search.search(searchstring, { type: 'video' }).then(searchResult => {
-          if (!searchResult.totalResults || searchResult.totalResults === 0) return response.edit(note('fail', 'Failed to get search results.'));
+          if (!searchResult.totalResults || searchResult.totalResults === 0) return response.edit(musicbot.note('fail', 'Failed to get search results.'));
 
           const startTheFun = async (videos, max) => {
               const embed = new Discord.RichEmbed();
@@ -1432,8 +1581,9 @@ module.exports = function(client, options) {
       musicbot.setLoopState(msg.guild.id, false);
       msg.channel.send(musicbot.note('note', 'Successfully left your voice channel!'));
     } else {
-      const chance = Math.flood((Math.random * 100) + 1);
-      msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
+      const chance = Math.floor((Math.random * 100) + 1);
+      if (chance <= 10) return msg.channel.send(musicbot.note('fail', `I'm afraid I can't let you do that, ${msg.author.username}.`))
+      else return msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
     }
   }
 
@@ -1550,6 +1700,33 @@ module.exports = function(client, options) {
   };
 
   /**
+   * Set command function.
+   *
+   * @param {Message} msg - Original message.
+   * @param {string} suffix - Command suffix.
+   */
+  musicbot.set = (msg, suffix, args) => {
+    if (!musicbot.isAdmin(msg.member)) return msg.channel.send(musicbot.note('fail', `Only admins may do this!`));
+    const valid = ["prefix"];
+    if (!args[0]) return msg.channel.send(musicbot.note('note', `Valid settings are: ${valid.join(", ")}.`));
+    if (!valid.includes(args[0])) return msg.channel.send(musicbot.note('fail', 'Not a valid setting!'));
+    if (args[0] && args[0] == "prefix") {
+      const newPrefix = args.slice(1, args.length).join(" ");
+      if (!newPrefix || newPrefix.legnth < 1) return msg.channel.send(musicbot.note('fail', 'Please specify a prefix!'));
+      musicbot.updatePrefix(msg.guild.id, newPrefix)
+      .then(response => {
+        if (response) msg.channel.send(musicbot.note('note', response));
+      })
+      .catch(err => {
+        if (err) {
+          msg.channel.send(musicbot.note('fail', `Error!\n${err}`));
+          return console.log(`[updatePrefix] [${msg.guild.id}] ${err}`);
+        }
+      })
+    }
+  };
+
+  /**
    * Executes the next song in the queue.
    *
    * @param {Message} msg - Original message.
@@ -1605,7 +1782,7 @@ module.exports = function(client, options) {
           // Skip to the next song.
           console.log(error);
           const locky = musicbot.getLockChan(msg.guild.id);
-          if (lock) locky.send(note('fail', `Dispatcher error!\n\`${error}\``));
+          if (lock) locky.send(musicbot.note('fail', `Dispatcher error!\n\`${error}\``));
           queue.shift();
           musicbot.executeQueue(msg, queue);
         });
@@ -1614,7 +1791,7 @@ module.exports = function(client, options) {
           // Skip to the next song.
           console.log(error);
           const locky = musicbot.getLockChan(msg.guild.id);
-          if (lock) locky.send(note('fail', `Dispatcher error!\n\`${error}\``));
+          if (lock) locky.send(musicbot.note('fail', `Dispatcher error!\n\`${error}\``));
           queue.shift();
           musicbot.executeQueue(msg, queue);
         });

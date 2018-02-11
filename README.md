@@ -101,7 +101,7 @@ _Note: All boolean options default false._
 | anyoneCanSkip | Boolean | Whether or not anyone can skip. |
 | clearInvoker | Boolean | Whether to delete command messages. |  
 | messageHelp | Boolean | Whether to message the user on help command usage. If it can't, it will send it in the channel like normal. |
-| maxWait | Number | *_New_* Max time in milliseconds for checks to wait (checking video search, etc). Defaults `15000`. |
+| botAdmins | Object/Array | An array of Discord user ID's to be admins as the bot. They will ignore permissions for the bot, including the set command. |
 
 ## Other Options.  
 | Option | Type | Description |  
@@ -158,6 +158,10 @@ _Note: All boolean options default false._
 | disableClear | Boolean | Disable the clear command. |
 | clearHelp | String | Help text of the clear command. |
 | clearAlt | Array | Alt names (aliases) for the clear command. |
+| setCmd | String | Name of the set command. |
+| disableSet | Boolean | Disable the set command. |
+| setHelp | String | Help text of the set command. |
+| setAlt | Array | Alt names (aliases) for the set command. |
 | loopCmd | String | Name of the loop command. |
 | disableLoop | Boolean | Disable the loop command. |
 | loopHelp | String | Help text of the loop command. |
@@ -190,6 +194,15 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 1.10.2
+* AH CUSTOM PREFIXXXSSSSSS (bot now supports multiple prefix's)
+* Added `advancedMode`, `multiPrefix`, `advancedMode` object settings. Please see examples (advancedModeBot.js) or the discord server.
+* Fixed `leave`.
+* Fixed `note` function errors.
+* Added `set` command.
+* Boolean options are now always Booleans. Always.
+* Added `botAdmins`. Adding an ID will allow this user to override every permission.
+
 ## 1.10.1
 * Corrected `streamMode` error.
 
