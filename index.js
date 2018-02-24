@@ -1689,9 +1689,8 @@ module.exports = function(client, options) {
     // Get the queue.
     const queue = musicbot.getQueue(msg.guild.id);
 
-    // Make sure the user is a DJ
-    if (musicbot.djRole && !musicbot.isDJ(msg.member)) return msg.channel.send(musicbot.note('fail', 'Only DJs are allowed to use this command.'));
-
+   if (!musicbot.canAdjust(msg.member, queue)) return msg.channel.send(musicbot.note('fail', 'Only Admins and DJs are allowed to use this command.'));
+    
     // Get the dispatcher
     const dispatcher = voiceConnection.player.dispatcher;
 
