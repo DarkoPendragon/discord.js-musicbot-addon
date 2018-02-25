@@ -194,8 +194,11 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 1.10.3
+* Removed `lockChan` and unused related items.
+
 ## 1.10.2
-* AH CUSTOM PREFIXXXSSSSSS (bot now supports multiple prefix's)
+* Bot now supports multiple prefix's.
 * Added `advancedMode`, `multiPrefix`, `advancedMode` object settings. Please see examples (advancedModeBot.js) or the discord server.
 * Fixed `leave`.
 * Fixed `note` function errors.

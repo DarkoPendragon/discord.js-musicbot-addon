@@ -112,7 +112,6 @@ module.exports = function(client, options) {
       this.maxWait = parseInt((options && options.maxWait) || 15000);
       this.queues = {};
       this.loops = {};
-      this.lockChans = {};
       this.advancedMode = (options && options.advancedMode) || {};
       this.botAdmins = [];
     }
@@ -776,7 +775,7 @@ module.exports = function(client, options) {
         console.log(musicbot.aliveMessage);
       }, musicbot.aliveMessageTime);
     };
-    var startmsg = `------- ${client.user.username} -------\n> version: ${PACKAGE.version}\n> ytdl version: ${require('../ytdl-core/package.json').version} (0.20.1 and up recommended)\n> Extra logging disabled.\n> Global queues are disabled.\n> node: ${process.version}\n------- ${client.user.username} -------`;
+    var startmsg = `------- ${client.user.username} -------\n> version: ${PACKAGE.version}\n> ytdl version: ${require('../ytdl-core/package.json').version}\n> Extra logging disabled.\n> Global queues are disabled.\n> node: ${process.version}\n------- ${client.user.username} -------`;
     if (musicbot.logging) startmsg = startmsg.replace("Extra logging disabled.", "Extra logging enabled.");
     if (musicbot.global) startmsg = startmsg.replace("Global queues are disabled.", "Global queues are enabled.");
     console.log(startmsg);
@@ -911,27 +910,6 @@ module.exports = function(client, options) {
     };
     if (!state) return musicbot.loops[server].looping = false;
     if (state) return musicbot.loops[server].looping = true;
-  };
-
-  /**
-   * Gets the lockChan of the server.
-   *
-   * @param {integer} server - The server id.
-   * @returns {boolean} - The lockChan.
-   */
-  musicbot.getLockChan = (server) => {
-    if (musicbot.lockChans[server]) return musicbot.lockChans[server];
-    else return null;
-  };
-
-  /**
-   * Sets the lockChan of the server.
-   *
-   * @param {integer} server - The server id.
-   * @param {object} channel -  The channel to set.
-   */
-  musicbot.setLockCHan = (server, channel) => {
-    musicbot.lockChans[server] = channel;
   };
 
   /**
@@ -1142,7 +1120,6 @@ module.exports = function(client, options) {
           if (musicbot.requesterName) result.requesterAvatarURL = msg.author.displayAvatarURL;
           queue.push(result);
           if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
-          musicbot.setLockCHan(msg.guild.id, msg.channel);
         });
       }
     }).catch(console.log);
@@ -1289,7 +1266,6 @@ module.exports = function(client, options) {
                     return msg.channel.send(musicbot.note('note', `Queued **${musicbot.note('font', videos[song_number].title)}**`)).then(() => {
                       queue.push(videos[song_number]);
                       if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
-                      musicbot.setLockCHan(msg.guild.id, msg.channel);
                     }).catch(console.log);
                   };
                 })
@@ -1566,7 +1542,7 @@ module.exports = function(client, options) {
    */
   musicbot.leave = (msg, suffix) => {
     musicbot.dInvoker(msg);
-    musicbot.setLockCHan(msg.guild.id, null);
+
     if (musicbot.isAdmin(msg.member) && musicbot.anyoneCanLeave !== true) {
       const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
       if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'I\'m not in a voice channel.'));
@@ -1595,7 +1571,7 @@ module.exports = function(client, options) {
    */
   musicbot.clearqueue = (msg, suffix) => {
     musicbot.dInvoker(msg)
-    musicbot.setLockCHan(msg.guild.id, null);
+
     if (musicbot.isAdmin(msg.member)) {
       const queue = musicbot.getQueue(msg.guild.id);
       const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
@@ -1780,9 +1756,8 @@ module.exports = function(client, options) {
 
         connection.on('error', (error) => {
           // Skip to the next song.
-          console.log(error);
-          const locky = musicbot.getLockChan(msg.guild.id);
-          if (lock) locky.send(musicbot.note('fail', `Dispatcher error!\n\`${error}\``));
+          console.log(`Dispatcher/connection: ${error}`);
+          if (msg && msg.channel) msg.channel.send(musicbot.note('fail', `Dispatcher error!\n\`${error}\``));
           queue.shift();
           musicbot.executeQueue(msg, queue);
         });
@@ -1790,8 +1765,8 @@ module.exports = function(client, options) {
         dispatcher.on('error', (error) => {
           // Skip to the next song.
           console.log(error);
-          const locky = musicbot.getLockChan(msg.guild.id);
-          if (lock) locky.send(musicbot.note('fail', `Dispatcher error!\n\`${error}\``));
+          console.log(`Dispatcher: ${error}`);
+          if (msg && msg.channel) msg.channel.send(musicbot.note('fail', `Dispatcher error!\n\`${error}\``));
           queue.shift();
           musicbot.executeQueue(msg, queue);
         });
