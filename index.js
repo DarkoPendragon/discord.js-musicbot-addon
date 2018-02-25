@@ -114,6 +114,7 @@ module.exports = function(client, options) {
       this.loops = {};
       this.advancedMode = (options && options.advancedMode) || {};
       this.botAdmins = [];
+      this.djRole = (options && options.djRole) || null;
     }
 
     logger(cmd, msg, text) {
@@ -147,7 +148,11 @@ module.exports = function(client, options) {
         console.log(new Error(`all commands disabled`));
         process.exit(1);
     };
-
+    
+    if (typeof musicbot.djRole !== 'string') {
+      console.log(new TypeError(`djRole must be a string`));
+      process.exit(1);
+    }
     if (typeof musicbot.botAdmins !== 'object') {
       console.log(new TypeError(`botAdmins must be an object (array)`));
       process.exit(1);
@@ -478,6 +483,7 @@ module.exports = function(client, options) {
           help: musicbot.helpHelp,
           aliases: musicbot.helpAlt,
           admin: false,
+          dj: false,
           run: "musichelp"
         };
         musicbot.commands.set(musicbot.helpCmd, help_props);
@@ -491,6 +497,7 @@ module.exports = function(client, options) {
           help: musicbot.searcHelp,
           aliases: musicbot.searchAlt,
           admin: false,
+          dj: true,
           run: "search"
         };
         musicbot.commands.set(musicbot.searchCmd, search_props);
@@ -504,6 +511,7 @@ module.exports = function(client, options) {
           help: musicbot.playHelp,
           aliases: musicbot.playAlt,
           admin: false,
+          dj: true,
           run: "play"
         };
         musicbot.commands.set(musicbot.playCmd, play_props);
@@ -517,6 +525,7 @@ module.exports = function(client, options) {
           help: musicbot.skipHelp,
           aliases: musicbot.skipAlt,
           admin: true,
+          dj: false,
           run: "skip"
         };
         musicbot.commands.set(musicbot.skipCmd, skip_props);
@@ -530,6 +539,7 @@ module.exports = function(client, options) {
           help: musicbot.queueHelp,
           aliases: musicbot.queueAlt,
           admin: false,
+          dj: false,
           run: "queue"
         };
         musicbot.commands.set(musicbot.queueCmd, queue_props);
@@ -543,6 +553,7 @@ module.exports = function(client, options) {
           help: musicbot.pauseHelp,
           aliases: musicbot.pauseAlt,
           admin: false,
+          dj: true,
           run: "pause"
         };
         musicbot.commands.set(musicbot.pauseCmd, pause_props);
@@ -556,6 +567,7 @@ module.exports = function(client, options) {
           help: musicbot.resumeHelp,
           aliases: musicbot.resumeAlt,
           admin: false,
+          dj: true,
           run: "resume"
         };
         musicbot.commands.set(musicbot.resumeCmd, resume_props);
@@ -569,6 +581,7 @@ module.exports = function(client, options) {
           help: musicbot.volumeHelp,
           aliases: musicbot.volumeAlt,
           admin: false,
+          dj: true,
           run: "volume"
         };
         musicbot.commands.set(musicbot.volumeCmd, volume_props);
@@ -582,6 +595,7 @@ module.exports = function(client, options) {
           help: musicbot.clearHelp,
           aliases: musicbot.clearAlt,
           admin: false,
+          dj: true,
           run: "clearqueue"
         };
         musicbot.commands.set(musicbot.clearCmd, clear_props);
@@ -595,6 +609,7 @@ module.exports = function(client, options) {
           help: musicbot.npHelp,
           aliases: musicbot.npAlt,
           admin: false,
+          dj: false,
           run: "np"
         };
         musicbot.commands.set(musicbot.npCmd, np_props);
@@ -608,6 +623,7 @@ module.exports = function(client, options) {
           help: musicbot.ownerHelp,
           aliases: musicbot.ownerAlt,
           admin: false,
+          dj: false,
           run: "ownerCommands"
         };
         musicbot.commands.set(musicbot.ownerCmd, owner_props);
@@ -620,7 +636,8 @@ module.exports = function(client, options) {
           disabled: musicbot.disableLeave,
           help: musicbot.leaveHelp,
           aliases: musicbot.leaveAlt,
-          admin: false,
+          admin: true,
+          dj: false,
           run: "leave"
         };
         musicbot.commands.set(musicbot.leaveCmd, leave_props);
@@ -634,6 +651,7 @@ module.exports = function(client, options) {
           help: musicbot.loopHelp,
           aliases: musicbot.loopAlt,
           admin: false,
+          dj: true,
           run: "loop"
         };
         musicbot.commands.set(musicbot.loopCmd, loop_props);
@@ -647,6 +665,7 @@ module.exports = function(client, options) {
           help: musicbot.setHelp,
           aliases: musicbot.setAlt,
           admin: false,
+          dj: false,
           run: "set"
         };
         musicbot.commands.set(musicbot.setCmd, set_props);
@@ -665,6 +684,7 @@ module.exports = function(client, options) {
               help: command.help,
               aliases: command.aliases,
               admin: command.admin,
+              dj: command.dj,
               run: command.run
             };
             musicbot.aliases.set(command.aliases[a], props);
@@ -817,6 +837,17 @@ module.exports = function(client, options) {
     if (musicbot.botAdmins.includes(member.id)) return true;
     return member.hasPermission("ADMINISTRATOR");
   };
+  
+   /**
+   * Checks if a user is a dj.
+   *
+   * @param {GuildMember} member - The guild member
+   * @returns {boolean} - If the user is dj.
+   */
+  musicbot.isDJ = (member) => {
+    if (musicbot.ownerOverMember && member.id === musicbot.botOwner) return true;
+    if (member.roles.find(r => r.name.toLowerCase() === musicbot.djRole.toLowerCase())) return true;
+  };
 
   /**
    * Checks if the user can skip the song.
@@ -829,7 +860,8 @@ module.exports = function(client, options) {
     if (musicbot.anyoneCanSkip) return true;
     else if (musicbot.botAdmins.includes(member.id)) return true;
     else if (musicbot.ownerOverMember && member.id === musicbot.botOwner) return true;
-    else if (queue[0].requester === member.id) return true;
+    else if (queue[0].requester === member.id && !musicbot.djRole) return true;
+    else if (queue[0].requester === member.id && musicbot.djRole && musicbot.isDJ(member)) return true;
     else if (musicbot.isAdmin(member)) return true;
     else return false;
   };
@@ -846,6 +878,7 @@ module.exports = function(client, options) {
     else if (musicbot.botAdmins.includes(member.id)) return true;
     else if (queue[0].requester === member.id) return true;
     else if (musicbot.isAdmin(member)) return true;
+    else if (musicbot.isDJ(member)) return true;
     else return false;
   };
 
@@ -1079,7 +1112,10 @@ module.exports = function(client, options) {
 
     // Check if the queue has reached its maximum size.
     if (queue.length >= musicbot.maxQueueSize) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
-
+    
+    // Make sure the user is a DJ
+    if (musicbot.djRole && !musicbot.isDJ(msg.member)) return msg.channel.send(musicbot.note('fail', 'Only DJs are allowed to use this command.'));
+    
     // Get the video information.
     // I don't know why I use trim when I don't need to... Yeah.
     var searchstring = suffix.trim();
@@ -1145,6 +1181,9 @@ module.exports = function(client, options) {
     // Check if the queue has reached its maximum size.
     if (queue.length >= musicbot.maxQueueSize) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
 
+    // Make sure the user is a DJ
+    if (musicbot.djRole && !musicbot.isDJ(msg.member)) return msg.channel.send(musicbot.note('fail', 'Only DJs are allowed to use this command.'));
+    
     // Get the video information.
     // This is pretty much just play but 10 results to queue.
     var searchstring = suffix.trim();
@@ -1601,8 +1640,8 @@ module.exports = function(client, options) {
     const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
     if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
 
-    if (!musicbot.isAdmin(msg.member))
-      return msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
+    // Make sure the user is a DJ
+    if (musicbot.djRole && !musicbot.isDJ(msg.member)) return msg.channel.send(musicbot.note('fail', 'Only DJs are allowed to use this command.'));
 
     // Resume.
     msg.channel.send(musicbot.note('note', 'Playback resumed.'));
@@ -1626,9 +1665,8 @@ module.exports = function(client, options) {
     // Get the queue.
     const queue = musicbot.getQueue(msg.guild.id);
 
-    if (!musicbot.canAdjust(msg.member, queue))
-      return msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
-
+   if (!musicbot.canAdjust(msg.member, queue)) return msg.channel.send(musicbot.note('fail', 'Only Admins and DJs are allowed to use this command.'));
+    
     // Get the dispatcher
     const dispatcher = voiceConnection.player.dispatcher;
 
