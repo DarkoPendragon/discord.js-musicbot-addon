@@ -114,6 +114,7 @@ module.exports = function(client, options) {
       this.loops = {};
       this.advancedMode = (options && options.advancedMode) || {};
       this.botAdmins = [];
+      this.embedColor = (options && options.embedColor) || `0x27e33d`;
     }
 
     logger(cmd, msg, text) {
@@ -962,7 +963,7 @@ module.exports = function(client, options) {
             embed.addField(thisCmd.name, thisCmd.help);
           };
         };
-        embed.setColor(0x27e33d);
+        embed.setColor(musicbot.embedColor);
         setTimeout(() => {
           if (musicbot.messageHelp) {
             let sent = false;
@@ -1041,7 +1042,7 @@ module.exports = function(client, options) {
         embed.setDescription(command.help);
         if (command.aliases.length > 0) embed.addField(`Aliases`, command.aliases.join(", "), musicbot.inlineEmbeds);
         if (command.usage !== null) embed.addField(`Usage`, command.usage, musicbot.inlineEmbeds);
-        embed.setColor(0x27e33d);
+        embed.setColor(musicbot.embedColor);
         msg.channel.send({
           embed
         });
@@ -1155,7 +1156,7 @@ module.exports = function(client, options) {
           const startTheFun = async (videos, max) => {
               const embed = new Discord.RichEmbed();
               embed.setTitle(`Choose Your Video`);
-              embed.setColor(0x27e33d);
+              embed.setColor(musicbot.embedColor);
               var index = 0;
               videos.forEach(function(video) {
                 index++;
@@ -1370,7 +1371,7 @@ module.exports = function(client, options) {
         embed.setAuthor(`Queued Song #${suffix}`, client.user.avatarURL);
         embed.addField(queue[songNum].channelTitle, `[${queue[songNum].title}](${queue[songNum].url})`, musicbot.inlineEmbeds);
         embed.setThumbnail(queue[songNum].thumbnails[musicbot.thumbnailType].url);
-        embed.setColor(0x27e33d);
+        embed.setColor(musicbot.embedColor);
         if (musicbot.requesterName && reqMem) embed.setFooter(`Queued by: ${reqMem.username}`, queue[songNum].requesterAvatarURL);
         if (musicbot.requesterName && !reqMem) embed.setFooter(`Queued by: \`UnknownUser (id: ${queue[songNum].requester})\``, queue[songNum].requesterAvatarURL)
         msg.channel.send({
@@ -1489,7 +1490,7 @@ module.exports = function(client, options) {
       try {
         embed.setAuthor('Now Playing', client.user.avatarURL);
         var songTitle = queue[0].title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`');
-        embed.setColor(0x27e33d);
+        embed.setColor(musicbot.embedColor);
         embed.addField(queue[0].channelTitle, `[${songTitle}](${queue[0].url})`, musicbot.inlineEmbeds);
         embed.setThumbnail(queue[0].thumbnails.high.url);
         const resMem = client.users.get(queue[0].requester);
