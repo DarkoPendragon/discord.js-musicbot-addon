@@ -1596,7 +1596,7 @@ module.exports = function(client, options) {
 	musicbot.leave = (msg, suffix) => {
 		musicbot.dInvoker(msg);
 
-		if (musicbot.isAdmin(msg.member) && musicbot.anyoneCanLeave === true) {
+		if (musicbot.isAdmin(msg.member) || musicbot.anyoneCanLeave === true) {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 			if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'I\'m not in a voice channel.'));
 			// Clear the queue.
