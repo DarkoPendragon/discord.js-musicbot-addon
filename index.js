@@ -1689,6 +1689,12 @@ module.exports = function(client, options) {
 			.then((response) => {
 				response.delete(5000);
 			});
+		
+		// Stops volume going to 0 when suffix is not specified
+		if(suffix.length === 0 || !suffix.trim()) return msg.channel.send(musicbot.note('fail', 'No volume specified!'))
+			.then((response) => {
+			response.delete(5000);
+			});
 
 		msg.channel.send(musicbot.note('note', 'Volume set to ' + suffix));
 		dispatcher.setVolume((suffix / 100));
