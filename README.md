@@ -1,5 +1,8 @@
 [![npm package](https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/discord.js-musicbot-addon/)  
-[![Discord Server](https://discordapp.com/api/guilds/360519133219127297/embed.png)](https://discord.gg/cADwxKs)  [![Downlaods](https://img.shields.io/npm/dt/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)  [![Version](https://img.shields.io/npm/v/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)
+[![Discord Server](https://discordapp.com/api/guilds/427239929924288532/embed.png)](https://discord.gg/cADwxKs)  [![Downlaods](https://img.shields.io/npm/dt/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)  [![Version](https://img.shields.io/npm/v/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)
+***
+*For some reason, The Den (discord server) no longer exists. A new server has been created and will be re-made overtime for those interested in joining. https://discord.gg/FKYrX4X*  
+_*NOTE: 10.0.3-aplha is not a real update and will contain broken code. Please do not use it for production.*_
 ***
 This module may be buggy and need some fine tuning. Feel free to let me know what problems you encounter by opening an issue on the repo.
 This was originally an update of the original bot from [ruiqimao](https://github.com/ruiqimao/discord.js-music) by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11), but is now a updated version (again) for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks to the priors. For support/questions join the [Discord server](https://discord.gg/cADwxKs) for a faster response than the repo.  
@@ -194,6 +197,9 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 10.0.3-aplha
+* A faux update to alert people of the old server just poofing out of existence. _*DO NOT*_ use it for production use, as it is broken.
+
 ## 1.10.3
 * Removed `lockChan` and unused related items.
 
