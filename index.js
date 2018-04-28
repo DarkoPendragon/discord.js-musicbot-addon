@@ -3,8 +3,7 @@
  * Newly edited by Darko Pendragon (Demise).
  * Other contributions: Rodabaugh, mcao.
  */
-// const stream = require('youtube-audio-stream');
-const stream = require('youtube-audio-stream')
+
 const ytdl = require('ytdl-core');
 const {
   YTSearcher
@@ -33,7 +32,6 @@ module.exports = function(client, options) {
       this.botPrefixs = new Map();
       this.thumbnailType = (options && options.thumbnailType) || "high";
       this.anyoneCanLeave = Boolean((options && options.anyoneCanLeave) || false);
-      this.streamMode = parseInt((options && options.streamMode) || 0);
       this.global = (options && options.global) || false;
       this.maxQueueSize = parseInt((options && options.maxQueueSize) || 20);
       this.defVolume = parseInt((options && options.defVolume) || 50);
@@ -106,6 +104,7 @@ module.exports = function(client, options) {
       this.requesterName = Boolean((options && options.requesterName) || false);
       this.inlineEmbeds = Boolean((options && options.inlineEmbeds) || false);
       this.maxWait = parseInt((options && options.maxWait) || 15000);
+      this.dateLocal = (options && options.dateLocal) || 'en-US';
       this.queues = {};
       this.loops = {};
       this.advancedMode = (options && options.advancedMode) || {};
@@ -154,6 +153,10 @@ module.exports = function(client, options) {
       console.log(new TypeError(`botAdmins must be an object (array)`));
       process.exit(1);
     }
+    if (typeof musicbot.dateLocal !== 'string') {
+      console.log(new TypeError(`dateLocal must be a string`));
+      process.exit(1);
+    }
     if (typeof musicbot.advancedMode !== 'object') {
       console.log(new TypeError(`advancedMode must be an object`));
       process.exit(1);
@@ -189,14 +192,6 @@ module.exports = function(client, options) {
     };
     if (typeof musicbot.playHelp !== 'string') {
       console.log(new TypeError(`playHelp must be a string`))
-      process.exit(1);
-    };
-    if (typeof musicbot.streamMode !== 'number') {
-      console.log(new TypeError(`streamMode must be a number`));
-      process.exit(1);
-    };
-    if (musicbot.streamMode !== 0 && musicbot.streamMode !== 1) {
-      console.log(new TypeError(`streamMode must be either 0 or 1`));
       process.exit(1);
     };
     if (typeof musicbot.playAlt !== 'object') {
@@ -1127,6 +1122,7 @@ module.exports = function(client, options) {
               if (queue.length !== (musicbot.maxQueueSize + 1) && video.resourceId.kind == 'youtube#video') {
                 if (!video.url) video.url = `https://www.youtube.com/watch?v=` + video.resourceId.videoId;
                 video.requester = msg.author.id;
+                video.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
                 if (musicbot.requesterName) video.requesterAvatarURL = msg.author.displayAvatarURL;
                 queue.push(video);
                 if (queue.length === 1) musicbot.executeQueue(msg, queue);
@@ -1148,8 +1144,47 @@ module.exports = function(client, options) {
               var result = searchResult.first;
               result.requester = msg.author.id;
               result.channelURL = `https://www.youtube.com/channel/${result.channelId}`;
+              result.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
               if (musicbot.requesterName) result.requesterAvatarURL = msg.author.displayAvatarURL;
               queue.push(result);
+
+              if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
+                const embed = new Discord.RichEmbed();
+                try {
+                  embed.setAuthor('Now Playing', client.user.avatarURL);
+                  var songTitle = result.title.replace(/\\/g, '\\\\')
+                    .replace(/\`/g, '\\`')
+                    .replace(/\*/g, '\\*')
+                    .replace(/_/g, '\\_')
+                    .replace(/~/g, '\\~')
+                    .replace(/`/g, '\\`');
+                  embed.setColor(0x27e33d);
+                  embed.addField(result.channelTitle, `[${songTitle}](${result.url})`, musicbot.inlineEmbeds);
+                  embed.addField("Queued On", result.queuedOn, musicbot.inlineEmbeds);
+                  embed.setThumbnail(result.thumbnails.high.url);
+                  const resMem = client.users.get(result.requester);
+                  if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(result.requester).username}`, result.requesterAvatarURL);
+                  if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${result.requester})\``, result.requesterAvatarURL);
+                  msg.channel.send({
+                    embed
+                  });
+                } catch (e) {
+                  console.log(`[${msg.guild.name}] [playCmd] ` + e.stack);
+                };
+              } else {
+                try {
+                  var songTitle = result.title.replace(/\\/g, '\\\\')
+                    .replace(/\`/g, '\\`')
+                    .replace(/\*/g, '\\*')
+                    .replace(/_/g, '\\_')
+                    .replace(/~/g, '\\~')
+                    .replace(/`/g, '\\`');
+                  msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(result.requester).username}\nQueued On: ${result.queuedOn}`)
+                } catch (e) {
+                  console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
+                };
+              };
+
               if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
             });
         }
@@ -1547,6 +1582,7 @@ module.exports = function(client, options) {
           .replace(/`/g, '\\`');
         embed.setColor(0x27e33d);
         embed.addField(queue[0].channelTitle, `[${songTitle}](${queue[0].url})`, musicbot.inlineEmbeds);
+        embed.addField("Queued On", queue[0].queuedOn, musicbot.inlineEmbeds);
         embed.setThumbnail(queue[0].thumbnails.high.url);
         const resMem = client.users.get(queue[0].requester);
         if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, queue[0].requesterAvatarURL);
@@ -1565,7 +1601,7 @@ module.exports = function(client, options) {
           .replace(/_/g, '\\_')
           .replace(/~/g, '\\~')
           .replace(/`/g, '\\`');
-        msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(queue[0].requester).username}`)
+        msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(queue[0].requester).username}\nQueued On: ${queue[0].queuedOn}`)
       } catch (e) {
         console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
       };
@@ -1818,13 +1854,11 @@ module.exports = function(client, options) {
             musicbot.setLast(msg.guild.id, video);
             if (lvid !== video) musicbot.np(msg);
           };
-          let dispatcher = musicbot.streamMode == 0 ? connection.playStream(ytdl(video.url, {
+          let dispatcher = connection.playStream(ytdl(video.url, {
             filter: 'audioonly'
           }), {
             volume: (musicbot.defVolume / 100)
-          }) : connection.playStream(stream(video.url), {
-            volume: (musicbot.defVolume / 100)
-          });
+          })
 
           connection.on('error', (error) => {
             // Skip to the next song.
