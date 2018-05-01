@@ -654,9 +654,8 @@ module.exports = function(client, options) {
         musicbot.commands.set(musicbot.setCmd, set_props);
       };
 
-      // Load the aliases. Hopefully.
-      for (var i = 0; i < musicbot.commands.length; i++) {
-        let command = musicbot.commands[i];
+      // Load the aliases. Better.
+      musicbot.commands.forEach(function (command, key) {
         if (command.aliases.length > 0) {
           for (var a = 0; a < command.aliases.length; a++) {
             if (musicbot.logging) console.log(`[MUSIC] Mapping aliase for ${command.name}, ${command.aliases[a]}`);
@@ -672,7 +671,8 @@ module.exports = function(client, options) {
             musicbot.aliases.set(command.aliases[a], props);
           };
         };
-      };
+
+      });
     } catch (e) {
       console.log(e.stack);
       process.exit(1);
@@ -714,7 +714,9 @@ module.exports = function(client, options) {
           let tCmd = musicbot.commands.get(command);
           if (!tCmd.disabled) return musicbot[tCmd.run](msg, suffix, args);
         } else if (musicbot.aliases.has(command)) {
-          let aCmd = musicbot.commands.get(command);
+        //this command was make crash
+        //let aCmd = musicbot.commands.get(command);
+        let aCmd = musicbot.aliases.get(command);
           if (!aCmd.disabled) return musicbot[aCmd.run](msg, suffix, args);
         };
       } else if (message.startsWith(musicbot.botPrefix)) {
@@ -732,7 +734,9 @@ module.exports = function(client, options) {
           let tCmd = musicbot.commands.get(command);
           if (!tCmd.disabled) return musicbot[tCmd.run](msg, suffix, args);
         } else if (musicbot.aliases.has(command)) {
-          let aCmd = musicbot.commands.get(command);
+        //this command was make crash
+        //let aCmd = musicbot.commands.get(command);
+        let aCmd = musicbot.aliases.get(command);
           if (!aCmd.disabled) return musicbot[aCmd.run](msg, suffix, args);
         };
       };
@@ -751,7 +755,9 @@ module.exports = function(client, options) {
         let tCmd = musicbot.commands.get(command);
         if (!tCmd.disabled) return musicbot[tCmd.run](msg, suffix, args);
       } else if (musicbot.aliases.has(command)) {
-        let aCmd = musicbot.commands.get(command);
+        //this command was make crash
+        //let aCmd = musicbot.commands.get(command);
+        let aCmd = musicbot.aliases.get(command);
         if (!aCmd.disabled) return musicbot[aCmd.run](msg, suffix, args);
       };
     };
