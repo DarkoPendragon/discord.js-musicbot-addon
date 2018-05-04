@@ -1755,7 +1755,7 @@ module.exports = function(client, options) {
     const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
     if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
 
-    if (musicbot.queues[msg.guild.id].loop == "none") {
+    if (musicbot.queues[msg.guild.id].loop == "none" || !musicbot.queues[msg.guild.id].loop) {
       musicbot.queues[msg.guild.id].loop = "single";
       return msg.channel.send(musicbot.note('note', 'Looping single disabled! :repeat_one:'));
     } else if (musicbot.queues[msg.guild.id].loop == "single") {
