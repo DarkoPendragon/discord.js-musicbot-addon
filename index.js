@@ -948,12 +948,8 @@ module.exports = function(client, options) {
    * @returns {string} - The last played song.
    */
   musicbot.getLast = (server) => {
-    if (!musicbot.queue[server].last) {
-      musicbot.queue[server].last = {
-        looping: false,
-        last: null
-      };
-    };
+    if (musicbot.global) return null;
+    if (!musicbot.queue[server]) musicbot.queue[server] = [];
     if (!musicbot.queue[server].last) return null;
     else if (musicbot.queue[server].last) return musicbot.queue[server].last;
   };
