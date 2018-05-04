@@ -187,7 +187,14 @@ const music = new Music(client, {
 
 ***
 # Changelog
-***  
+***
+## 10.1.2
+* Fixed `leave`.
+
+## 10.1.1
+* Out of beta-beta release.
+* See 10.1.0 - 10.1.0-b3 for changes.
+
 ## 10.1.0-b3
 * Fixed `getLast` & `setLast`.
 
