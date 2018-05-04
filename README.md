@@ -93,6 +93,7 @@ The options you can pass in `music(client, {options})` and their types is as fol
 | maxQueueSize | Number | Max queue size allowed. | 20 |
 | defVolume | Number | The default volume of music. 1 - 200. | 50 |
 | anyoneCanSkip | Boolean | Allow anyone to skip. | false |
+| anyoneCanPause | Boolean | _*New!*_ Allow anyone to pause/resume. | false |
 | clearInvoker | Boolean | Delete messages that invoke a command. | false |
 | messageHelp | Boolean | Message the user on help command usage. If it can't, it will send it in the channel like normal. | false |
 | botAdmins | Array | An array of Discord user ID's to be admins as the bot. They will ignore permissions for the bot, including the set command. | [] |
@@ -187,6 +188,14 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 10.1.0-b2
+* Note: 'b' means `beta`, and the following number is the push number.
+* Added `anyoneCanPause`.
+* Reworked `loop`, removed `loopState` & `setLoopState`.
+* `loop` now has three options; none, single, queue.
+* Some other stuff I probably forgot.
+* Report beta bugs at: https://discord.gg/FKYrX4X
+
 ## 10.1.0
 * Removed `youtube-aduio-stream`.
 * Updated `README.md`.

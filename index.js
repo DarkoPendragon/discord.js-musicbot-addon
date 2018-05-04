@@ -1,7 +1,11 @@
 /*
  * Original code from nexu-dev, https://github.com/nexu-dev/discord.js-client
  * Newly edited by Darko Pendragon (Demise).
- * Other contributions: Rodabaugh, mcao.
+ * Other Credits:
+ * - Erik Rodabaugh
+ * - mcao.
+ * - Naz (Bluespring).
+ * - MatthewJ217.
  */
 
 const ytdl = require('ytdl-core');
@@ -104,9 +108,9 @@ module.exports = function(client, options) {
       this.requesterName = Boolean((options && options.requesterName) || false);
       this.inlineEmbeds = Boolean((options && options.inlineEmbeds) || false);
       this.maxWait = parseInt((options && options.maxWait) || 15000);
+      this.anyoneCanPause = Boolean((options && options.anyoneCanPause) || true);
       this.dateLocal = (options && options.dateLocal) || 'en-US';
       this.queues = {};
-      this.loops = {};
       this.advancedMode = (options && options.advancedMode) || {};
       this.botAdmins = [];
     }
@@ -890,41 +894,41 @@ module.exports = function(client, options) {
     return musicbot.queues[server];
   };
 
-  /**
-   * Gets the looping status of the server.
-   *
-   * @param {integer} server - The server id.
-   * @returns {boolean} - The queue state.
-   */
-  musicbot.loopState = (server) => {
-    if (musicbot.global) return false;
-    if (!musicbot.loops[server]) {
-      musicbot.loops[server] = {
-        looping: false,
-        last: null
-      };
-    };
-    if (musicbot.loops[server].looping) return true;
-    else if (!musicbot.loops[server].looping) return false;
-  };
+  // /**
+  //  * Gets the looping status of the server.
+  //  *
+  //  * @param {integer} server - The server id.
+  //  * @returns {boolean} - The queue state.
+  //  */
+  // musicbot.loopState = (server) => {
+  //   if (musicbot.global) return false;
+  //   if (!musicbot.loops[server]) {
+  //     musicbot.loops[server] = {
+  //       looping: false,
+  //       last: null
+  //     };
+  //   };
+  //   if (musicbot.loops[server].looping) return true;
+  //   else if (!musicbot.loops[server].looping) return false;
+  // };
 
-  /**
-   * Sets the looping status of the server.
-   *
-   * @param {integer} server - The server id.
-   * @returns {boolean} - The queue state.
-   */
-  musicbot.setLoopState = (server, state) => {
-    if (state && typeof state !== 'boolean') return console.log(`[loopingSet] ${new Error(`state wasnt a boolean`)}`);
-    if (!musicbot.loops[server]) {
-      musicbot.loops[server] = {
-        looping: false,
-        last: null
-      };
-    };
-    if (!state) return musicbot.loops[server].looping = false;
-    if (state) return musicbot.loops[server].looping = true;
-  };
+  // /**
+  //  * Sets the looping status of the server.
+  //  *
+  //  * @param {integer} server - The server id.
+  //  * @returns {boolean} - The queue state.
+  //  */
+  // musicbot.setLoopState = (server, state) => {
+  //   if (state && typeof state !== 'boolean') return console.log(`[loopingSet] ${new Error(`state wasnt a boolean`)}`);
+  //   if (!musicbot.loops[server]) {
+  //     musicbot.loops[server] = {
+  //       looping: false,
+  //       last: null
+  //     };
+  //   };
+  //   if (!state) return musicbot.loops[server].looping = false;
+  //   if (state) return musicbot.loops[server].looping = true;
+  // };
 
   /**
    * Sets the last played song of the server.
@@ -1393,8 +1397,8 @@ module.exports = function(client, options) {
         response.delete(5000);
       });
 
-    var first = musicbot.loopState(msg.guild.id);
-    if (first) musicbot.setLoopState(msg.guild.id, false);
+    var first = musicbot.queues[msg.guild.id].loop;
+    if (first !== "none") musicbot.queues[msg.guild.id].loop = "none";
 
     // Get the number to skip.
     let toSkip = 1; // Default 1.
@@ -1421,7 +1425,7 @@ module.exports = function(client, options) {
       return msg.channel.send(musicbot.note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
     };
 
-    if (first) return msg.channel.send(musicbot.note('note', 'Skipped **' + toSkip + '**! (Disabled Looping)'));
+    if (first !== "none") return msg.channel.send(musicbot.note('note', 'Skipped **' + toSkip + '**! (Disabled Looping)'));
     msg.channel.send(musicbot.note('note', 'Skipped **' + toSkip + '**!'));
   }
 
@@ -1621,7 +1625,7 @@ module.exports = function(client, options) {
     const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
     if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music being played.'));
 
-    if (!musicbot.isAdmin(msg.member)) return msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
+    if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
 
     // Pause.
     const dispatcher = voiceConnection.player.dispatcher;
@@ -1651,7 +1655,7 @@ module.exports = function(client, options) {
       if (!voiceConnection.player.dispatcher) return;
       voiceConnection.player.dispatcher.end();
       voiceConnection.disconnect();
-      musicbot.setLoopState(msg.guild.id, false);
+      musicbot.queues[msg.guild.id].loop == "none";
       msg.channel.send(musicbot.note('note', 'Successfully left your voice channel!'));
     } else {
       const chance = Math.floor((Math.random() * 100) + 1);
@@ -1679,7 +1683,7 @@ module.exports = function(client, options) {
 
       voiceConnection.player.dispatcher.end();
       voiceConnection.disconnect();
-      musicbot.setLoopState(msg.guild.id, false);
+      musicbot.queues[msg.guild.id].loop == "none";
     } else {
       msg.channel.send(musicbot.note('fail', `Only Admins are allowed to use this command.`));
     }
@@ -1698,8 +1702,7 @@ module.exports = function(client, options) {
     const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
     if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
 
-    if (!musicbot.isAdmin(msg.member))
-      return msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
+    if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
 
     // Resume.
     msg.channel.send(musicbot.note('note', 'Playback resumed.'));
@@ -1747,19 +1750,21 @@ module.exports = function(client, options) {
    */
   musicbot.loop = (msg, suffix) => {
     musicbot.dInvoker(msg);
+    const queue = musicbot.getQueue(msg.guild.id);
 
     const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
     if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
 
-    const looping = musicbot.loopState(msg.guild.id);
-
-    if (looping) {
-      musicbot.setLoopState(msg.guild.id, false);
-      return msg.channel.send(musicbot.note('note', 'Looping disabled! :arrow_forward:'));
-    } else if (!looping) {
-      musicbot.setLoopState(msg.guild.id, true);
-      return msg.channel.send(musicbot.note('note', 'Looping enabled! :repeat_one:'));
-    };
+    if (musicbot.queues[msg.guild.id].loop == "none") {
+      musicbot.queues[msg.guild.id].loop = "single";
+      return msg.channel.send(musicbot.note('note', 'Looping single disabled! :repeat_one:'));
+    } else if (musicbot.queues[msg.guild.id].loop == "single") {
+      musicbot.queues[msg.guild.id].loop = "queue";
+      return msg.channel.send(musicbot.note('note', 'Looping queue enabled! :repeat:'));
+    } else if (musicbot.queues[msg.guild.id].loop == "queue") {
+      musicbot.queues[msg.guild.id].loop == "none";
+      return msg.channel.send(musicbot.note('note', 'Looping disabled! :arrow_forawrd:'));
+    }
   };
 
   /**
@@ -1870,24 +1875,25 @@ module.exports = function(client, options) {
 
           dispatcher.on('error', (error) => {
             // Skip to the next song.
-            console.log(error);
-            console.log(`Dispatcher: ${error}`);
+            console.log(`Dispatcher: ${error.stack}`);
             if (msg && msg.channel) msg.channel.send(musicbot.note('fail', `Dispatcher error!\n\`${error}\``));
             queue.shift();
             musicbot.executeQueue(msg, queue);
           });
 
           dispatcher.on('end', () => {
-            var isLooping = musicbot.loopState(msg.guild.id);
             // Wait a second.
             setTimeout(() => {
-              if (isLooping) {
-                musicbot.executeQueue(msg, queue);
+              const nQueue = musicbot.getQueue(msg.guild.id);
+              if (musicbot.queues[msg.guild.id].loop == "single") {
+                musicbot.executeQueue(msg, queue); // Restart song.
+              } else if (musicbot.queues[msg.guild.id].loop == "queue") {
+                queue.push(queue[0]) // Add song 1 to the bottom of the queue.
+                queue.shift() // Next song.
+                executeQueue(msg, queue) // Start next song.
               } else {
-                if (queue.length > 0) {
-                  // Remove the song from the queue.
-                  queue.shift();
-                  // Play the next song in the queue.
+                if (queue.length > 0) { // Remove the song from the queue.
+                  queue.shift(); // Play the next song in the queue.
                   musicbot.executeQueue(msg, queue);
                 }
               }
