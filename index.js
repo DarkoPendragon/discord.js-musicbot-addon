@@ -1886,7 +1886,7 @@ module.exports = function(client, options) {
               } else if (musicbot.queues[msg.guild.id].loop == "queue") {
                 queue.push(queue[0]) // Add song 1 to the bottom of the queue.
                 queue.shift() // Next song.
-                executeQueue(msg, queue) // Start next song.
+                musicbot.executeQueue(msg, queue) // Start next song.
               } else {
                 if (queue.length > 0) { // Remove the song from the queue.
                   queue.shift(); // Play the next song in the queue.
