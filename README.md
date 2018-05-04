@@ -188,6 +188,9 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 10.1.0-b3
+* Fixed `getLast` & `setLast`.
+
 ## 10.1.0-b2
 * Note: 'b' means `beta`, and the following number is the push number.
 * Added `anyoneCanPause`.
