@@ -1,10 +1,13 @@
 /*
  * Original code from nexu-dev, https://github.com/nexu-dev/discord.js-client
  * Newly edited by Darko Pendragon (Demise).
- * Other contributions: Rodabaugh, mcao.
+ * Other Credits:
+ * - Erik Rodabaugh
+ * - mcao.
+ * - Naz (Bluespring).
+ * - MatthewJ217.
  */
-// const stream = require('youtube-audio-stream');
-const stream = require('youtube-audio-stream')
+
 const ytdl = require('ytdl-core');
 const {
   YTSearcher
@@ -33,7 +36,6 @@ module.exports = function(client, options) {
       this.botPrefixs = new Map();
       this.thumbnailType = (options && options.thumbnailType) || "high";
       this.anyoneCanLeave = Boolean((options && options.anyoneCanLeave) || false);
-      this.streamMode = parseInt((options && options.streamMode) || 0);
       this.global = (options && options.global) || false;
       this.maxQueueSize = parseInt((options && options.maxQueueSize) || 20);
       this.defVolume = parseInt((options && options.defVolume) || 50);
@@ -106,8 +108,9 @@ module.exports = function(client, options) {
       this.requesterName = Boolean((options && options.requesterName) || false);
       this.inlineEmbeds = Boolean((options && options.inlineEmbeds) || false);
       this.maxWait = parseInt((options && options.maxWait) || 15000);
+      this.anyoneCanPause = Boolean((options && options.anyoneCanPause) || true);
+      this.dateLocal = (options && options.dateLocal) || 'en-US';
       this.queues = {};
-      this.loops = {};
       this.advancedMode = (options && options.advancedMode) || {};
       this.botAdmins = [];
     }
@@ -154,6 +157,10 @@ module.exports = function(client, options) {
       console.log(new TypeError(`botAdmins must be an object (array)`));
       process.exit(1);
     }
+    if (typeof musicbot.dateLocal !== 'string') {
+      console.log(new TypeError(`dateLocal must be a string`));
+      process.exit(1);
+    }
     if (typeof musicbot.advancedMode !== 'object') {
       console.log(new TypeError(`advancedMode must be an object`));
       process.exit(1);
@@ -189,14 +196,6 @@ module.exports = function(client, options) {
     };
     if (typeof musicbot.playHelp !== 'string') {
       console.log(new TypeError(`playHelp must be a string`))
-      process.exit(1);
-    };
-    if (typeof musicbot.streamMode !== 'number') {
-      console.log(new TypeError(`streamMode must be a number`));
-      process.exit(1);
-    };
-    if (musicbot.streamMode !== 0 && musicbot.streamMode !== 1) {
-      console.log(new TypeError(`streamMode must be either 0 or 1`));
       process.exit(1);
     };
     if (typeof musicbot.playAlt !== 'object') {
@@ -895,41 +894,41 @@ module.exports = function(client, options) {
     return musicbot.queues[server];
   };
 
-  /**
-   * Gets the looping status of the server.
-   *
-   * @param {integer} server - The server id.
-   * @returns {boolean} - The queue state.
-   */
-  musicbot.loopState = (server) => {
-    if (musicbot.global) return false;
-    if (!musicbot.loops[server]) {
-      musicbot.loops[server] = {
-        looping: false,
-        last: null
-      };
-    };
-    if (musicbot.loops[server].looping) return true;
-    else if (!musicbot.loops[server].looping) return false;
-  };
+  // /**
+  //  * Gets the looping status of the server.
+  //  *
+  //  * @param {integer} server - The server id.
+  //  * @returns {boolean} - The queue state.
+  //  */
+  // musicbot.loopState = (server) => {
+  //   if (musicbot.global) return false;
+  //   if (!musicbot.loops[server]) {
+  //     musicbot.loops[server] = {
+  //       looping: false,
+  //       last: null
+  //     };
+  //   };
+  //   if (musicbot.loops[server].looping) return true;
+  //   else if (!musicbot.loops[server].looping) return false;
+  // };
 
-  /**
-   * Sets the looping status of the server.
-   *
-   * @param {integer} server - The server id.
-   * @returns {boolean} - The queue state.
-   */
-  musicbot.setLoopState = (server, state) => {
-    if (state && typeof state !== 'boolean') return console.log(`[loopingSet] ${new Error(`state wasnt a boolean`)}`);
-    if (!musicbot.loops[server]) {
-      musicbot.loops[server] = {
-        looping: false,
-        last: null
-      };
-    };
-    if (!state) return musicbot.loops[server].looping = false;
-    if (state) return musicbot.loops[server].looping = true;
-  };
+  // /**
+  //  * Sets the looping status of the server.
+  //  *
+  //  * @param {integer} server - The server id.
+  //  * @returns {boolean} - The queue state.
+  //  */
+  // musicbot.setLoopState = (server, state) => {
+  //   if (state && typeof state !== 'boolean') return console.log(`[loopingSet] ${new Error(`state wasnt a boolean`)}`);
+  //   if (!musicbot.loops[server]) {
+  //     musicbot.loops[server] = {
+  //       looping: false,
+  //       last: null
+  //     };
+  //   };
+  //   if (!state) return musicbot.loops[server].looping = false;
+  //   if (state) return musicbot.loops[server].looping = true;
+  // };
 
   /**
    * Sets the last played song of the server.
@@ -938,8 +937,8 @@ module.exports = function(client, options) {
    */
   musicbot.setLast = (server, last) => {
     if (musicbot.global) return null;
-    if (!last) musicbot.loops[server].last = null;
-    else if (last) musicbot.loops[server].last = last;
+    if (!last) musicbot.queue[server].last = null;
+    else if (last) musicbot.queue[server].last = last;
   };
 
   /**
@@ -949,14 +948,14 @@ module.exports = function(client, options) {
    * @returns {string} - The last played song.
    */
   musicbot.getLast = (server) => {
-    if (!musicbot.loops[server]) {
-      musicbot.loops[server] = {
+    if (!musicbot.queue[server].last) {
+      musicbot.queue[server].last = {
         looping: false,
         last: null
       };
     };
-    if (!musicbot.loops[server].last) return null;
-    else if (musicbot.loops[server].last) return musicbot.loops[server].last;
+    if (!musicbot.queue[server].last) return null;
+    else if (musicbot.queue[server].last) return musicbot.queue[server].last;
   };
 
   /**
@@ -1127,6 +1126,7 @@ module.exports = function(client, options) {
               if (queue.length !== (musicbot.maxQueueSize + 1) && video.resourceId.kind == 'youtube#video') {
                 if (!video.url) video.url = `https://www.youtube.com/watch?v=` + video.resourceId.videoId;
                 video.requester = msg.author.id;
+                video.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
                 if (musicbot.requesterName) video.requesterAvatarURL = msg.author.displayAvatarURL;
                 queue.push(video);
                 if (queue.length === 1) musicbot.executeQueue(msg, queue);
@@ -1148,8 +1148,47 @@ module.exports = function(client, options) {
               var result = searchResult.first;
               result.requester = msg.author.id;
               result.channelURL = `https://www.youtube.com/channel/${result.channelId}`;
+              result.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
               if (musicbot.requesterName) result.requesterAvatarURL = msg.author.displayAvatarURL;
               queue.push(result);
+
+              if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
+                const embed = new Discord.RichEmbed();
+                try {
+                  embed.setAuthor('Now Playing', client.user.avatarURL);
+                  var songTitle = result.title.replace(/\\/g, '\\\\')
+                    .replace(/\`/g, '\\`')
+                    .replace(/\*/g, '\\*')
+                    .replace(/_/g, '\\_')
+                    .replace(/~/g, '\\~')
+                    .replace(/`/g, '\\`');
+                  embed.setColor(0x27e33d);
+                  embed.addField(result.channelTitle, `[${songTitle}](${result.url})`, musicbot.inlineEmbeds);
+                  embed.addField("Queued On", result.queuedOn, musicbot.inlineEmbeds);
+                  embed.setThumbnail(result.thumbnails.high.url);
+                  const resMem = client.users.get(result.requester);
+                  if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(result.requester).username}`, result.requesterAvatarURL);
+                  if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${result.requester})\``, result.requesterAvatarURL);
+                  msg.channel.send({
+                    embed
+                  });
+                } catch (e) {
+                  console.log(`[${msg.guild.name}] [playCmd] ` + e.stack);
+                };
+              } else {
+                try {
+                  var songTitle = result.title.replace(/\\/g, '\\\\')
+                    .replace(/\`/g, '\\`')
+                    .replace(/\*/g, '\\*')
+                    .replace(/_/g, '\\_')
+                    .replace(/~/g, '\\~')
+                    .replace(/`/g, '\\`');
+                  msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(result.requester).username}\nQueued On: ${result.queuedOn}`)
+                } catch (e) {
+                  console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
+                };
+              };
+
               if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
             });
         }
@@ -1358,8 +1397,8 @@ module.exports = function(client, options) {
         response.delete(5000);
       });
 
-    var first = musicbot.loopState(msg.guild.id);
-    if (first) musicbot.setLoopState(msg.guild.id, false);
+    var first = musicbot.queues[msg.guild.id].loop;
+    if (first !== "none") musicbot.queues[msg.guild.id].loop = "none";
 
     // Get the number to skip.
     let toSkip = 1; // Default 1.
@@ -1386,7 +1425,7 @@ module.exports = function(client, options) {
       return msg.channel.send(musicbot.note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
     };
 
-    if (first) return msg.channel.send(musicbot.note('note', 'Skipped **' + toSkip + '**! (Disabled Looping)'));
+    if (first !== "none") return msg.channel.send(musicbot.note('note', 'Skipped **' + toSkip + '**! (Disabled Looping)'));
     msg.channel.send(musicbot.note('note', 'Skipped **' + toSkip + '**!'));
   }
 
@@ -1547,6 +1586,7 @@ module.exports = function(client, options) {
           .replace(/`/g, '\\`');
         embed.setColor(0x27e33d);
         embed.addField(queue[0].channelTitle, `[${songTitle}](${queue[0].url})`, musicbot.inlineEmbeds);
+        embed.addField("Queued On", queue[0].queuedOn, musicbot.inlineEmbeds);
         embed.setThumbnail(queue[0].thumbnails.high.url);
         const resMem = client.users.get(queue[0].requester);
         if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, queue[0].requesterAvatarURL);
@@ -1565,7 +1605,7 @@ module.exports = function(client, options) {
           .replace(/_/g, '\\_')
           .replace(/~/g, '\\~')
           .replace(/`/g, '\\`');
-        msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(queue[0].requester).username}`)
+        msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(queue[0].requester).username}\nQueued On: ${queue[0].queuedOn}`)
       } catch (e) {
         console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
       };
@@ -1585,7 +1625,7 @@ module.exports = function(client, options) {
     const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
     if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music being played.'));
 
-    if (!musicbot.isAdmin(msg.member)) return msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
+    if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
 
     // Pause.
     const dispatcher = voiceConnection.player.dispatcher;
@@ -1615,7 +1655,7 @@ module.exports = function(client, options) {
       if (!voiceConnection.player.dispatcher) return;
       voiceConnection.player.dispatcher.end();
       voiceConnection.disconnect();
-      musicbot.setLoopState(msg.guild.id, false);
+      musicbot.queues[msg.guild.id].loop == "none";
       msg.channel.send(musicbot.note('note', 'Successfully left your voice channel!'));
     } else {
       const chance = Math.floor((Math.random() * 100) + 1);
@@ -1643,7 +1683,7 @@ module.exports = function(client, options) {
 
       voiceConnection.player.dispatcher.end();
       voiceConnection.disconnect();
-      musicbot.setLoopState(msg.guild.id, false);
+      musicbot.queues[msg.guild.id].loop == "none";
     } else {
       msg.channel.send(musicbot.note('fail', `Only Admins are allowed to use this command.`));
     }
@@ -1662,8 +1702,7 @@ module.exports = function(client, options) {
     const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
     if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
 
-    if (!musicbot.isAdmin(msg.member))
-      return msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
+    if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(musicbot.note('fail', 'Only Admins are allowed to use this command.'));
 
     // Resume.
     msg.channel.send(musicbot.note('note', 'Playback resumed.'));
@@ -1711,19 +1750,21 @@ module.exports = function(client, options) {
    */
   musicbot.loop = (msg, suffix) => {
     musicbot.dInvoker(msg);
+    const queue = musicbot.getQueue(msg.guild.id);
 
     const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
     if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
 
-    const looping = musicbot.loopState(msg.guild.id);
-
-    if (looping) {
-      musicbot.setLoopState(msg.guild.id, false);
-      return msg.channel.send(musicbot.note('note', 'Looping disabled! :arrow_forward:'));
-    } else if (!looping) {
-      musicbot.setLoopState(msg.guild.id, true);
-      return msg.channel.send(musicbot.note('note', 'Looping enabled! :repeat_one:'));
-    };
+    if (musicbot.queues[msg.guild.id].loop == "none" || !musicbot.queues[msg.guild.id].loop) {
+      musicbot.queues[msg.guild.id].loop = "single";
+      return msg.channel.send(musicbot.note('note', 'Looping single disabled! :repeat_one:'));
+    } else if (musicbot.queues[msg.guild.id].loop == "single") {
+      musicbot.queues[msg.guild.id].loop = "queue";
+      return msg.channel.send(musicbot.note('note', 'Looping queue enabled! :repeat:'));
+    } else if (musicbot.queues[msg.guild.id].loop == "queue") {
+      musicbot.queues[msg.guild.id].loop == "none";
+      return msg.channel.send(musicbot.note('note', 'Looping disabled! :arrow_forawrd:'));
+    }
   };
 
   /**
@@ -1818,13 +1859,11 @@ module.exports = function(client, options) {
             musicbot.setLast(msg.guild.id, video);
             if (lvid !== video) musicbot.np(msg);
           };
-          let dispatcher = musicbot.streamMode == 0 ? connection.playStream(ytdl(video.url, {
+          let dispatcher = connection.playStream(ytdl(video.url, {
             filter: 'audioonly'
           }), {
             volume: (musicbot.defVolume / 100)
-          }) : connection.playStream(stream(video.url), {
-            volume: (musicbot.defVolume / 100)
-          });
+          })
 
           connection.on('error', (error) => {
             // Skip to the next song.
@@ -1836,24 +1875,25 @@ module.exports = function(client, options) {
 
           dispatcher.on('error', (error) => {
             // Skip to the next song.
-            console.log(error);
-            console.log(`Dispatcher: ${error}`);
+            console.log(`Dispatcher: ${error.stack}`);
             if (msg && msg.channel) msg.channel.send(musicbot.note('fail', `Dispatcher error!\n\`${error}\``));
             queue.shift();
             musicbot.executeQueue(msg, queue);
           });
 
           dispatcher.on('end', () => {
-            var isLooping = musicbot.loopState(msg.guild.id);
             // Wait a second.
             setTimeout(() => {
-              if (isLooping) {
-                musicbot.executeQueue(msg, queue);
+              const nQueue = musicbot.getQueue(msg.guild.id);
+              if (musicbot.queues[msg.guild.id].loop == "single") {
+                musicbot.executeQueue(msg, queue); // Restart song.
+              } else if (musicbot.queues[msg.guild.id].loop == "queue") {
+                queue.push(queue[0]) // Add song 1 to the bottom of the queue.
+                queue.shift() // Next song.
+                executeQueue(msg, queue) // Start next song.
               } else {
-                if (queue.length > 0) {
-                  // Remove the song from the queue.
-                  queue.shift();
-                  // Play the next song in the queue.
+                if (queue.length > 0) { // Remove the song from the queue.
+                  queue.shift(); // Play the next song in the queue.
                   musicbot.executeQueue(msg, queue);
                 }
               }
