@@ -188,6 +188,10 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 10.1.2
+* Fixed `play` showing 2 "Now Playing" events.
+* `queuedOn` should now work.
+
 ## 10.1.0-b3
 * Fixed `getLast` & `setLast`.
 

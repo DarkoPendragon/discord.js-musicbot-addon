@@ -2,16 +2,14 @@
  * Original code from nexu-dev, https://github.com/nexu-dev/discord.js-client
  * Newly edited by Darko Pendragon (Demise).
  * Other Credits:
- * - Erik Rodabaugh
+ * - Erik Rodabaugh.
  * - mcao.
  * - Naz (Bluespring).
  * - MatthewJ217.
  */
 
 const ytdl = require('ytdl-core');
-const {
-  YTSearcher
-} = require('ytsearcher');
+const {YTSearcher} = require('ytsearcher');
 const ypi = require('youtube-playlist-info');
 const Discord = require('discord.js');
 const PACKAGE = require('./package.json');
@@ -25,8 +23,6 @@ const PACKAGE = require('./package.json');
  */
 
 module.exports = function(client, options) {
-  if (PACKAGE.version === "10.0.3-aplha") return console.log(`=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\nThis is not a valid update. Please use a lower version. This update is to alert people that the old Discord server is down (see README.md for more).\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=`);
-  // Get all options.
   class Music {
     constructor(client, options) {
       this.commands = new Map();
@@ -1151,43 +1147,6 @@ module.exports = function(client, options) {
               result.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
               if (musicbot.requesterName) result.requesterAvatarURL = msg.author.displayAvatarURL;
               queue.push(result);
-
-              if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
-                const embed = new Discord.RichEmbed();
-                try {
-                  embed.setAuthor('Now Playing', client.user.avatarURL);
-                  var songTitle = result.title.replace(/\\/g, '\\\\')
-                    .replace(/\`/g, '\\`')
-                    .replace(/\*/g, '\\*')
-                    .replace(/_/g, '\\_')
-                    .replace(/~/g, '\\~')
-                    .replace(/`/g, '\\`');
-                  embed.setColor(0x27e33d);
-                  embed.addField(result.channelTitle, `[${songTitle}](${result.url})`, musicbot.inlineEmbeds);
-                  embed.addField("Queued On", result.queuedOn, musicbot.inlineEmbeds);
-                  embed.setThumbnail(result.thumbnails.high.url);
-                  const resMem = client.users.get(result.requester);
-                  if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(result.requester).username}`, result.requesterAvatarURL);
-                  if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${result.requester})\``, result.requesterAvatarURL);
-                  msg.channel.send({
-                    embed
-                  });
-                } catch (e) {
-                  console.log(`[${msg.guild.name}] [playCmd] ` + e.stack);
-                };
-              } else {
-                try {
-                  var songTitle = result.title.replace(/\\/g, '\\\\')
-                    .replace(/\`/g, '\\`')
-                    .replace(/\*/g, '\\*')
-                    .replace(/_/g, '\\_')
-                    .replace(/~/g, '\\~')
-                    .replace(/`/g, '\\`');
-                  msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(result.requester).username}\nQueued On: ${result.queuedOn}`)
-                } catch (e) {
-                  console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
-                };
-              };
 
               if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
             });
