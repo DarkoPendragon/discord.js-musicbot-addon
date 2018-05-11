@@ -1,5 +1,5 @@
 [![npm package](https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/discord.js-musicbot-addon/)  
-[![Discord Server](https://discordapp.com/api/guilds/427239929924288532/embed.png)](https://discord.gg/cADwxKs)  [![Downlaods](https://img.shields.io/npm/dt/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)  [![Version](https://img.shields.io/npm/v/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)
+[![Discord Server](https://discordapp.com/api/guilds/427239929924288532/embed.png)](https://discord.gg/FKYrX4X)  [![Downlaods](https://img.shields.io/npm/dt/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)  [![Version](https://img.shields.io/npm/v/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)
 ***
 *For some reason, The Den (discord server) no longer exists. A new server has been created and will be re-made overtime for those interested in joining. https://discord.gg/FKYrX4X*  
 ***
@@ -188,6 +188,13 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 10.1.6
+* Fixed `getLast` & `setLast`.
+* Redid the way the bot sets aliases.
+
+## 10.1.5
+* `NPM` fixes.
+
 ## 10.1.2
 * Fixed `play` showing 2 "Now Playing" events.
 * `queuedOn` should now work.

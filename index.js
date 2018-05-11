@@ -4,7 +4,7 @@
  * Other Credits:
  * - Erik Rodabaugh.
  * - mcao.
- * - Naz (Bluespring).
+ * - Naz (BluSpring).
  * - MatthewJ217.
  */
 
@@ -650,11 +650,10 @@ module.exports = function(client, options) {
       };
 
       // Load the aliases. Hopefully.
-      for (var i = 0; i < musicbot.commands.length; i++) {
-        let command = musicbot.commands[i];
+      musicbot.commands.forEach(command => {
         if (command.aliases.length > 0) {
-          for (var a = 0; a < command.aliases.length; a++) {
-            if (musicbot.logging) console.log(`[MUSIC] Mapping aliase for ${command.name}, ${command.aliases[a]}`);
+          command.aliases.forEach(ail => {
+            if (musicbot.logging) console.log(`[MUSIC] Mapping aliase for ${command.name}, ${ail}`);
             let props = {
               name: command.name,
               usage: command.usage,
@@ -664,10 +663,10 @@ module.exports = function(client, options) {
               admin: command.admin,
               run: command.run
             };
-            musicbot.aliases.set(command.aliases[a], props);
-          };
+            musicbot.aliases.set(ail, props);
+          })
         };
-      };
+      });
     } catch (e) {
       console.log(e.stack);
       process.exit(1);
@@ -890,42 +889,6 @@ module.exports = function(client, options) {
     return musicbot.queues[server];
   };
 
-  // /**
-  //  * Gets the looping status of the server.
-  //  *
-  //  * @param {integer} server - The server id.
-  //  * @returns {boolean} - The queue state.
-  //  */
-  // musicbot.loopState = (server) => {
-  //   if (musicbot.global) return false;
-  //   if (!musicbot.loops[server]) {
-  //     musicbot.loops[server] = {
-  //       looping: false,
-  //       last: null
-  //     };
-  //   };
-  //   if (musicbot.loops[server].looping) return true;
-  //   else if (!musicbot.loops[server].looping) return false;
-  // };
-
-  // /**
-  //  * Sets the looping status of the server.
-  //  *
-  //  * @param {integer} server - The server id.
-  //  * @returns {boolean} - The queue state.
-  //  */
-  // musicbot.setLoopState = (server, state) => {
-  //   if (state && typeof state !== 'boolean') return console.log(`[loopingSet] ${new Error(`state wasnt a boolean`)}`);
-  //   if (!musicbot.loops[server]) {
-  //     musicbot.loops[server] = {
-  //       looping: false,
-  //       last: null
-  //     };
-  //   };
-  //   if (!state) return musicbot.loops[server].looping = false;
-  //   if (state) return musicbot.loops[server].looping = true;
-  // };
-
   /**
    * Sets the last played song of the server.
    *
@@ -933,8 +896,8 @@ module.exports = function(client, options) {
    */
   musicbot.setLast = (server, last) => {
     if (musicbot.global) return null;
-    if (!last) musicbot.queue[server].last = null;
-    else if (last) musicbot.queue[server].last = last;
+    if (!last) musicbot.queues[server].last = null;
+    else if (last) musicbot.queues[server].last = last;
   };
 
   /**
@@ -944,14 +907,14 @@ module.exports = function(client, options) {
    * @returns {string} - The last played song.
    */
   musicbot.getLast = (server) => {
-    if (!musicbot.queue[server].last) {
-      musicbot.queue[server].last = {
+    if (!musicbot.queues[server].last) {
+      musicbot.queues[server].last = {
         looping: false,
         last: null
       };
     };
-    if (!musicbot.queue[server].last) return null;
-    else if (musicbot.queue[server].last) return musicbot.queue[server].last;
+    if (!musicbot.queues[server].last) return null;
+    else if (musicbot.queues[server].last) return musicbot.queues[server].last;
   };
 
   /**
