@@ -188,11 +188,15 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
-## 1.0.1.7
-* Misic.
+## 10.1.8
+* Play will display a "Queued Song" message again.
+* Play's "Queued Song" message will only display if the queues first "Now Playing" message will not appear.
+
+## 10.1.7
+* Reowkred `getLast` & `setLast`.
 
 ## 10.1.6
-* Fixed `getLast` & `setLast`.
+* ~~Fixed `getLast` & `setLast`.~~
 * Redid the way the bot sets aliases.
 
 ## 10.1.5

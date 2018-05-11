@@ -1112,6 +1112,43 @@ module.exports = function(client, options) {
               if (musicbot.requesterName) result.requesterAvatarURL = msg.author.displayAvatarURL;
               queue.push(result);
 
+              if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS') && queue.length !== 1) {
+                const embed = new Discord.RichEmbed();
+                try {
+                  embed.setAuthor('Queued Song', client.user.avatarURL);
+                  var songTitle = queue[0].title.replace(/\\/g, '\\\\')
+                    .replace(/\`/g, '\\`')
+                    .replace(/\*/g, '\\*')
+                    .replace(/_/g, '\\_')
+                    .replace(/~/g, '\\~')
+                    .replace(/`/g, '\\`');
+                  embed.setColor(0x27e33d);
+                  embed.addField(queue[0].channelTitle, `[${songTitle}](${queue[0].url})`, musicbot.inlineEmbeds);
+                  embed.addField("Queued At", queue[0].queuedOn, musicbot.inlineEmbeds);
+                  embed.setThumbnail(queue[0].thumbnails.high.url);
+                  const resMem = client.users.get(queue[0].requester);
+                  if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(queue[0].requester).username}`, queue[0].requesterAvatarURL);
+                  if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${queue[0].requester})\``, queue[0].requesterAvatarURL);
+                  msg.channel.send({
+                    embed
+                  });
+                } catch (e) {
+                  console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
+                };
+              } else {
+                try {
+                  var songTitle = queue[0].title.replace(/\\/g, '\\\\')
+                    .replace(/\`/g, '\\`')
+                    .replace(/\*/g, '\\*')
+                    .replace(/_/g, '\\_')
+                    .replace(/~/g, '\\~')
+                    .replace(/`/g, '\\`');
+                  msg.channel.send(`Queued Song: **${songTitle}**\nRequested By: ${client.users.get(queue[0].requester).username}\nQueued On: ${queue[0].queuedOn}`)
+                } catch (e) {
+                  console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
+                };
+              }
+
               if (queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
             });
         }
