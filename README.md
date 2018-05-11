@@ -188,6 +188,9 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 10.1.9
+* Fixed `loop` typos.
+
 ## 10.1.8
 * Play will display a "Queued Song" message again.
 * Play's "Queued Song" message will only display if the queues first "Now Playing" message will not appear.

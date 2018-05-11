@@ -1717,13 +1717,13 @@ module.exports = function(client, options) {
 
     if (musicbot.queues[msg.guild.id].loop == "none" || !musicbot.queues[msg.guild.id].loop) {
       musicbot.queues[msg.guild.id].loop = "single";
-      return msg.channel.send(musicbot.note('note', 'Looping single disabled! :repeat_one:'));
+      return msg.channel.send(musicbot.note('note', 'Looping single enabled! :repeat_one:'));
     } else if (musicbot.queues[msg.guild.id].loop == "single") {
       musicbot.queues[msg.guild.id].loop = "queue";
       return msg.channel.send(musicbot.note('note', 'Looping queue enabled! :repeat:'));
     } else if (musicbot.queues[msg.guild.id].loop == "queue") {
       musicbot.queues[msg.guild.id].loop == "none";
-      return msg.channel.send(musicbot.note('note', 'Looping disabled! :arrow_forawrd:'));
+      return msg.channel.send(musicbot.note('note', 'Looping disabled! :arrow_forward:'));
     }
   };
 
