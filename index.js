@@ -895,9 +895,12 @@ module.exports = function(client, options) {
    * @param {integer} server - The server id.
    */
   musicbot.setLast = (server, last) => {
-    if (musicbot.global) return null;
-    if (!last) musicbot.queues[server].last = null;
-    else if (last) musicbot.queues[server].last = last;
+    return new Promise((resolve, reject) => {
+      if (musicbot.global) reject("Global Enabled");
+      musicbot.queues[server].last = last;
+      console.log(musicbot.queues);
+      resolve(musicbot.queues[server]);
+    });
   };
 
   /**
@@ -907,14 +910,12 @@ module.exports = function(client, options) {
    * @returns {string} - The last played song.
    */
   musicbot.getLast = (server) => {
-    if (!musicbot.queues[server].last) {
-      musicbot.queues[server].last = {
-        looping: false,
-        last: null
-      };
-    };
-    if (!musicbot.queues[server].last) return null;
-    else if (musicbot.queues[server].last) return musicbot.queues[server].last;
+    return new Promise((resolve, reject) => {
+      if (musicbot.global) reject("Global Enabled");
+      let q = musicbot.queues[server];
+      if (!q || !q.last) resolve(null)
+      else if (q.last) resolve(q.last);
+    });
   };
 
   /**
@@ -1777,9 +1778,20 @@ module.exports = function(client, options) {
         // Play the video.
         try {
           if (!musicbot.global) {
-            const lvid = musicbot.getLast(msg.guild.id);
-            musicbot.setLast(msg.guild.id, video);
-            if (lvid !== video) musicbot.np(msg);
+            musicbot.getLast(msg.guild.id).then((response) => {
+              musicbot.setLast(msg.guild.id, video).then((res) => {
+                console.log(res);
+                if (response !== video) musicbot.np(msg);
+              }).catch((res) => {
+                msg.channel.send(musicbot.note('fail', 'Error occoured, try again!'));
+                return console.log(new Error("Dispatcher SetLast: " + response));
+              })
+            }).catch((response) => {
+              if (response) {
+                msg.channel.send(musicbot.note('fail', 'Error occoured, try again!'));
+                return console.log(new Error("Dispatcher GetLast: " + response));
+              }
+            });
           };
           let dispatcher = connection.playStream(ytdl(video.url, {
             filter: 'audioonly'

@@ -188,6 +188,9 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 1.0.1.7
+* Misic.
+
 ## 10.1.6
 * Fixed `getLast` & `setLast`.
 * Redid the way the bot sets aliases.
