@@ -188,6 +188,9 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 10.1.10
+* Fixed `loop` single dispatcher error.
+
 ## 10.1.9
 * Fixed `loop` typos.
 

@@ -1817,7 +1817,6 @@ module.exports = function(client, options) {
           if (!musicbot.global) {
             musicbot.getLast(msg.guild.id).then((response) => {
               musicbot.setLast(msg.guild.id, video).then((res) => {
-                console.log(res);
                 if (response !== video) musicbot.np(msg);
               }).catch((res) => {
                 msg.channel.send(musicbot.note('fail', 'Error occoured, try again!'));
@@ -1861,7 +1860,7 @@ module.exports = function(client, options) {
               } else if (musicbot.queues[msg.guild.id].loop == "queue") {
                 queue.push(queue[0]) // Add song 1 to the bottom of the queue.
                 queue.shift() // Next song.
-                executeQueue(msg, queue) // Start next song.
+                musicbot.executeQueue(msg, queue) // Start next song.
               } else {
                 if (queue.length > 0) { // Remove the song from the queue.
                   queue.shift(); // Play the next song in the queue.
