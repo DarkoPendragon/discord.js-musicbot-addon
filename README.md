@@ -188,6 +188,11 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+## 10.1.11
+* Fixed `leave`, again.
+* Added `verifyQueue` to hopefully fix some issues.
+* Setting `maxQueueSize` to 0 will allow an unlimited queue.
+
 ## 10.1.10
 * Fixed `loop` single dispatcher error.
 

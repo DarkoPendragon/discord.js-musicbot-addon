@@ -33,7 +33,7 @@ module.exports = function(client, options) {
       this.thumbnailType = (options && options.thumbnailType) || "high";
       this.anyoneCanLeave = Boolean((options && options.anyoneCanLeave) || false);
       this.global = (options && options.global) || false;
-      this.maxQueueSize = parseInt((options && options.maxQueueSize) || 20);
+      this.maxQueueSize = parseInt((options && options.maxQueueSize) || 100);
       this.defVolume = parseInt((options && options.defVolume) || 50);
       this.anyoneCanSkip = Boolean((options && options.anyoneCanSkip) || false);
       this.clearInvoker = Boolean((options && options.clearInvoker) || false);
@@ -892,7 +892,9 @@ module.exports = function(client, options) {
   /**
    * Sets the last played song of the server.
    *
-   * @param {integer} server - The server id.
+   * @param {string} server - The server id.
+   * @param {object} last - Video to be set for last.
+   * @returns {Promise} - Returns the queue once last is set.
    */
   musicbot.setLast = (server, last) => {
     return new Promise((resolve, reject) => {
@@ -907,7 +909,7 @@ module.exports = function(client, options) {
    * Gets the last played song of the server.
    *
    * @param {integer} server - The server id.
-   * @returns {string} - The last played song.
+   * @returns {Promise} - Retunrs the queues last.
    */
   musicbot.getLast = (server) => {
     return new Promise((resolve, reject) => {
@@ -915,6 +917,24 @@ module.exports = function(client, options) {
       let q = musicbot.queues[server];
       if (!q || !q.last) resolve(null)
       else if (q.last) resolve(q.last);
+    });
+  };
+
+  /**
+   * Verifies if the queue is empty or not.
+   *
+   * @param {object} queue - Queue to check if empty.
+   * @returns {Promise} - If empty or not.
+   */
+  musicbot.verifyQueue = (queue) => {
+    return new Promise((resolve, reject) => {
+      if (!queue) reject(); // Reject if no queue passed.
+
+      if (queue.length == 0) resolve(true); // If the queue is somehow at 0, resolve TRUE.
+
+      if (queue.length == 1 && queue.last || queue.loop) resolve(true) // If the queue length is 1, and it has loop OR last, resolve TRUE.
+      else if (queue.length == 2 && queue.last && queue.loop) resolve("empty") // If the queue length is 2, and it has last AND loop, resolve TRUE.
+      else if (queue.length >= 3) resolve(false); // Relove FALSE for a queue length that equals 3 or more, as it will contain videos.
     });
   };
 
@@ -1061,7 +1081,7 @@ module.exports = function(client, options) {
     const queue = musicbot.getQueue(msg.guild.id);
 
     // Check if the queue has reached its maximum size.
-    if (queue.length >= musicbot.maxQueueSize) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
+    if (queue.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
 
     // Get the video information.
     // I don't know why I use trim when I don't need to... Yeah.
@@ -1083,7 +1103,8 @@ module.exports = function(client, options) {
 
             newItems.forEach(video => {
               ran++;
-              if (queue.length !== (musicbot.maxQueueSize + 1) && video.resourceId.kind == 'youtube#video') {
+              if (queue.length == (musicbot.maxQueueSize + 1) && musicbot.maxQueueSize !== 0) return;
+              if (video.resourceId.kind == 'youtube#video') {
                 if (!video.url) video.url = `https://www.youtube.com/watch?v=` + video.resourceId.videoId;
                 video.requester = msg.author.id;
                 video.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
@@ -1112,7 +1133,7 @@ module.exports = function(client, options) {
               if (musicbot.requesterName) result.requesterAvatarURL = msg.author.displayAvatarURL;
               queue.push(result);
 
-              if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS') && queue.length !== 1) {
+              if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS') && queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) {
                 const embed = new Discord.RichEmbed();
                 try {
                   embed.setAuthor('Queued Song', client.user.avatarURL);
@@ -1174,7 +1195,7 @@ module.exports = function(client, options) {
     const queue = musicbot.getQueue(msg.guild.id);
 
     // Check if the queue has reached its maximum size.
-    if (queue.length >= musicbot.maxQueueSize) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
+    if (queue.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
 
     // Get the video information.
     // This is pretty much just play but 10 results to queue.
@@ -1533,6 +1554,23 @@ module.exports = function(client, options) {
     if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
     const dispatcher = voiceConnection.player.dispatcher;
     const queue = musicbot.getQueue(msg.guild.id);
+
+    musicbot.verifyQueue(queue).then((res) => {
+      if (!res || res == false) {
+        msg.channel.send(musicbot.note('fail', 'Failed on Now Playing command!'));
+        console.error(new Error("Failed on NP. Invalid queue."));
+        const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+        if (voiceConnection !== null) return voiceConnection.disconnect();
+      }
+    }).catch((res) => {
+      if (res) {
+        msg.channel.send(musicbot.note('fail', 'Failed on Now Playing command!'));
+        console.error(new Error("Failed on NP. Invalid queue. " + res));
+        const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+        if (voiceConnection !== null) return voiceConnection.disconnect();
+      }
+    });
+
     if (msg.channel.permissionsFor(msg.guild.me)
       .has('EMBED_LINKS')) {
       const embed = new Discord.RichEmbed();
@@ -1604,7 +1642,7 @@ module.exports = function(client, options) {
   musicbot.leave = (msg, suffix) => {
     musicbot.dInvoker(msg);
 
-    if (musicbot.isAdmin(msg.member) && musicbot.anyoneCanLeave === true) {
+    if (musicbot.isAdmin(msg.member) || musicbot.anyoneCanLeave === true) {
       const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
       if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'I\'m not in a voice channel.'));
       // Clear the queue.
@@ -1775,13 +1813,25 @@ module.exports = function(client, options) {
    */
   musicbot.executeQueue = (msg, queue) => {
     // If the queue is empty, finish.
-    if (queue.length === 0) {
-      msg.channel.send(musicbot.note('note', 'Playback finished.'));
+    musicbot.verifyQueue(queue).then(res => {
+      if (res == true) {
+        msg.channel.send(musicbot.note('note', 'Playback finished.'));
 
-      // Leave the voice channel.
-      const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-      if (voiceConnection !== null) return voiceConnection.disconnect();
-    }
+        // Leave the voice channel.
+        const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+        if (voiceConnection !== null) return voiceConnection.disconnect();
+      };
+    }).catch(res => {
+      if (res) {
+        console.log(`[executeQueue]: ${new Error(res)}`);
+
+        msg.channel.send(musicbot.note('fail', 'Error occoured!'));
+
+        // Leave the voice channel.
+        const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+        if (voiceConnection !== null) return voiceConnection.disconnect();
+      }
+    })
 
     new Promise((resolve, reject) => {
         // Join the voice channel if not already in one.
