@@ -188,10 +188,14 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
-## 10.1.11
+# 11.0.0
 * Fixed `leave`, again.
 * Added `verifyQueue` to hopefully fix some issues.
 * Setting `maxQueueSize` to 0 will allow an unlimited queue.
+* Reworked `exports` to allow data flow.
+* Changed how the bot starts.
+* `<Music>.start` instead of making it as a constructor.
+* Added file: `classBotExample.js` in `exmaples`.
 
 ## 10.1.10
 * Fixed `loop` single dispatcher error.
@@ -253,7 +257,7 @@ const music = new Music(client, {
 ## 1.10.1
 * Corrected `streamMode` error.
 
-## 1.10.0
+# 1.10.0
 * Added the search command.
 * Added the `thumbnailType` option.
 * Play command now plays the first result instead of searching.
@@ -269,7 +273,7 @@ const music = new Music(client, {
 * Added the `maxWait` option.
 * Fixed command run functions.
 
-## 1.9.0  
+# 1.9.0  
 * Requires Node 8+.
 * Added aliases support.  
 * Small changes to some code.
@@ -289,7 +293,7 @@ const music = new Music(client, {
 * Errors now display when queueing a song rather than showing "timed out" when one actually occurs. Probably.
 
 ## 1.8.2  
-* _Actually_ fixed the play function queueing the wrong song. (_update: I lied_)
+* ~~Actually fixed the play function queueing the wrong song.~~
 
 ## 1.8.1  
 * Fixed the queueing error within the play function.

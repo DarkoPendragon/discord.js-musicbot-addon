@@ -22,7 +22,7 @@ const PACKAGE = require('./package.json');
  * @param {object} options - Options to configure the client bot.
  */
 
-module.exports = function(client, options) {
+exports.start = (client, options) => {
   class Music {
     constructor(client, options) {
       this.commands = new Map();
@@ -117,6 +117,7 @@ module.exports = function(client, options) {
   }
 
   var musicbot = new Music(client, options);
+  exports.bot = musicbot;
 
   if (musicbot.advancedMode && musicbot.advancedMode.enabled) {
     musicbot.advancedMode = {
@@ -900,7 +901,6 @@ module.exports = function(client, options) {
     return new Promise((resolve, reject) => {
       if (musicbot.global) reject("Global Enabled");
       musicbot.queues[server].last = last;
-      console.log(musicbot.queues);
       resolve(musicbot.queues[server]);
     });
   };
@@ -1127,6 +1127,7 @@ module.exports = function(client, options) {
             .then(searchResult => {
               if (!searchResult.totalResults || searchResult.totalResults === 0) return response.edit(musicbot.note('fail', 'Failed to get search results.'));
               var result = searchResult.first;
+              console.log(result);
               result.requester = msg.author.id;
               result.channelURL = `https://www.youtube.com/channel/${result.channelId}`;
               result.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
@@ -1406,7 +1407,7 @@ module.exports = function(client, options) {
       return msg.channel.send(musicbot.note('fail', `Error occoured!\n\`\`\`\n${nerr[0]}: ${nerr[1]}\n\`\`\``));
     };
 
-    if (first !== "none") return msg.channel.send(musicbot.note('note', 'Skipped **' + toSkip + '**! (Disabled Looping)'));
+    if (musicbot.queues[msg.guild.id] && musicbot.queues[msg.guild.id].loop !== "none") return msg.channel.send(musicbot.note('note', 'Skipped **' + toSkip + '**! (Disabled Looping)'));
     msg.channel.send(musicbot.note('note', 'Skipped **' + toSkip + '**!'));
   }
 

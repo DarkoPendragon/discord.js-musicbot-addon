@@ -20,7 +20,7 @@ let mprop = {
 // Change be changed latter with the set command.
 mapper.set('387727240047230976', mprop);
 
-const music = new Music(client, {
+Music.start(client, {
   youtubeKey: "somekey-her/e",        // The youtube api key.
   prefix: settings.prefix,            // Prefix for the commands. Will be used for deafult prefix's for servers.
   botAdmins: ["275147928249827338"],  // List of ID's for admins (bypasses all permissions).
