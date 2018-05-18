@@ -1,4 +1,4 @@
-// For v11 and above only.
+// For version 11 and above only.
 
 const Discord = require('discord.js');
 
@@ -16,8 +16,8 @@ client.on('ready', () => {
     console.log(`[Start] ${new Date()}`);
 });
 
-Music.start(client, {
+client.music.start(client, {
   youtubeKey: "some-key_here"
 });
 
-client.login(client.settigs.token);
+client.login(client.settings.token);

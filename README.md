@@ -70,7 +70,7 @@ const Discord = require('discord.js');
 const Music = require('discord.js-musicbot-addon');
 const client = new Discord.Client();
 
-const music = new Music(client, {
+Music.start(client, {
   youtubeKey: 'sum-key_hhereas'
 });
 
@@ -171,7 +171,7 @@ The options you can pass in `music(client, {options})` and their types is as fol
 
 An example of a few custom options would be:  
 ```javascript
-const music = new Music(client, {
+Music.start(client, {
   prefix: ">",
   maxQueueSize: "100",
   disableLoop: true,
@@ -188,6 +188,10 @@ const music = new Music(client, {
 ***
 # Changelog
 ***  
+# 11.0.1
+* Made `volume` no longer reduce volume on command usage with no suffix.
+* Updated examples.
+
 # 11.0.0
 * Fixed `leave`, again.
 * Added `verifyQueue` to hopefully fix some issues.

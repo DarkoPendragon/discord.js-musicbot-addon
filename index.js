@@ -1718,6 +1718,9 @@ exports.start = (client, options) => {
    */
   musicbot.volume = (msg, suffix) => {
     musicbot.dInvoker(msg)
+
+    if (!suffix) return msg.channel.send(musicbot.note('fail', 'No volume specified.'));
+    suffix = parseInt(suffix);
     // Get the voice connection.
     const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
     if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
@@ -1731,7 +1734,7 @@ exports.start = (client, options) => {
     // Get the dispatcher
     const dispatcher = voiceConnection.player.dispatcher;
 
-    if (suffix > 200 || suffix < 0) return msg.channel.send(musicbot.note('fail', 'Volume out of range!'))
+    if (suffix > 200 || suffix <= 0) return msg.channel.send(musicbot.note('fail', 'Volume out of range, must be within 1 - 200'))
       .then((response) => {
         response.delete(5000);
       });
