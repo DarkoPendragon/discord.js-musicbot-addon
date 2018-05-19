@@ -112,6 +112,7 @@ The options you can pass in `music(client, {options})` and their types is as fol
 | aliveMessageTime | Number | Time in _**milliseconds**_ the bot logs the message. | 600000 |
 | requesterName | Boolean | Display the username of the song requester. | false |
 | inlineEmbeds | Boolean | Whether or not to make embed fields inline (help command and some fields are excluded). | false |
+| embedColor | Array, Number, String | Color resolvable for embeds produced by the bot. | 'GREEN' |
 
 ## Command Options.  
 | Option | Type | Description | Default |
@@ -188,6 +189,9 @@ Music.start(client, {
 ***
 # Changelog
 ***  
+# 11.0.2
+* Added custom embed colors, see https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable.
+
 # 11.0.1
 * Made `volume` no longer reduce volume on command usage with no suffix.
 * Updated examples.
