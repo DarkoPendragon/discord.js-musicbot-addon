@@ -1,7 +1,7 @@
 {
   "name": "discord.js-musicbot-addon",
-  "version": "11.0.2",
-  "description": "A music bot addon for an already made Discord.js bot to run with or simply run by itself.",
+  "version": "11.0.3",
+  "description": "A music bot addon for Discord.js bots, using YouTube. Simply add it to a bot or run it entirly by itself.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

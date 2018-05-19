@@ -189,6 +189,10 @@ Music.start(client, {
 ***
 # Changelog
 ***  
+# 11.0.3
+* Fixed `search` not setting a `queuedOn`.
+* Fixed `play`'s 'Queued Now' embed showing case.
+
 # 11.0.2
 * Added custom embed colors, see https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable.
 

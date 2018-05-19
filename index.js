@@ -1140,7 +1140,7 @@ exports.start = (client, options) => {
               if (musicbot.requesterName) result.requesterAvatarURL = msg.author.displayAvatarURL;
               queue.push(result);
 
-              if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS') && queue.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) {
+              if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS') && queue.length > 3 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) {
                 const embed = new Discord.RichEmbed();
                 try {
                   embed.setAuthor('Queued Song', client.user.avatarURL);
@@ -1352,6 +1352,7 @@ exports.start = (client, options) => {
               result.requester = msg.author.id;
               if (musicbot.requesterName) result.requesterAvatarURL = msg.author.displayAvatarURL;
               result.channelURL = `https://www.youtube.com/channel/${result.channelId}`;
+              result.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
               videos.push(result);
               if (i === max) {
                 i = 101;
