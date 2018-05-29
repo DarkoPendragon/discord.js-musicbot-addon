@@ -186,6 +186,10 @@ Music.start(client, {
 ***
 # Changelog
 ***  
+## 12.0.1
+* Fixed a `Promise` format error in `checkQueues`.
+* Fixed `index.min.js`.
+
 # 12.0.0
 * `ownerOverMember` now overrides `canAdjust`.
 * Re-worked queue system and related functions.
@@ -199,7 +203,6 @@ Music.start(client, {
 * Baked chocolate for my girlfriend.
 * Added `checkQueues`. *Use only if needed.*
 * Cleared browser history for the past week. #nekoparaForLife.
-*
 
 ## 11.0.3
 * Fixed `search` not setting a `queuedOn`.

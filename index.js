@@ -867,12 +867,12 @@ exports.start = (client, options) => {
     console.log(`------- ${client.user.username} -------\n> Version: ${PACKAGE.version}\n> Extra Logging: ${musicbot.logging}.\n> Using Global Queue: ${musicbot.global}.\n> Node.js Version: ${process.version}\n------- ${client.user.username} -------`);
     if (!musicbot.enableQueueStat) console.log(`[MUSIC] enableQueueStat is 'false'. Queue will not have a Playing/Paused indicator.`);
 
-    if (musicbot.checkQueues) {
+    if (musicbot.checkQueues == true) {
       console.warn(`[MUSIC] checkQueues is enabled.`);
 
       setInterval(() => {
         function verify(q) {
-          return new Promise((resolve, reject) {
+          return new Promise((resolve, reject) => {
             if (!q) reject(0);
             else if (q && q.songs == null) reject(1);
             else if (q && q.songs.length > musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) reject(1);
@@ -885,7 +885,7 @@ exports.start = (client, options) => {
             })
 
             resolve("pass");
-          });;
+          });
         };
 
         musicbot.queues.forEach(queue => {
