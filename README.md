@@ -16,7 +16,6 @@ __The commands available are: (default names)__
 * `volume`: Adjust the playback volume between 1 and 200.
 * `leave`: Clears the song queue and leaves the channel.
 * `clearqueue`: Clears the song queue.
-* `owner`: Various owner commands/actions. (W.I.P)
 
 __Permissions:__  
 * If `anyoneCanSkip` is true, anyone can skip songs in the queue.
@@ -43,7 +42,7 @@ __Issue:__ [NPM] ERR Cannot read property '0' of undefined
 __Fix:__ `npm i -g npm@4.6.1` or another lower version of npm.  
 
 __Issue:__ TypeError: Invalid non-string/buffer chunk  
-__Fix:__ Stop using `ffmpeg-binaries`. Seriously. It's been said enough to use `ffmpeg` itself by now.
+__Fix:__ Make sure you: A) Are using the latest version, B) Are using [ffmpeg](http://ffmpeg.org), C) Have Python 2.7.x installed, D) Have `ytdl-core` to the latest version.
 
 __Issue:__ Any node-gyp errors. (build fail, missing cl.exe, etc.)  
 __Fix:__ This one is a little more complicated.  
@@ -55,8 +54,8 @@ If that doesn't fix your issue;
 1. Download and install the [Windows 8.1 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-8-1-sdk)  
 
 __Issue:__ `ffluent-ffmpeg` errors.
-1. Download and install ffmpeg correctly for your OS/env.
-2. Stop asking and make __sure__ it's installed right. You have Google, use it.
+1. Download and install [ffmpeg](http://ffmpeg.org) correctly for your OS/env.
+2. Export/Import/Set ffmpeg to your PATH.
 
 ***
 # Basic Example.
@@ -81,7 +80,7 @@ client.login("token");
 # Options & Config.
 ***
 __Most options are optional and thus not needed.__  
-The options you can pass in `music(client, {options})` and their types is as followed:  
+The options you can pass in `Music.start(client, {options})` and their types is as followed:  
 
 ## Basic Options.
 | Option | Type | Description | Default |
@@ -113,6 +112,8 @@ The options you can pass in `music(client, {options})` and their types is as fol
 | requesterName | Boolean | Display the username of the song requester. | false |
 | inlineEmbeds | Boolean | Whether or not to make embed fields inline (help command and some fields are excluded). | false |
 | embedColor | Array, Number, String | Color resolvable for embeds produced by the bot. | 'GREEN' |
+| clearOnLeave | Boolean | Clear the queue on use of the leave command. | false |
+| checkQueues | Boolean | If true, will periodically verify all queues every hour (from the latest `READY`). If something is wrong with a queue, the bot will nullify the queue and attempt to disconnect from voice connections from the server the queue belongs to. | false |  
 
 ## Command Options.  
 | Option | Type | Description | Default |
@@ -164,11 +165,7 @@ The options you can pass in `music(client, {options})` and their types is as fol
 | searchCmd | String | Name of the search command. | search |
 | disableSearch | Boolean | Disable the search command. | false |
 | searchHelp | String | Help text of the search command. | Non-listed |
-| searchAlt | Array | Alt names (aliases) for the search command. | [] |
-| ownerCmd | String | Name of the owner command. | owner |
-| disableOwnerCmd | Boolean | Disable the owner command. | false |
-| ownerHelp | String | Help text of the owner command. | Non-listed |
-| ownerAlt | Array | Alt names (aliases) for the owner command. | [] |
+| searchAlt | Array | Alt names (aliases) for the search command. | [] |  
 
 An example of a few custom options would be:  
 ```javascript
@@ -189,14 +186,29 @@ Music.start(client, {
 ***
 # Changelog
 ***  
-# 11.0.3
+# 12.0.0
+* `ownerOverMember` now overrides `canAdjust`.
+* Re-worked queue system and related functions.
+* `verifyQueue` changed to `isQueueEmpty`.
+* Made a real update.
+* Removed the `owner` command.
+* Fixed aliases.
+* Added an `index.min.js` file to the repo for people wanting to squeeze size.
+* Added `clearOnLeave`.
+* The bot will no longer clear the queue on `leave` unless `clearOnLeave` is true.
+* Baked chocolate for my girlfriend.
+* Added `checkQueues`. *Use only if needed.*
+* Cleared browser history for the past week. #nekoparaForLife.
+*
+
+## 11.0.3
 * Fixed `search` not setting a `queuedOn`.
 * Fixed `play`'s 'Queued Now' embed showing case.
 
-# 11.0.2
+## 11.0.2
 * Added custom embed colors, see https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable.
 
-# 11.0.1
+## 11.0.1
 * Made `volume` no longer reduce volume on command usage with no suffix.
 * Updated examples.
 
