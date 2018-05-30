@@ -1,10 +1,7 @@
 [![npm package](https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/discord.js-musicbot-addon/)  
 [![Discord Server](https://discordapp.com/api/guilds/427239929924288532/embed.png)](https://discord.gg/FKYrX4X)  [![Downlaods](https://img.shields.io/npm/dt/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)  [![Version](https://img.shields.io/npm/v/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)
-***
-*For some reason, The Den (discord server) no longer exists. A new server has been created and will be re-made overtime for those interested in joining. https://discord.gg/FKYrX4X*  
-***
-This module may be buggy and need some fine tuning. Feel free to let me know what problems you encounter by opening an issue on the repo.
-This was originally an update of the original bot from [ruiqimao](https://github.com/ruiqimao/discord.js-music) by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11), but is now a updated version (again) for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks to the priors. For support/questions join the [Discord server](https://discord.gg/cADwxKs) for a faster response than the repo.  
+
+This was originally an update of the original bot from [ruiqimao](https://github.com/ruiqimao/discord.js-music) by [nexu-dev](https://www.npmjs.com/package/discord.js-music-v11), but is now a updated version (again) for [Discord.js](https://discord.js.org/)'s version 11.2^. Fixes deprecated warnings, video playback issues, along with various other add-ons and tweaks to the priors. This module may be buggy and need some fine tuning. Feel free to let me know what problems you encounter by opening an issue on the repo or joining the [Discord server](https://discord.gg/cADwxKs), where I or a `@Helper` will help you.
 
 __The commands available are: (default names)__  
 * `musichelp [command]`: Displays help text for commands by this addon, or help for a specific command.
@@ -20,9 +17,8 @@ __The commands available are: (default names)__
 __Permissions:__  
 * If `anyoneCanSkip` is true, anyone can skip songs in the queue.
 * If `anyoneCanAdjust` is true, anyone can adjust the volume.
-* If `ownerOverMember` is true, the set ID of the user (`botOwner`) will over-ride CanAjust and CanSkip.
+* If `ownerOverMember` is true, the set ID of the user (`botOwner`) will over-ride CanAjust and CanSkip.  
 
-***
 # Installation
 ***  
 __Installation:__  
@@ -55,9 +51,8 @@ If that doesn't fix your issue;
 
 __Issue:__ `ffluent-ffmpeg` errors.
 1. Download and install [ffmpeg](http://ffmpeg.org) correctly for your OS/env.
-2. Export/Import/Set ffmpeg to your PATH.
+2. Export/Import/Set ffmpeg to your PATH.  
 
-***
 # Basic Example.
 ***  
 This addon is easy to use, and doesn't require any extra configuration besides a YouTube Data API key to run.  
@@ -76,7 +71,6 @@ Music.start(client, {
 client.login("token");
 ```  
 
-***
 # Options & Config.
 ***
 __Most options are optional and thus not needed.__  
@@ -183,9 +177,14 @@ Music.start(client, {
 });
 ```
 
-***
 # Changelog
 ***  
+## 12.0.2
+* Redid some parts of the `executeQueue` function.
+* Redid a tiny bit of the `play`, `leave` functions.
+* Redid the entire `isQueueEmpty` function.
+* Lived another day.
+
 ## 12.0.1
 * Fixed a `Promise` format error in `checkQueues`.
 * Fixed `index.min.js`.

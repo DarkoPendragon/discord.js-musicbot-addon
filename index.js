@@ -1070,11 +1070,21 @@ exports.start = (client, options) => {
   musicbot.isQueueEmpty = (queue) => {
     return new Promise((resolve, reject) => {
       if (!queue) reject("no queue passed"); // Reject if no queue passed.
-      else if (!queue.songs) reject("no songs object found"); // Reject if no songs object found.
-      else if (queue && queue.songs) {
-        if (queue.songs.length > 0) resolve(false) // Resolve false for a queue with songs.
-        else resolve(true); // Resolve true for an empty queue.
-      }
+
+      // Check if it's songs passed, instead of an entire queue.
+      // If it equals and object (array), check for length instead of songs.
+      if (typeof queue == "object") {
+        if (queue.length > 0) resolve(false)
+        else if (queue.length <= 0) resolve(true);
+      } else {
+        if (queue && queue.songs) { // Check songs in an entire queue object.
+          if (queue.songs.length > 0) resolve(false) // Resolve false for a queue with songs.
+          else if (queue.songs.length <= 0) resolve(true); // Resolve true for an empty queue.
+        } else {
+          reject("no queue/songs found");
+        };
+      };
+
     });
   };
 
@@ -1214,13 +1224,13 @@ exports.start = (client, options) => {
   musicbot.play = (msg, suffix) => {
     musicbot.dInvoker(msg);
     // Make sure the user is in a voice channel.
-    if (msg.member.voiceChannel === undefined) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel~`));
+    if (msg.member.voiceChannel === undefined) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
 
     // Make sure the suffix exists.
     if (!suffix) return msg.channel.send(musicbot.note('fail', 'No video specified!'));
 
     // Get the queue.
-    const queue = musicbot.getQueue(msg.guild.id, false);
+    const queue = musicbot.getQueue(msg.guild.id);
 
     // Check if the queue has reached its maximum size.
     if (queue.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
@@ -1297,7 +1307,7 @@ exports.start = (client, options) => {
                     embed
                   });
                 } catch (e) {
-                  console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
+                  console.error(`[${msg.guild.name}] [npCmd] ` + e.stack);
                 };
               } else {
                 try {
@@ -1309,7 +1319,7 @@ exports.start = (client, options) => {
                     .replace(/`/g, '\\`');
                   msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(result.requester).username}\nQueued On: ${result.queuedOn}`)
                 } catch (e) {
-                  console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
+                  console.error(`[${msg.guild.name}] [npCmd] ` + e.stack);
                 };
               }
             }
@@ -1667,6 +1677,12 @@ exports.start = (client, options) => {
           const newText = text.substr(0, 1899);
           const otherText = text.substr(1900, text.length);
           if (otherText.length > 1900) {
+            let queueStatus = 'Stopped';
+              const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+              if (voiceConnection !== null) {
+                const dispatcher = voiceConnection.player.dispatcher;
+                queueStatus = dispatcher.paused ? 'Paused' : 'Playing';
+              }
             msg.channel.send(musicbot.note('wrap', 'Queue (' + queueStatus + '):\n' + "Past character limit..."));
           } else {
             if (musicbot.enableQueueStat) {
@@ -1716,11 +1732,12 @@ exports.start = (client, options) => {
   musicbot.np = (msg, suffix) => {
     musicbot.dInvoker(msg);
     // Get the voice connection.
-    // const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-    // if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
-    // const dispatcher = voiceConnection.player.dispatcher;
-
+    const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
     const queue = musicbot.getQueue(msg.guild.id, true);
+    if (voiceConnection === null && queue.length > 0) return msg.channel.send(musicbot.note('fail', 'No music is being played, but an ongoing queue is avainable.'));
+    else if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
+    const dispatcher = voiceConnection.player.dispatcher;
+
 
     musicbot.isQueueEmpty(musicbot.queues.get(msg.guild.id)).then(res => {
       if (res == true) return msg.channel.send(musicbot.note('note', 'Queue empty.'))
@@ -1753,7 +1770,7 @@ exports.start = (client, options) => {
           embed
         });
       } catch (e) {
-        console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
+        console.error(`[${msg.guild.name}] [npCmd] ` + e.stack);
       };
     } else {
       try {
@@ -1765,7 +1782,7 @@ exports.start = (client, options) => {
           .replace(/`/g, '\\`');
         msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(queue[0].requester).username}\nQueued On: ${queue[0].queuedOn}`)
       } catch (e) {
-        console.log(`[${msg.guild.name}] [npCmd] ` + e.stack);
+        console.error(`[${msg.guild.name}] [npCmd] ` + e.stack);
       };
     }
   }
@@ -1813,6 +1830,17 @@ exports.start = (client, options) => {
       voiceConnection.player.dispatcher.end();
       voiceConnection.disconnect();
       msg.channel.send(musicbot.note('note', 'Successfully left your voice channel!'));
+
+      setTimeout(() => {
+        let vc = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+        if (!vc.player.dispatcher) return;
+        try {
+          vc.player.dispatcher.end();
+          vc.disconnect();
+        } catch (e) {
+          console.error(`[leaevCmd] [${msg.guild.name}] ${e.stack}`);
+        }
+      }, 2500);
     } else {
       const chance = Math.floor((Math.random() * 100) + 1);
       if (chance <= 10) return msg.channel.send(musicbot.note('fail', `I'm afraid I can't let you do that, ${msg.author.username}.`))
@@ -1964,6 +1992,11 @@ exports.start = (client, options) => {
    * @returns {<promise>} - The voice channel.
    */
   musicbot.executeQueue = (msg, queue) => {
+    if (queue.songs.length <= 0) {
+      const vc = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+      if (vc === null) return;
+    };
+
     // If the queue is empty, finish.
     musicbot.isQueueEmpty(queue).then(res => {
       if (res == true) {
@@ -1975,9 +2008,9 @@ exports.start = (client, options) => {
       };
     }).catch(res => {
       if (res) {
-        console.log(`[executeQueue]: ${new Error(res)}`);
+        console.error(`[executeQueue]: ${new Error(res)}`);
 
-        msg.channel.send(musicbot.note('fail', 'Error occoured!'));
+        msg.channel.send(musicbot.note('fail', 'Error occoured on starting the queue!'));
 
         // Leave the voice channel.
         const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
@@ -2017,21 +2050,22 @@ exports.start = (client, options) => {
 
         // Play the video.
         try {
-          if (!musicbot.global) {
-            musicbot.getLast(msg.guild.id).then((response) => {
-              musicbot.setLast(msg.guild.id, video).then((res) => {
-                if (response !== video) musicbot.np(msg);
-              }).catch((res) => {
-                msg.channel.send(musicbot.note('fail', 'Error occoured, try again!'));
-                return console.log(new Error("Dispatcher SetLast: " + res));
-              })
-            }).catch((response) => {
-              if (response) {
-                msg.channel.send(musicbot.note('fail', 'Error occoured, try again!'));
-                return console.log(new Error("Dispatcher GetLast: " + response));
-              }
-            });
-          };
+          musicbot.getLast(msg.guild.id).then((response) => {
+            const re = response;
+            musicbot.setLast(msg.guild.id, video).then((res) => {
+              const wew = musicbot.queues.get(msg.guild.id);
+              if (re !== video && wew.loop == 'none') musicbot.np(msg);
+            }).catch((res) => {
+              msg.channel.send(musicbot.note('fail', 'Error occoured, try again!'));
+              return console.error(new Error("Dispatcher SetLast: " + res));
+            })
+          }).catch((response) => {
+            if (response) {
+              msg.channel.send(musicbot.note('fail', 'Error occoured, try again!'));
+              return console.error(new Error("Dispatcher GetLast: " + response));
+            }
+          });
+
           let dispatcher = connection.playStream(ytdl(video.url, {
             filter: 'audioonly'
           }), {
@@ -2091,7 +2125,7 @@ exports.start = (client, options) => {
   //Text wrapping and cleaning.
   musicbot.note = (type, text) => {
     if (type === 'wrap') {
-      ntext = text
+      let ntext = text
         .replace(/`/g, '`' + String.fromCharCode(8203))
         .replace(/@/g, '@' + String.fromCharCode(8203))
         .replace(client.token, 'REMOVED');
