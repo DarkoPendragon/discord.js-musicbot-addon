@@ -71,6 +71,89 @@ Music.start(client, {
 client.login("token");
 ```  
 
+# Functions Outside The Bot
+***
+As of v11, the bot now uses exports to pass data along _after_ the bot has been started. As of v12.0.3 there are now several "easy-exports" that allow you to change/do things outside of the bot, assuming you have the bots data saved somewhere (an example of how to do so would be `/examples/classBotExample.js`). Replace `Music` with the music object after it has been started. A quic example:
+```js
+const Discord = require('discord.js');
+class Bot extends Discord.Client {
+  constructor(options) {
+    super(options);
+    this.music = require('discord.js-musicbot-addon');
+  }
+}
+const client = new Bot();
+
+client.music.start(client, {
+  youtubeKey: "APIKEY"
+});
+
+const failureNote = client.music.note("fail", "That thing you just did failed!"); // musicbot.note() function.
+// failureNote will equal: ':no_entry_sign: | That thing you just did failed!'
+
+// Change the YouTube key provided at Music.start()
+client.music.changeKey("YouTubeApiKeyString").then((res) => {
+  // Will resolve with the new <musicbot> object.
+}).catch(console.error); // Errors if no key or the tyeof the key isn't a string.
+
+client.login("TOKEN");
+```  
+
+## Music.changeKey([key]);
+```js
+@param {key}: String - key string to set.  
+@returns {promise}: Object - The new musicbot object.
+// Will change the given YouTube API Key from startup, and reset the searcher object with the new key.
+```
+
+## Music.verifyQueue([queueObject]);
+```js
+@param {queueObject}: Object - Queue to check for errors.  
+@returns {promise}: String - Resolves "pass" if fine, rejects on error.
+// Will verify data, but unlike in `checkQueues` it will not change/null the queue data.  
+```
+
+## Music.isQueueEmpty([queueObject]);
+```js
+@param {queueObject}: Object - Queue to check.  
+@returns {promise}: String/Boolean - Resolves a true/false for empty/non empty queue, rejects when no queue is passed.
+```
+
+## Music.note([type], [text]);
+```js
+@param {type}: String - Type of note to pass.  
+@param {text}: String - Text of note to pass.  
+@returns {text}: String - Errors on invalid type, returns the message with type provided.  
+// Valid types for the `note` function are: `wrap`, `note`, `fail`, `search`, `font`.
+```  
+
+## Music.addAdmin([admin]);
+```js
+@param {admin}: String - ID of the user to set.  
+@returns {botAdmins}: Object - Rejects on invalid/no admin passed, resolves the botAdmins object.
+// Remember that these aren't permanent.
+```  
+
+## Music.getQueue([server]);
+```js
+@param {server}: String - ID of the server to get.  
+@returns {queue}: Object - Rejects the queue of the server, or null if there is none.
+```  
+
+## Music.setQueue([data]);
+```js
+@param {server}: Object/String - Queue data structure or ID of server to set.
+@returns {promise}: Object - Rejects if an error occurred, will fill in missing data, resolves the queue once set.
+// You can either supply a queue (see below) or a server ID to set a blank queue.
+// Example of a queue data structure:
+const data = {
+  songs: [], // Array object for videos.
+  last: null, // Last played song object.
+  loop: "none", // Can be "none", "single", "queue".
+  id: "serverID" // ID that the queue belongs to.
+}
+```  
+
 # Options & Config.
 ***
 __Most options are optional and thus not needed.__  
@@ -160,6 +243,10 @@ The options you can pass in `Music.start(client, {options})` and their types is 
 | disableSearch | Boolean | Disable the search command. | false |
 | searchHelp | String | Help text of the search command. | Non-listed |
 | searchAlt | Array | Alt names (aliases) for the search command. | [] |  
+| JoinCmd | String | Name of the join command. | search |
+| disableJoin | Boolean | Disable the join command. | false |
+| joinHelp | String | Help text of the join command. | Non-listed |
+| joinAlt | Array | Alt names (aliases) for the join command. | [] |  
 
 An example of a few custom options would be:  
 ```javascript
@@ -177,94 +264,18 @@ Music.start(client, {
 });
 ```
 
-# Functions Outside The Bot
-***
-As of v11, the bot now uses exports to pass data along _after_ the bot has been started. As of v12.0.3 there are now several "easy-exports" that allow you to change/do things outside of the bot, assuming you have the bots data saved somewhere (an example of how to do so would be `/examples/classBotExample.js`). Replace `Music` with the music object after it has been started. A quic example:
-```js
-const Discord = require('discord.js');
-class Bot extends Discord.Client {
-  constructor(options) {
-    super(options);
-    this.music = require('discord.js-musicbot-addon');
-  }
-}
-const client = new Bot();
-
-client.music.start(client, {
-  youtubeKey: "APIKEY"
-});
-
-const failureNote = client.music.note("fail", "That thing you just did failed!"); // musicbot.note() function.
-// failureNote will equal: ':no_entry_sign: | That thing you just did failed!'
-
-// Change the YouTube key provided at Music.start()
-client.music.changeKey("YouTubeApiKeyString").then((res) => {
-  // Will resolve with the new <musicbot> object.
-}).catch(console.error); // Errors if no key or the tyeof the key isn't a string.
-
-client.login("TOKEN");
-```  
-
-## Music.changeKey([key]);
-```js
-@param {key}: String - key string to set.  
-@returns {promise}: Object - The new musicbot object.
-// Will change the given YouTube API Key from startup, and reset the searcher object with the new key.
-```
-
-## Music.verifyQueue([queueObject]);
-```js
-@param {queueObject}: Object - Queue to check for errors.  
-@returns {promise}: String - Resolves "pass" if fine, rejects on error.
-// Will verify data, but unlike in `checkQueues` it will not change/null the queue data.  
-```
-
-## Music.isQueueEmpty([queueObject]);
-```js
-@param {queueObject}: Object - Queue to check.  
-@returns {promise}: String/Boolean - Resolves a true/false for empty/non empty queue, rejects when no queue is passed.
-```
-
-## Music.note([type], [text]);
-```js
-@param {type}: String - Type of note to pass.  
-@returns {text}: String - Errors on invalid type, returns the message with type provided.  
-// Valid types for the `note` function are: `wrap`, `note`, `fail`, `search`, `font`.
-```  
-
-## Music.addAdmin([admin]);
-```js
-@param {admin}: String - ID of the user to set.  
-@returns {botAdmins}: Object - Rejects on invalid/no admin passed, resolves the botAdmins object.
-// Remember that these aren't permanent.
-```  
-
-## Music.getQueue([server]);
-```js
-@param {server}: String - ID of the server to get.  
-@returns {queue}: Object - Rejects the queue of the server, or null if there is none.
-```  
-
-## Music.setQueue([data]);
-```js
-@param {server}: Object/String - Queue data structure or ID of server to set.
-@returns {promise}: Object - Rejects if an error occurred, will fill in missing data, resolves the queue once set.
-// You can either supply a queue (see below) or a server ID to set a blank queue.
-// Example of a queue data structure:
-const data = {
-  songs: [], // Array object for videos.
-  last: null, // Last played song object.
-  loop: "none", // Can be "none", "single", "queue".
-  id: "serverID" // ID that the queue belongs to.
-}
-```  
-
 # Changelog
 ***  
+## 12.0.4
+* Added a `join` command, and related options.
+* Added `anyoneCanJoin`.
+* Fixed `console.error` in the startup function.
+* To save space, be it spall, examples are no longer downloaded with npm.
+
 ## 12.0.3
 * Added some easy-exports incase you want to change up some shit. Will be listed above.
 * Changed some console logging to make sure it logs as an error, not just data.
-* Fixed `searcHelp` (used to be `searcHelp`... Yeah).
+* Fixed `searchHelp` (used to be `searcHelp`... Yeah).
 
 ## 12.0.2
 * Redid some parts of the `executeQueue` function.

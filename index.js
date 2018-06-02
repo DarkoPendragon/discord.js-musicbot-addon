@@ -49,6 +49,10 @@ exports.start = (client, options) => {
       this.disableSkip = Boolean((options && options.disableSkip) || false);
       this.skipHelp = (options && options.skipHelp) || "Skip a song or multi songs.";
       this.skipAlt = (options && options.skipAlt) || [];
+      this.joinCmd = (options && options.joinCmd) || 'join';
+      this.disableJoin = Boolean((options && options.disableJoin) || false);
+      this.joinHelp = (options && options.joinHelp) || "Join your current voice channel.";
+      this.joinAlt = (options && options.joinAlt) || [];
       this.queueCmd = (options && options.queueCmd) || 'queue';
       this.disableQueue = Boolean((options && options.disableQueue) || false);
       this.queueHelp = (options && options.queueHelp) || "Shows the current queue.";
@@ -133,7 +137,7 @@ exports.start = (client, options) => {
   async function musicBotStart() {
 		if (process.version.slice(1)
 	    .split('.')[0] < 8) {
-	    console.log(new Error(`[MusicBot] node 8 or higher is needed, please update`));
+	    console.error(new Error(`[MusicBot] node 8 or higher is needed, please update`));
 	    process.exit(1);
 	  }
 
@@ -149,336 +153,352 @@ exports.start = (client, options) => {
       musicbot.disableNp &&
       musicbot.disableSearch &&
       musicbot.disableVolume) {
-      console.log(new Error(`all commands disabled`));
+      console.error(new Error(`all commands disabled`));
       process.exit(1);
     }
 
     if (typeof musicbot.embedColor !== 'object' && typeof musicbot.embedColor !== 'number' && typeof musicbot.embedColor !== 'string') {
-      console.log(new TypeError(`embedColor must be an object (array), number, or a string`));
+      console.error(new TypeError(`embedColor must be an object (array), number, or a string`));
       process.exit(1);
     }
 
     if (typeof musicbot.botAdmins !== 'object') {
-      console.log(new TypeError(`botAdmins must be an object (array)`));
+      console.error(new TypeError(`botAdmins must be an object (array)`));
       process.exit(1);
     }
     if (typeof musicbot.clearOnLeave !== 'boolean') {
-      console.log(new TypeError(`clearOnLeave must be a boolean`));
+      console.error(new TypeError(`clearOnLeave must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.checkQueues !== 'boolean') {
-      console.log(new TypeError(`checkQueues must be a boolean`));
+      console.error(new TypeError(`checkQueues must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.dateLocal !== 'string') {
-      console.log(new TypeError(`dateLocal must be a string`));
+      console.error(new TypeError(`dateLocal must be a string`));
       process.exit(1);
     }
     if (typeof musicbot.advancedMode !== 'object') {
-      console.log(new TypeError(`advancedMode must be an object`));
+      console.error(new TypeError(`advancedMode must be an object`));
       process.exit(1);
     }
     if (musicbot.advancedMode.enabled && typeof musicbot.advancedMode.enabled !== 'boolean') {
-      console.log(new TypeError(`advancedMode.enabled must be a boolean`));
+      console.error(new TypeError(`advancedMode.enabled must be a boolean`));
       process.exit(1);
     }
     if (musicbot.advancedMode.multiPrefix && typeof musicbot.advancedMode.multiPrefix !== 'boolean') {
-      console.log(new TypeError(`advancedMode.multiPrefix must be a boolean`));
+      console.error(new TypeError(`advancedMode.multiPrefix must be a boolean`));
       process.exit(1);
     }
     if (musicbot.advancedMode.serverPrefixs && typeof musicbot.advancedMode.serverPrefixs !== 'object') {
-      console.log(new TypeError(`advancedMode.serverPrefixs must be an object`));
+      console.error(new TypeError(`advancedMode.serverPrefixs must be an object`));
       process.exit(1);
     }
 
     if (typeof musicbot.thumbnailType !== 'string') {
-      console.log(new TypeError(`thumbnailType must be a string`));
+      console.error(new TypeError(`thumbnailType must be a string`));
       process.exit(1);
     };
     if (!musicbot.thumbnailType.match(/default|medium|high/)) {
-      console.log(new Error(`thumbnailType must be one of the following: default, medium, high`));
+      console.error(new Error(`thumbnailType must be one of the following: default, medium, high`));
       process.exit(1);
     };
     if (typeof musicbot.helpHelp !== 'string') {
-      console.log(new TypeError(`helpHelp must be a string`))
+      console.error(new TypeError(`helpHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.helpAlt !== 'object') {
-      console.log(new TypeError(`helpAlt must be an array`));
+      console.error(new TypeError(`helpAlt must be an array`));
       process.exit(1);
     };
     if (typeof musicbot.playHelp !== 'string') {
-      console.log(new TypeError(`playHelp must be a string`))
+      console.error(new TypeError(`playHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.playAlt !== 'object') {
-      console.log(new TypeError(`playAlt must be an array`));
+      console.error(new TypeError(`playAlt must be an array`));
       process.exit(1);
     };
     if (typeof musicbot.queueHelp !== 'string') {
-      console.log(new TypeError(`queueHelp must be a string`))
+      console.error(new TypeError(`queueHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.queueAlt !== 'object') {
-      console.log(new TypeError(`queueAlt must be an array`));
+      console.error(new TypeError(`queueAlt must be an array`));
       process.exit(1);
     };
     if (typeof musicbot.pauseHelp !== 'string') {
-      console.log(new TypeError(`pauseHelp must be a string`))
+      console.error(new TypeError(`pauseHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.pauseAlt !== 'object') {
-      console.log(new TypeError(`pauseAlt must be an array`));
+      console.error(new TypeError(`pauseAlt must be an array`));
       process.exit(1);
     };
     if (typeof musicbot.resumeHelp !== 'string') {
-      console.log(new TypeError(`resumeHelp must be a string`))
+      console.error(new TypeError(`resumeHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.resumeAlt !== 'object') {
-      console.log(new TypeError(`resumeAlt must be an array`));
+      console.error(new TypeError(`resumeAlt must be an array`));
       process.exit(1);
     };
     if (typeof musicbot.volumeHelp !== 'string') {
-      console.log(new TypeError(`volumeHelp must be a string`))
+      console.error(new TypeError(`volumeHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.volumeAlt !== 'object') {
-      console.log(new TypeError(`volumeAlt must be an array`));
+      console.error(new TypeError(`volumeAlt must be an array`));
       process.exit(1);
     };
     if (typeof musicbot.leaveHelp !== 'string') {
-      console.log(new TypeError(`leaveHelp must be a string`))
+      console.error(new TypeError(`leaveHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.leaveAlt !== 'object') {
-      console.log(new TypeError(`leaveAlt must be an array`));
+      console.error(new TypeError(`leaveAlt must be an array`));
       process.exit(1);
     };
     if (typeof musicbot.clearHelp !== 'string') {
-      console.log(new TypeError(`clearHelp must be a string`))
+      console.error(new TypeError(`clearHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.clearAlt !== 'object') {
-      console.log(new TypeError(`clearAlt must be an array`));
+      console.error(new TypeError(`clearAlt must be an array`));
       process.exit(1);
     };
     if (typeof musicbot.loopHelp !== 'string') {
-      console.log(new TypeError(`loopHelp must be a string`))
+      console.error(new TypeError(`loopHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.loopAlt !== 'object') {
-      console.log(new TypeError(`loopAlt must be an array`));
+      console.error(new TypeError(`loopAlt must be an array`));
       process.exit(1);
     };
     if (typeof musicbot.npHelp !== 'string') {
-      console.log(new TypeError(`npHelp must be a string`))
+      console.error(new TypeError(`npHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.npAlt !== 'object') {
-      console.log(new TypeError(`npAlt must be an array`));
+      console.error(new TypeError(`npAlt must be an array`));
       process.exit(1);
     };
     if (typeof musicbot.ownerHelp !== 'string') {
-      console.log(new TypeError(`ownerHelp must be a string`))
+      console.error(new TypeError(`ownerHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.ownerAlt !== 'object') {
-      console.log(new TypeError(`ownerAlt must be an array`));
+      console.error(new TypeError(`ownerAlt must be an array`));
       process.exit(1);
     };
     if (typeof musicbot.skipHelp !== 'string') {
-      console.log(new TypeError(`skipHelp must be a string`))
+      console.error(new TypeError(`skipHelp must be a string`))
       process.exit(1);
     };
     if (typeof musicbot.skipAlt !== 'object') {
-      console.log(new TypeError(`skipAlt must be an array`));
+      console.error(new TypeError(`skipAlt must be an array`));
       process.exit(1);
     };
     if (!musicbot.youtubeKey) {
-      console.log(new Error(`youtubeKey is required but missing`));
+      console.error(new Error(`youtubeKey is required but missing`));
       process.exit(1);
     };
     if (musicbot.youtubeKey && typeof musicbot.youtubeKey !== 'string') {
-      console.log(new TypeError(`youtubeKey must be a string`));
+      console.error(new TypeError(`youtubeKey must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.disableHelp !== 'boolean') {
-      console.log(new TypeError(`disableHelp must be a boolean`));
+      console.error(new TypeError(`disableHelp must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.disablePlay !== 'boolean') {
-      console.log(new TypeError(`disablePlay must be a boolean`));
+      console.error(new TypeError(`disablePlay must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.disableSkip !== 'boolean') {
-      console.log(new TypeError(`disableSkip must be a boolean`));
+      console.error(new TypeError(`disableSkip must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.disableQueue !== 'boolean') {
-      console.log(new TypeError(`disableQueue must be a boolean`));
+      console.error(new TypeError(`disableQueue must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.disablePause !== 'boolean') {
-      console.log(new TypeError(`disablePause must be a boolean`));
+      console.error(new TypeError(`disablePause must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.disableResume !== 'boolean') {
-      console.log(new TypeError(`disableResume must be a boolean`));
+      console.error(new TypeError(`disableResume must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.disableLeave !== 'boolean') {
-      console.log(new TypeError(`disableLeave must be a boolean`));
+      console.error(new TypeError(`disableLeave must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.disableClear !== 'boolean') {
-      console.log(new TypeError(`disableClear must be a boolean`));
+      console.error(new TypeError(`disableClear must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.disableLoop !== 'boolean') {
-      console.log(new TypeError(`disableLoop must be a boolean`));
+      console.error(new TypeError(`disableLoop must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.disableNp !== 'boolean') {
-      console.log(new TypeError(`disableNp must be a boolean`));
+      console.error(new TypeError(`disableNp must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.disableOwnerCmd !== 'boolean') {
-      console.log(new TypeError(`disableOwnerCmd must be a boolean`));
+      console.error(new TypeError(`disableOwnerCmd must be a boolean`));
       process.exit(1);
     }
     if (typeof musicbot.ownerCmd !== 'string') {
-      console.log(new TypeError(`ownerCmd must be a string`));
+      console.error(new TypeError(`ownerCmd must be a string`));
       process.exit(1);
     }
     if (typeof musicbot.ownerOverMember !== 'boolean') {
-      console.log(new TypeError(`ownerOverMember must be a boolean`));
+      console.error(new TypeError(`ownerOverMember must be a boolean`));
       process.exit(1);
     };
     if (musicbot.ownerOverMember && typeof musicbot.botOwner !== 'string') {
-      console.log(new TypeError(`botOwner must be a string`));
+      console.error(new TypeError(`botOwner must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.botPrefix !== 'string') {
-      console.log(new TypeError(`prefix must be a string`));
+      console.error(new TypeError(`prefix must be a string`));
       process.exit(1);
     };
     if (musicbot.botPrefix.length < 1 || musicbot.botPrefix.length > 10) {
-      console.log(new RangeError(`prefix length must be between 1 and 10`));
+      console.error(new RangeError(`prefix length must be between 1 and 10`));
       process.exit(1);
     };
     if (typeof musicbot.global !== 'boolean') {
-      console.log(new TypeError(`global must be a boolean`));
+      console.error(new TypeError(`global must be a boolean`));
       process.exit(1);
     };
     if (typeof musicbot.maxQueueSize !== 'number') {
-      console.log(new TypeError(`maxQueueSize must be a number`));
+      console.error(new TypeError(`maxQueueSize must be a number`));
       process.exit(1);
     };
     if (!Number.isInteger(musicbot.maxQueueSize)) {
-      console.log(new TypeError(`maxQueueSize must be an integer`));
+      console.error(new TypeError(`maxQueueSize must be an integer`));
       process.exit(1);
     };
     if (typeof musicbot.defVolume !== 'number') {
-      console.log(new TypeError(`defaultVolume must be a number`));
+      console.error(new TypeError(`defaultVolume must be a number`));
       process.exit(1);
     };
     if (!Number.isInteger(musicbot.defVolume) || musicbot.defVolume < 1 || musicbot.defVolume > 200) {
-      console.log(new TypeError(`defaultVolume must be an integer between 1 and 200`));
+      console.error(new TypeError(`defaultVolume must be an integer between 1 and 200`));
       process.exit(1);
     };
     if (typeof musicbot.anyoneCanSkip !== 'boolean') {
-      console.log(new TypeError(`anyoneCanSkip must be a boolean`));
+      console.error(new TypeError(`anyoneCanSkip must be a boolean`));
       process.exit(1);
     };
     if (typeof musicbot.clearInvoker !== 'boolean') {
-      console.log(new TypeError(`clearInvoker must be a boolean`));
+      console.error(new TypeError(`clearInvoker must be a boolean`));
       process.exit(1);
     };
     if (typeof musicbot.enableAliveMessage !== 'boolean') {
-      console.log(new TypeError(`enableAliveMessage must be a boolean`));
+      console.error(new TypeError(`enableAliveMessage must be a boolean`));
       process.exit(1);
     };
     if (typeof musicbot.aliveMessage !== 'string') {
-      console.log(new TypeError(`aliveMessage must be a string`));
+      console.error(new TypeError(`aliveMessage must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.aliveMessageTime !== 'number') {
-      console.log(new TypeError(`aliveMessageTime must be a number`));
+      console.error(new TypeError(`aliveMessageTime must be a number`));
       process.exit(1);
     };
     if (typeof musicbot.helpCmd !== 'string') {
-      console.log(new TypeError(`helpCmd must be a string`));
+      console.error(new TypeError(`helpCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.playCmd !== 'string') {
-      console.log(new TypeError(`playCmd must be a string`));
+      console.error(new TypeError(`playCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.searchCmd !== 'string') {
-      console.log(new TypeError(`searchCmd must be a string`));
+      console.error(new TypeError(`searchCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.disableSearch !== 'boolean') {
-      console.log(new TypeError(`disableSearch must be a boolean`));
+      console.error(new TypeError(`disableSearch must be a boolean`));
       process.exit(1);
     };
     if (typeof musicbot.skipCmd !== 'string') {
-      console.log(new TypeError(`skipCmd must be a string`));
+      console.error(new TypeError(`skipCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.queueCmd !== 'string') {
-      console.log(new TypeError(`queueCmd must be a string`));
+      console.error(new TypeError(`queueCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.pauseCmd !== 'string') {
-      console.log(new TypeError(`pauseCmd must be a string`));
+      console.error(new TypeError(`pauseCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.npCmd !== 'string') {
-      console.log(new TypeError(`npCmd must be a string`));
+      console.error(new TypeError(`npCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.resumeCmd !== 'string') {
-      console.log(new TypeError(`resumeCmd must be a string`));
+      console.error(new TypeError(`resumeCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.volumeCmd !== 'string') {
-      console.log(new TypeError(`volumeCmd must be a string`));
+      console.error(new TypeError(`volumeCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.leaveCmd !== 'string') {
-      console.log(new TypeError(`leaveCmd must be a string`));
+      console.error(new TypeError(`leaveCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.clearCmd !== 'string') {
-      console.log(new TypeError(`clearCmd must be a string`));
+      console.error(new TypeError(`clearCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.loopCmd !== 'string') {
-      console.log(new TypeError(`loopCmd must be a string`));
+      console.error(new TypeError(`loopCmd must be a string`));
       process.exit(1);
     };
     if (typeof musicbot.enableQueueStat !== 'boolean') {
-      console.log(new TypeError(`enableQueueStat must be a boolean`));
+      console.error(new TypeError(`enableQueueStat must be a boolean`));
       process.exit(1);
     };
     if (typeof musicbot.anyoneCanAdjust !== 'boolean') {
-      console.log(new TypeError(`anyoneCanAdjust must be a boolean`));
+      console.error(new TypeError(`anyoneCanAdjust must be a boolean`));
       process.exit(1);
     };
     if (typeof musicbot.logging !== 'boolean') {
-      console.log(new TypeError(`logging must be a boolean`));
+      console.error(new TypeError(`logging must be a boolean`));
       process.exit(1);
     };
     if (typeof musicbot.requesterName !== 'boolean') {
-      console.log(new TypeError(`requesterName must be a boolean`));
+      console.error(new TypeError(`requesterName must be a boolean`));
       process.exit(1);
     };
     if (typeof musicbot.inlineEmbeds !== 'boolean') {
-      console.log(new TypeError(`inlineEmbeds must be a boolean`));
+      console.error(new TypeError(`inlineEmbeds must be a boolean`));
       process.exit(1);
     };
+    if (typeof musicbot.joinCmd !== "string") {
+      console.error(new TypeError(`joinCmd must be a string`));
+      process.exit(1);
+    }
+    if (typeof musicbot.disableJoin !== "boolean") {
+      console.error(new TypeError(`disableJoin must be a boolean`));
+      process.exit(1);
+    }
+    if (typeof musicbot.joinAlt !== "object") {
+      console.error(new TypeError(`joinAlt must be an object (array)`));
+      process.exit(1);
+    }
+    if (typeof musicbot.joinHelp !== "string") {
+      console.error(new TypeError(`joinHelp must be a string`));
+      process.exit(1);
+    }
     if (musicbot.global && musicbot.maxQueueSize < 50) console.warn(`global queues are enabled while maxQueueSize is below 50! Recommended to use a higher size.`);
 
     // Set those commands, baby.
@@ -1863,6 +1883,36 @@ exports.start = (client, options) => {
   }
 
   /**
+   * The command for joining the voice channel.
+   *
+   * @param {Message} msg - Original message.
+   * @param {string} suffix - Command suffix.
+   * @returns {<promise>} - The response message.
+   */
+  musicbot.join = (msg, suffix) => {
+    musicbot.dInvoker(msg);
+
+    if (musicbot.isAdmin(msg.member) || musicbot.anyoneCanJoin === true) {
+      if (msg.member.voiceChannel && msg.member.voiceChannel.joinable) {
+        msg.member.voiceChannel.join().then((connection) => {
+          msg.channel.send(musicbot.note("note", "Joined your voice channel. :ok_hand:"));
+        }).catch((error) => {
+            console.error(error);
+            msg.channel.send(musicbot.note("fail", "Error occoured!"));
+          });
+      } else if (!msg.member.voiceChannel) {
+        return msg.channel.send(musicbot.note("fail", "Doesn't seem you're in a voice channel."));
+      } else if (msg.member.voiceChannel && !msg.member.voiceChannel.joinable) {
+        return msg.channel.send(musicbot.note("fail", "Can't join your voice channel."));
+      };
+    } else {
+      const chance = Math.floor((Math.random() * 100) + 1);
+      if (chance <= 10) return msg.channel.send(musicbot.note('fail', `I'm afraid I can't let you do that, ${msg.author.username}.`))
+      else return msg.channel.send(musicbot.note('fail', 'Sorry, you\'re not allowed to do that.'));
+    }
+  }
+
+  /**
    * The command for clearing the song queue.
    *
    * @param {Message} msg - Original message.
@@ -1933,10 +1983,7 @@ exports.start = (client, options) => {
     // Get the dispatcher
     const dispatcher = voiceConnection.player.dispatcher;
 
-    if (suffix > 200 || suffix <= 0) return msg.channel.send(musicbot.note('fail', 'Volume out of range, must be within 1 - 200'))
-      .then((response) => {
-        response.delete(5000);
-      });
+    if (suffix > 200 || suffix <= 0) return msg.channel.send(musicbot.note('fail', 'Volume out of range, must be within 1 - 200'));
 
     dispatcher.setVolume((suffix / 100));
     msg.channel.send(musicbot.note('note', 'Volume set to ' + suffix));
@@ -2201,5 +2248,5 @@ exports.start = (client, options) => {
         reject(new Error("data didn't equal a string or object"));
       }
     });
-  }
+  };
 };
