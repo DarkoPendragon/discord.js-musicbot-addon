@@ -75,7 +75,7 @@ exports.start = (client, options) => {
       this.clearAlt = (options && options.clearAlt) || [];
       this.searchCmd = (options && options.searchCmd) || 'search';
       this.disableSearch = Boolean((options && options.disableSearch) || false);
-      this.searcHelp = (options && options.searcHelp) || "Searchs for up to 10 results.";
+      this.searchHelp = (options && options.searchHelp) || "Searchs for up to 10 results.";
       this.searchAlt = (options && options.searchAlt) || [];
       this.loopCmd = (options && options.loopCmd) || 'loop';
       this.disableLoop = Boolean((options && options.disableLoop) || false);
@@ -509,7 +509,7 @@ exports.start = (client, options) => {
           name: musicbot.searchCmd,
           usage: `${musicbot.botPrefix}${musicbot.searchCmd} <query>`,
           disabled: musicbot.disableSearch,
-          help: musicbot.searcHelp,
+          help: musicbot.searchHelp,
           aliases: musicbot.searchAlt,
           admin: false,
           run: "search"
@@ -744,17 +744,29 @@ exports.start = (client, options) => {
 
       };
     } catch (e) {
-      console.log(e.stack);
+      console.error(e.stack);
       process.exit(1);
     };
   };
   musicBotStart();
 
   //Set the YouTube API key.
-  const search = new YTSearcher({
+  musicbot.searcher = new YTSearcher({
     key: musicbot.youtubeKey,
     revealkey: true
   });
+
+  exports.changeKey = (key) => {
+    return new Promise((resolve, reject) => {
+      if (!key || typeof key !== "string") reject("invalid key provided");
+      musicbot.youtubeKey = key;
+      musicbot.searcher = new YTSearcher({
+        key: key,
+        revealkey: true
+      });
+      resolve(musicbot);
+    });
+  };
 
   // Catch message events.
   client.on('message', msg => {
@@ -870,26 +882,27 @@ exports.start = (client, options) => {
     if (musicbot.checkQueues == true) {
       console.warn(`[MUSIC] checkQueues is enabled.`);
 
+      musicbot.verify = (q) => {
+        return new Promise((resolve, reject) => {
+          if (!q) reject(0);
+          else if (q && q.songs == null) reject(1);
+          else if (q && q.songs.length > musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) reject(1);
+          else if (q && q.songs.length < 0) reject(1);
+          else if (q && typeof q.loop !== "string") reject(2);
+          else if (q && !q.id) reject(3);
+
+          q.songs.forEach(song => {
+            if (!song.title || !song.url || !song.queuedOn || !song.requester) reject(4);
+          })
+
+          resolve("pass");
+        });
+      };
+      exports.verifyQueue = musicbot.verify;
       setInterval(() => {
-        function verify(q) {
-          return new Promise((resolve, reject) => {
-            if (!q) reject(0);
-            else if (q && q.songs == null) reject(1);
-            else if (q && q.songs.length > musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) reject(1);
-            else if (q && q.songs.length < 0) reject(1);
-            else if (q && typeof q.loop !== "string") reject(2);
-            else if (q && !q.id) reject(3);
-
-            q.songs.forEach(song => {
-              if (!song.title || !song.url || !song.queuedOn || !song.requester) reject(4);
-            })
-
-            resolve("pass");
-          });
-        };
 
         musicbot.queues.forEach(queue => {
-          verify(queue).then((res) => {
+          musicbot.verify(queue).then((res) => {
             if (musicbot.logging) console.log(`[Check Queues Music] Queue ${queue.id} passed verification.`);
           }).catch((res) => {
             if (res >= 0) {
@@ -1087,6 +1100,7 @@ exports.start = (client, options) => {
 
     });
   };
+  exports.isQueueEmpty = musicbot.isQueueEmpty;
 
   /**
    * Makes a servers queue and related data empty.
@@ -1273,7 +1287,7 @@ exports.start = (client, options) => {
             });
           });
         } else {
-          search.search(searchstring, {
+          musicbot.searcher.search(searchstring, {
               type: 'video'
             })
             .then(searchResult => {
@@ -1356,7 +1370,7 @@ exports.start = (client, options) => {
     var searchstring = suffix.trim();
     msg.channel.send(musicbot.note('search', `Searching: \`${searchstring}\``))
       .then(response => {
-        search.search(searchstring, {
+        musicbot.searcher.search(searchstring, {
             type: 'video'
           })
           .then(searchResult => {
@@ -2145,7 +2159,47 @@ exports.start = (client, options) => {
         .replace(/~/g, '\\~')
         .replace(/`/g, '\\`');
     } else {
-      console.log(new Error(`${type} was an invalid type`));
+      console.error(new Error(`${type} was an invalid type`));
     }
   };
+  exports.note = musicbot.note;
+  exports.addAdmin = (admin) => {
+    return new Promise((resolve, reject) => {
+      if (!admin || typeof admin !== "string") reject("invalid admin object");
+      musicbot.botAdmins.push(admin);
+      resolve(musicbot.botAdmins);
+    });
+  };
+  exports.getQueue = (server) => {
+    if (!server) {
+      console.error(new Error("no server provided for getQueue"));
+      return null;
+    };
+    let q = musicbot.queues.has(server) ? musicbot.queues.get(server) : null;
+    return q;
+  }
+  exports.setQueue = (data) => {
+    return new Promise((resolve, reject) => {
+      if (!data) reject(new Error("no data passed to setQueue"));
+      if (typeof data == "string") {
+        data = {
+          songs: [],
+          last: null,
+          loop: "none",
+          id: data
+        };
+        musicbot.queues.set(data.id, data);
+        resolve(musicbot.queues.get(data.id));
+      } else if (typeof data == "object") {
+        if (!data.songs || typeof data.songs !== "object") data.songs = [];
+        if (!data.last) data.last = null;
+        if (!data.loop || typeof data.loop !== "string") data.loop = "none";
+        if (!data.id || typeof data.id !== "string") data.id = data.toString();
+        musicbot.queues.set(data.id, data);
+        resolve(musicbot.queues.get(data.id));
+      } else {
+        reject(new Error("data didn't equal a string or object"));
+      }
+    });
+  }
 };
