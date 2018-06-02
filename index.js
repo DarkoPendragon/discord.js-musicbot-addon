@@ -763,6 +763,26 @@ exports.start = (client, options) => {
         };
 
       };
+      if (!musicbot.commands.has(musicbot.joinCmd)) {
+        if (musicbot.logging) console.log(`[MUSIC] Mapping ${musicbot.joinCmd} command.`);
+        const join_props = {
+          name: musicbot.joinCmd,
+          usage: `${musicbot.botPrefix}${musicbot.joinCmd}`,
+          disabled: musicbot.disableJoin,
+          help: musicbot.joinHelp,
+          aliases: musicbot.joinAlt,
+          admin: false,
+          run: "join"
+        };
+        musicbot.commands.set(musicbot.joinCmd, join_props);
+
+        if (musicbot.joinAlt.length > 0) {
+          musicbot.setAlt.forEach(alt => {
+            musicbot.aliases.set(alt, join_props);
+          });
+        };
+
+      };
     } catch (e) {
       console.error(e.stack);
       process.exit(1);
