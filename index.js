@@ -993,6 +993,7 @@ exports.start = (client, options) => {
       })
     };
   };
+  exports.updatePrefix = musicbot.updatePrefix;
 
   /**
    * Checks if a user is an admin.
