@@ -1,5 +1,5 @@
 ---
-name: Bug Report
+name: Bug/Error Report
 about: Follow this tempate to submit a bug report.
 
 ---
