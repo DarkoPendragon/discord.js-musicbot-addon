@@ -800,10 +800,7 @@ exports.start = (client, options) => {
     return new Promise((resolve, reject) => {
       if (!key || typeof key !== "string") reject("invalid key provided");
       musicbot.youtubeKey = key;
-      musicbot.searcher = new YTSearcher({
-        key: key,
-        revealkey: true
-      });
+      musicbot.searcher.key = key;
       resolve(musicbot);
     });
   };
