@@ -63,7 +63,7 @@ client.login("token"); // Connect the bot.
 # Options & Config.
 ***
 __Most options are optional and thus not needed.__  
-The options you can pass in `music(client, {options})` and their types is as followed:  
+The options you can pass in `music.start(client, {options})` and their types is as followed:  
 _Note: All Boolean options default false._  
 
 ## Basic Options.
