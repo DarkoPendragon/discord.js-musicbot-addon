@@ -176,6 +176,7 @@ exports.start = (client, options) => {
       this.inlineEmbeds = Boolean((options && options.inlineEmbeds));
       this.dateLocal = (options && options.dateLocal) || 'en-US';
       this.bigPicture = Boolean((options && options.bigPicture)) || false;
+      this.defVolume = Number(options && options.defVolume) || 0.5;
 
       // Cooldown Settins
       this.cooldown = {
