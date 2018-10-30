@@ -163,7 +163,7 @@ exports.start = (client, options) => {
       this.youtubeKey = (options && options.youtubeKey);
       this.botPrefix = (options && options.botPrefix) || "!";
       // this.thumbnailType = (options && options.thumbnailType) || "high";
-      this.defaultVolume = (options && options.defaultVolume) || 50;
+      this.defVolume = (options && options.defVolume) || 50;
       this.maxQueueSize = (options && options.maxQueueSize) || 50;
       this.ownerOverMember = Boolean((options && options.ownerOverMember));
       this.botAdmins = (options && options.botAdmins) || [];
@@ -176,7 +176,6 @@ exports.start = (client, options) => {
       this.inlineEmbeds = Boolean((options && options.inlineEmbeds));
       this.dateLocal = (options && options.dateLocal) || 'en-US';
       this.bigPicture = Boolean((options && options.bigPicture)) || false;
-      this.defVolume = Number(options && options.defVolume) || 0.5;
 
       // Cooldown Settins
       this.cooldown = {
