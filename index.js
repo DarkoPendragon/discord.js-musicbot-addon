@@ -163,7 +163,7 @@ exports.start = (client, options) => {
       this.youtubeKey = (options && options.youtubeKey);
       this.botPrefix = (options && options.botPrefix) || "!";
       // this.thumbnailType = (options && options.thumbnailType) || "high";
-      this.defaultVolume = (options && options.defaultVolume) || 50;
+      this.defVolume = (options && options.defVolume) || 50;
       this.maxQueueSize = (options && options.maxQueueSize) || 50;
       this.ownerOverMember = Boolean((options && options.ownerOverMember));
       this.botAdmins = (options && options.botAdmins) || [];
