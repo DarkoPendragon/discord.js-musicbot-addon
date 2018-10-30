@@ -297,6 +297,7 @@ exports.start = (client, options) => {
         let tCmd = musicbot.commands.get(command);
         if (!tCmd.disabled) {
           if (!musicbot.cooldown.disabled) musicbot.recentTalk.add(msg.author.id);
+          setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
           return musicbot[tCmd.run](msg, suffix, args);
         }
       } else if (musicbot.aliases.has(command)) {
@@ -304,6 +305,7 @@ exports.start = (client, options) => {
         let aCmd = musicbot.aliases.get(command);
         if (!aCmd.disabled) {
           if (!musicbot.cooldown.disabled) musicbot.recentTalk.add(msg.author.id);
+          setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
           return aCmd.run(msg, suffix, args);
         }
       };

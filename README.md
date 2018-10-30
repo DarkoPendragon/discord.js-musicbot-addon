@@ -138,6 +138,10 @@ music.start(client, {
 
 # Changelog
 ***  
+## 13.0.1
+* Wew already broke it lads.
+* Cooldown is fixed.
+
 ## 13.0.0
 * Redid entire module.
 
