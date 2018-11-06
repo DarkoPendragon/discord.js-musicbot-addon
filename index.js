@@ -31,7 +31,9 @@ exports.start = (client, options) => {
         alt: (options && options.play && options.play.alt) || [],
         help: (options && options.play && options.play.help) || "Queue a song/playlist by URL or name.",
         name: (options && options.play && options.play.name) || "play",
-        usage: (options && options.play && options.play.usage) || null
+        usage: (options && options.play && options.play.usage) || null,
+        exclude: Boolean((options && options.play && options.play.exclude)),
+        masked: "play"
       };
 
       // Help Command options
@@ -41,7 +43,9 @@ exports.start = (client, options) => {
         alt: (options && options.help && options.help.alt) || [],
         help: (options && options.help && options.help.help) || "Help for commands.",
         name: (options && options.help && options.help.name) || "help",
-        usage: (options && options.help && options.help.usage) || null
+        usage: (options && options.help && options.help.usage) || null,
+        exclude: Boolean((options && options.help && options.help.exclude)),
+        masked: "help"
       };
 
       // Pause Command options
@@ -51,7 +55,9 @@ exports.start = (client, options) => {
         alt: (options && options.pause && options.pause.alt) || [],
         help: (options && options.pause && options.pause.help) || "Pauses playing music.",
         name: (options && options.pause && options.pause.name) || "pause",
-        usage: (options && options.pause && options.pause.usage) || null
+        usage: (options && options.pause && options.pause.usage) || null,
+        exclude: Boolean((options && options.pause && options.pause.exclude)),
+        masked: "pause"
       };
 
       // Resume Command options
@@ -61,7 +67,9 @@ exports.start = (client, options) => {
         alt: (options && options.resume && options.resume.alt) || [],
         help: (options && options.resume && options.resume.help) || "Resumes a paused queue.",
         name: (options && options.resume && options.resume.name) || "resume",
-        usage: (options && options.resume && options.resume.usage) || null
+        usage: (options && options.resume && options.resume.usage) || null,
+        exclude: Boolean((options && options.resume && options.resume.exclude)),
+        masked: "resume"
       };
 
       // Leave Command options
@@ -71,7 +79,9 @@ exports.start = (client, options) => {
         alt: (options && options.leave && options.leave.alt) || [],
         help: (options && options.leave && options.leave.help) || "Leaves the voice channel.",
         name: (options && options.leave && options.leave.name) || "leave",
-        usage: (options && options.leave && options.leave.usage) || null
+        usage: (options && options.leave && options.leave.usage) || null,
+        exclude: Boolean((options && options.leave && options.leave.exclude)),
+        masked: "leave"
       };
 
       // Queue Command options
@@ -81,7 +91,9 @@ exports.start = (client, options) => {
         alt: (options && options.queue && options.queue.alt) || [],
         help: (options && options.queue && options.queue.help) || "View the current queue.",
         name: (options && options.queue && options.queue.name) || "queue",
-        usage: (options && options.queue && options.queue.usage) || null
+        usage: (options && options.queue && options.queue.usage) || null,
+        exclude: Boolean((options && options.queue && options.queue.exclude)),
+        masked: "queue"
       };
 
       // Nowplaying Command options
@@ -91,7 +103,9 @@ exports.start = (client, options) => {
         alt: (options && options.np && options.np.alt) || [],
         help: (options && options.np && options.np.help) || "Shows the now playing text.",
         name: (options && options.np && options.np.name) || "np",
-        usage: (options && options.np && options.np.usage) || null
+        usage: (options && options.np && options.np.usage) || null,
+        exclude: Boolean((options && options.np && options.np.exclude)),
+        masked: "np"
       };
 
       // Loop Command options
@@ -101,7 +115,9 @@ exports.start = (client, options) => {
         alt: (options && options.loop && options.loop.alt) || [],
         help: (options && options.loop && options.loop.help) || "Sets the loop state for the queue.",
         name: (options && options.loop && options.loop.name) || "loop",
-        usage: (options && options.loop && options.loop.usage) || null
+        usage: (options && options.loop && options.loop.usage) || null,
+        exclude: Boolean((options && options.loop && options.loop.exclude)),
+        masked: "loop"
       };
 
       // Search Command options
@@ -111,7 +127,9 @@ exports.start = (client, options) => {
         alt: (options && options.search && options.search.alt) || [],
         help: (options && options.search && options.search.help) || "Searchs for up to 10 videos from YouTube.",
         name: (options && options.search && options.search.name) || "search",
-        usage: (options && options.search && options.search.usage) || null
+        usage: (options && options.search && options.search.usage) || null,
+        exclude: Boolean((options && options.search && options.search.exclude)),
+        masked: "search"
       };
 
       // Clear Command options
@@ -121,7 +139,9 @@ exports.start = (client, options) => {
         alt: (options && options.clear && options.clear.alt) || [],
         help: (options && options.clear && options.clear.help) || "Clears the entire queue.",
         name: (options && options.clear && options.clear.name) || "clear",
-        usage: (options && options.clear && options.clear.usage) || null
+        usage: (options && options.clear && options.clear.usage) || null,
+        exclude: Boolean((options && options.clearqueue && options.clearqueue.exclude)),
+        masked: "clearqueue"
       };
 
       // Volume Command options
@@ -131,7 +151,9 @@ exports.start = (client, options) => {
         alt: (options && options.volume && options.volume.alt) || [],
         help: (options && options.volume && options.volume.help) || "Changes the volume output of the bot.",
         name: (options && options.volume && options.volume.name) || "volume",
-        usage: (options && options.volume && options.volume.usage) || null
+        usage: (options && options.volume && options.volume.usage) || null,
+        exclude: Boolean((options && options.volume && options.volume.exclude)),
+        masked: "volume"
       };
 
       this.remove = {
@@ -140,7 +162,9 @@ exports.start = (client, options) => {
         alt: (options && options.remove && options.remove.alt) || [],
         help: (options && options.remove && options.remove.help) || "Remove a song from the queue by position in the queue.",
         name: (options && options.remove && options.remove.name) || "remove",
-        usage: (options && options.remove && options.remove.usage) || "{{prefix}}remove [position]"
+        usage: (options && options.remove && options.remove.usage) || "{{prefix}}remove [position]",
+        exclude: Boolean((options && options.remove && options.remove.exclude)),
+        masked: "remove"
       };
 
       // Skip Command options
@@ -150,7 +174,9 @@ exports.start = (client, options) => {
         alt: (options && options.skip && options.skip.alt) || [],
         help: (options && options.skip && options.skip.help) || "Skip a song or songs with `skip [number]`",
         name: (options && options.skip && options.skip.name) || "skip",
-        usage: (options && options.skip && options.skip.usage) || null
+        usage: (options && options.skip && options.skip.usage) || null,
+        exclude: Boolean((options && options.skip && options.skip.exclude)),
+        masked: "skip"
       };
 
       this.embedColor = (options && options.embedColor) || 'GREEN';
@@ -175,12 +201,13 @@ exports.start = (client, options) => {
       this.messageHelp = Boolean((options && options.messageHelp));
       this.inlineEmbeds = Boolean((options && options.inlineEmbeds));
       this.dateLocal = (options && options.dateLocal) || 'en-US';
-      this.bigPicture = Boolean((options && options.bigPicture)) || false;
+      this.bigPicture = Boolean((options && options.bigPicture)) || false
 
       // Cooldown Settins
       this.cooldown = {
         disabled: Boolean(options && options.cooldown && options.cooldown.disabled),
-        timer: parseInt((options && options.cooldown && options.cooldown.timer) || 10000)
+        timer: parseInt((options && options.cooldown && options.cooldown.timer) || 10000),
+        exclude: (options && options.cooldown && options.cooldown.exclude) || ["volume","queue","pause","resume","np"]
       };
       this.recentTalk = new Set();
     }
@@ -281,8 +308,12 @@ exports.start = (client, options) => {
     });
   };
 
-  client.on("ready", (client) => {
+  client.on("ready", () => {
     console.log(`------- Music Bot -------\n> Version: ${PACKAGE.version}\n> Extra Logging: ${musicbot.logging}.\n> Node.js Version: ${process.version}\n------- Music Bot -------`);
+    if (musicbot.cooldown.exclude.includes("skip")) console.warn(`[MUSIC] Excluding SKIP CMD from cooldowns can cause issues.`);
+    if (musicbot.cooldown.exclude.includes("play")) console.warn(`[MUSIC] Excluding PLAY CMD from cooldowns can cause issues.`);
+    if (musicbot.cooldown.exclude.includes("remove")) console.warn(`[MUSIC] Excluding REMOVE CMD from cooldowns can cause issues.`);
+    if (musicbot.cooldown.exclude.includes("search")) console.warn(`[MUSIC] Excluding SEARCH CMD from cooldowns can cause issues.`);
   });
 
   client.on("message", (msg) => {
@@ -290,19 +321,21 @@ exports.start = (client, options) => {
     const command = message.substring(musicbot.botPrefix.length).split(/[ \n]/)[0].trim();
     const suffix = message.substring(musicbot.botPrefix.length + command.length).trim();
     const args = message.slice(musicbot.botPrefix.length + command.length).trim().split(/ +/g);
+    let prefix = musicbot.botPrefix;
+    if (typeof prefix === 'object') prefix = prefix.has(msg.guild.id) ? prefix.get(msg.guild.id) : musicbot.botPrefix;
 
     if (message.startsWith(musicbot.botPrefix) && !msg.author.bot && msg.channel.type == "text") {
       if (musicbot.commands.has(command)) {
-        if (musicbot.recentTalk.has(msg.author.id) && !musicbot.cooldown.disabled) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
         let tCmd = musicbot.commands.get(command);
+        if (musicbot.recentTalk.has(msg.author.id) && !musicbot.cooldown.disabled && !musicbot.cooldown.exclude.includes(tCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
         if (!tCmd.disabled) {
           if (!musicbot.cooldown.disabled) musicbot.recentTalk.add(msg.author.id);
           setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
           return musicbot[tCmd.run](msg, suffix, args);
         }
       } else if (musicbot.aliases.has(command)) {
-        if (musicbot.recentTalk.has(msg.author.id) && !musicbot.cooldown.disabled) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
         let aCmd = musicbot.aliases.get(command);
+        if (musicbot.recentTalk.has(msg.author.id) && !musicbot.cooldown.disabled && !musicbot.cooldown.exclude.includes(aCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
         if (!aCmd.disabled) {
           if (!musicbot.cooldown.disabled) musicbot.recentTalk.add(msg.author.id);
           setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
@@ -390,7 +423,7 @@ exports.start = (client, options) => {
         let max = musicbot.commandsArray.length;
         embed.setColor(musicbot.embedColor);
         for (var i = 0; i < musicbot.commandsArray.length; i++) {
-          embed.addField(musicbot.commandsArray[i].name, musicbot.commandsArray[i].help);
+          if (!musicbot.commandsArray[i].exclude) embed.addField(musicbot.commandsArray[i].name, musicbot.commandsArray[i].help);
           index++;
           if (index == max) {
             if (musicbot.messageHelp) {
@@ -418,7 +451,7 @@ exports.start = (client, options) => {
         let index = 0;
         let max = musicbot.commandsArray.length;
         for (var i = 0; i < musicbot.commandsArray.length; i++) {
-          if (!musicbot.commandsArray[i].disabled) {
+          if (!musicbot.commandsArray[i].disabled || !musicbot.commandsArray[i].exclude) {
             cmdmsg = cmdmsg + `\n• ${musicbot.commandsArray[i].name}: ${musicbot.commandsArray[i].help}`;
             index++;
             if (index == musicbot.commandsArray.length) {
@@ -449,6 +482,7 @@ exports.start = (client, options) => {
         .has('EMBED_LINKS')) {
         const embed = new Discord.RichEmbed();
         command = musicbot.commands.get(command) || musicbot.aliases.get(command);
+        if (command.exclude) return msg.channel.send(musicbot.note('fail', `${suffix} is not a valid command!`));
         embed.setAuthor(command.name, msg.client.user.avatarURL);
         embed.setDescription(command.help);
         if (command.alt.length > 0) embed.addField(`Aliases`, command.alt.join(", "), musicbot.inlineEmbeds);
@@ -459,6 +493,7 @@ exports.start = (client, options) => {
         });
       } else {
         command = musicbot.commands.get(command) || musicbot.aliases.get(command);
+        if (command.exclude) return msg.channel.send(musicbot.note('fail', `${suffix} is not a valid command!`));
         var cmdhelp = `= ${command.name} =\n`;
         cmdhelp + `\n${command.help}`;
         if (command.usage !== null) cmdhelp = cmdhelp + `\nUsage: ${command.usage.replace(/{{prefix}})/g, musicbot.botPrefix)}`;
@@ -675,152 +710,294 @@ exports.start = (client, options) => {
             if (!searchResult.totalResults || searchResult.totalResults === 0) return response.edit(musicbot.note('fail', 'Failed to get search results.'));
 
             const startTheFun = async (videos, max) => {
-              const embed = new Discord.RichEmbed();
-              embed.setTitle(`Choose Your Video`);
-              embed.setColor(musicbot.embedColor);
-              var index = 0;
-              videos.forEach(function(video) {
-                index++;
-                embed.addField(`${index} (${video.channelTitle})`, `[${musicbot.note('font', video.title)}](${video.url})`, musicbot.inlineEmbeds);
-              });
-              embed.setFooter(`Search by: ${msg.author.username}`, msg.author.displayAvatarURL);
-              msg.channel.send({
+              if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
+                const embed = new Discord.RichEmbed();
+                embed.setTitle(`Choose Your Video`);
+                embed.setColor(musicbot.embedColor);
+                var index = 0;
+                videos.forEach(function(video) {
+                  index++;
+                  embed.addField(`${index} (${video.channelTitle})`, `[${musicbot.note('font', video.title)}](${video.url})`, musicbot.inlineEmbeds);
+                });
+                embed.setFooter(`Search by: ${msg.author.username}`, msg.author.displayAvatarURL);
+                msg.channel.send({
                   embed
                 })
                 .then(firstMsg => {
                   var filter = null;
                   if (max === 0) {
                     filter = m => m.author.id === msg.author.id &&
-                      m.content.includes('1') ||
-                      m.content.trim() === (`cancel`);
+                    m.content.includes('1') ||
+                    m.content.trim() === (`cancel`);
                   } else if (max === 1) {
                     filter = m => m.author.id === msg.author.id &&
-                      m.content.includes('1') ||
-                      m.content.includes('2') ||
-                      m.content.trim() === (`cancel`);
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.trim() === (`cancel`);
                   } else if (max === 2) {
                     filter = m => m.author.id === msg.author.id &&
-                      m.content.includes('1') ||
-                      m.content.includes('2') ||
-                      m.content.includes('3') ||
-                      m.content.trim() === (`cancel`);
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.trim() === (`cancel`);
                   } else if (max === 3) {
                     filter = m => m.author.id === msg.author.id &&
-                      m.content.includes('1') ||
-                      m.content.includes('2') ||
-                      m.content.includes('3') ||
-                      m.content.includes('4') ||
-                      m.content.trim() === (`cancel`);
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.trim() === (`cancel`);
                   } else if (max === 4) {
                     filter = m => m.author.id === msg.author.id &&
-                      m.content.includes('1') ||
-                      m.content.includes('2') ||
-                      m.content.includes('3') ||
-                      m.content.includes('4') ||
-                      m.content.includes('5') ||
-                      m.content.trim() === (`cancel`);
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.trim() === (`cancel`);
                   } else if (max === 5) {
                     filter = m => m.author.id === msg.author.id &&
-                      m.content.includes('1') ||
-                      m.content.includes('2') ||
-                      m.content.includes('3') ||
-                      m.content.includes('4') ||
-                      m.content.includes('5') ||
-                      m.content.includes('6') ||
-                      m.content.trim() === (`cancel`);
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.includes('6') ||
+                    m.content.trim() === (`cancel`);
                   } else if (max === 6) {
                     filter = m => m.author.id === msg.author.id &&
-                      m.content.includes('1') ||
-                      m.content.includes('2') ||
-                      m.content.includes('3') ||
-                      m.content.includes('4') ||
-                      m.content.includes('5') ||
-                      m.content.includes('6') ||
-                      m.content.includes('7') ||
-                      m.content.trim() === (`cancel`);
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.includes('6') ||
+                    m.content.includes('7') ||
+                    m.content.trim() === (`cancel`);
                   } else if (max === 7) {
                     filter = m => m.author.id === msg.author.id &&
-                      m.content.includes('1') ||
-                      m.content.includes('2') ||
-                      m.content.includes('3') ||
-                      m.content.includes('4') ||
-                      m.content.includes('5') ||
-                      m.content.includes('6') ||
-                      m.content.includes('7') ||
-                      m.content.includes('8') ||
-                      m.content.trim() === (`cancel`);
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.includes('6') ||
+                    m.content.includes('7') ||
+                    m.content.includes('8') ||
+                    m.content.trim() === (`cancel`);
                   } else if (max === 8) {
                     filter = m => m.author.id === msg.author.id &&
-                      m.content.includes('1') ||
-                      m.content.includes('2') ||
-                      m.content.includes('3') ||
-                      m.content.includes('4') ||
-                      m.content.includes('5') ||
-                      m.content.includes('6') ||
-                      m.content.includes('7') ||
-                      m.content.includes('8') ||
-                      m.content.includes('9') ||
-                      m.content.trim() === (`cancel`);
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.includes('6') ||
+                    m.content.includes('7') ||
+                    m.content.includes('8') ||
+                    m.content.includes('9') ||
+                    m.content.trim() === (`cancel`);
                   } else if (max === 9) {
                     filter = m => m.author.id === msg.author.id &&
-                      m.content.includes('1') ||
-                      m.content.includes('2') ||
-                      m.content.includes('3') ||
-                      m.content.includes('4') ||
-                      m.content.includes('5') ||
-                      m.content.includes('6') ||
-                      m.content.includes('7') ||
-                      m.content.includes('8') ||
-                      m.content.includes('9') ||
-                      m.content.includes('10') ||
-                      m.content.trim() === (`cancel`);
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.includes('6') ||
+                    m.content.includes('7') ||
+                    m.content.includes('8') ||
+                    m.content.includes('9') ||
+                    m.content.includes('10') ||
+                    m.content.trim() === (`cancel`);
                   }
                   msg.channel.awaitMessages(filter, {
-                      max: 1,
-                      time: 60000,
-                      errors: ['time']
-                    })
-                    .then(collected => {
-                      const newColl = Array.from(collected);
-                      const mcon = newColl[0][1].content;
+                    max: 1,
+                    time: 60000,
+                    errors: ['time']
+                  })
+                  .then(collected => {
+                    const newColl = Array.from(collected);
+                    const mcon = newColl[0][1].content;
 
-                      if (mcon === "cancel") return firstMsg.edit(musicbot.note('note', 'Searching canceled.'));
-                      const song_number = parseInt(mcon) - 1;
-                      if (song_number >= 0) {
-                        firstMsg.delete();
+                    if (mcon === "cancel") return firstMsg.edit(musicbot.note('note', 'Searching canceled.'));
+                    const song_number = parseInt(mcon) - 1;
+                    if (song_number >= 0) {
+                      firstMsg.delete();
 
-                        videos[song_number].requester == msg.author.id;
-                        var embed = new Discord.RichEmbed();
-                        embed.setAuthor('Adding To Queue', client.user.avatarURL);
-                        var songTitle = videos[song_number].title.replace(/\\/g, '\\\\')
-                        .replace(/\`/g, '\\`')
-                        .replace(/\*/g, '\\*')
-                        .replace(/_/g, '\\_')
-                        .replace(/~/g, '\\~')
-                        .replace(/`/g, '\\`');
-                        embed.setColor(musicbot.embedColor);
-                        embed.addField(videos[song_number].channelTitle, `[${songTitle}](${videos[song_number].url})`, musicbot.inlineEmbeds);
-                        embed.addField("Queued On", videos[song_number].queuedOn, musicbot.inlineEmbeds);
-                        if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
-                        if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
-                        const resMem = client.users.get(videos[song_number].requester);
-                        if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(videos[song_number].requester).username}`, videos[song_number].requesterAvatarURL);
-                        if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${videos[song_number].requester})\``, videos[song_number].requesterAvatarURL);
-                        msg.channel.send({
-                          embed
-                        }).then(() => {
-                            queue.songs.push(videos[song_number]);
-                            if (queue.songs.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
-                          })
-                          .catch(console.log);
-                      };
-                    })
-                    .catch(collected => {
-                      if (collected.toString()
-                        .match(/error|Error|TypeError|RangeError|Uncaught/)) return firstMsg.edit(`\`\`\`xl\nSearching canceled. ${collected}\n\`\`\``);
-                      return firstMsg.edit(`\`\`\`xl\nSearching canceled.\n\`\`\``);
-                    });
+                      videos[song_number].requester == msg.author.id;
+                      videos[song_number].position = queue.songs.length ? queue.songs.length : 0;
+                      var embed = new Discord.RichEmbed();
+                      embed.setAuthor('Adding To Queue', client.user.avatarURL);
+                      var songTitle = videos[song_number].title.replace(/\\/g, '\\\\')
+                      .replace(/\`/g, '\\`')
+                      .replace(/\*/g, '\\*')
+                      .replace(/_/g, '\\_')
+                      .replace(/~/g, '\\~')
+                      .replace(/`/g, '\\`');
+                      embed.setColor(musicbot.embedColor);
+                      embed.addField(videos[song_number].channelTitle, `[${songTitle}](${videos[song_number].url})`, musicbot.inlineEmbeds);
+                      embed.addField("Queued On", videos[song_number].queuedOn, musicbot.inlineEmbeds);
+                      if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
+                      if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
+                      const resMem = client.users.get(videos[song_number].requester);
+                      if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(videos[song_number].requester).username}`, videos[song_number].requesterAvatarURL);
+                      if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${videos[song_number].requester})\``, videos[song_number].requesterAvatarURL);
+                      msg.channel.send({
+                        embed
+                      }).then(() => {
+                        queue.songs.push(videos[song_number]);
+                        if (queue.songs.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
+                      })
+                      .catch(console.log);
+                    };
+                  })
+                  .catch(collected => {
+                    if (collected.toString()
+                    .match(/error|Error|TypeError|RangeError|Uncaught/)) return firstMsg.edit(`\`\`\`xl\nSearching canceled. ${collected}\n\`\`\``);
+                    return firstMsg.edit(`\`\`\`xl\nSearching canceled.\n\`\`\``);
+                  });
                 })
+              } else {
+                const vids = videos.map((video, index) => (
+                  `**${index + 1}:** __${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}__`
+                )).join('\n\n');
+                msg.channel.send(`\`\`\`\n= Pick Your Video =\n${vids}\n\n= Say Cancel To Cancel =`).then(firstMsg => {
+                  var filter = null;
+                  if (max === 0) {
+                    filter = m => m.author.id === msg.author.id &&
+                    m.content.includes('1') ||
+                    m.content.trim() === (`cancel`);
+                  } else if (max === 1) {
+                    filter = m => m.author.id === msg.author.id &&
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.trim() === (`cancel`);
+                  } else if (max === 2) {
+                    filter = m => m.author.id === msg.author.id &&
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.trim() === (`cancel`);
+                  } else if (max === 3) {
+                    filter = m => m.author.id === msg.author.id &&
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.trim() === (`cancel`);
+                  } else if (max === 4) {
+                    filter = m => m.author.id === msg.author.id &&
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.trim() === (`cancel`);
+                  } else if (max === 5) {
+                    filter = m => m.author.id === msg.author.id &&
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.includes('6') ||
+                    m.content.trim() === (`cancel`);
+                  } else if (max === 6) {
+                    filter = m => m.author.id === msg.author.id &&
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.includes('6') ||
+                    m.content.includes('7') ||
+                    m.content.trim() === (`cancel`);
+                  } else if (max === 7) {
+                    filter = m => m.author.id === msg.author.id &&
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.includes('6') ||
+                    m.content.includes('7') ||
+                    m.content.includes('8') ||
+                    m.content.trim() === (`cancel`);
+                  } else if (max === 8) {
+                    filter = m => m.author.id === msg.author.id &&
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.includes('6') ||
+                    m.content.includes('7') ||
+                    m.content.includes('8') ||
+                    m.content.includes('9') ||
+                    m.content.trim() === (`cancel`);
+                  } else if (max === 9) {
+                    filter = m => m.author.id === msg.author.id &&
+                    m.content.includes('1') ||
+                    m.content.includes('2') ||
+                    m.content.includes('3') ||
+                    m.content.includes('4') ||
+                    m.content.includes('5') ||
+                    m.content.includes('6') ||
+                    m.content.includes('7') ||
+                    m.content.includes('8') ||
+                    m.content.includes('9') ||
+                    m.content.includes('10') ||
+                    m.content.trim() === (`cancel`);
+                  }
+                  msg.channel.awaitMessages(filter, {
+                    max: 1,
+                    time: 60000,
+                    errors: ['time']
+                  })
+                  .then(collected => {
+                    const newColl = Array.from(collected);
+                    const mcon = newColl[0][1].content;
+
+                    if (mcon === "cancel") return firstMsg.edit(musicbot.note('note', 'Searching canceled.'));
+                    const song_number = parseInt(mcon) - 1;
+                    if (song_number >= 0) {
+                      firstMsg.delete();
+
+                      videos[song_number].requester == msg.author.id;
+                      videos[song_number].position = queue.songs.length ? queue.songs.length : 0;
+                      var embed = new Discord.RichEmbed();
+                      embed.setAuthor('Adding To Queue', client.user.avatarURL);
+                      var songTitle = videos[song_number].title.replace(/\\/g, '\\\\')
+                      .replace(/\`/g, '\\`')
+                      .replace(/\*/g, '\\*')
+                      .replace(/_/g, '\\_')
+                      .replace(/~/g, '\\~')
+                      .replace(/`/g, '\\`');
+                      embed.setColor(musicbot.embedColor);
+                      embed.addField(videos[song_number].channelTitle, `[${songTitle}](${videos[song_number].url})`, musicbot.inlineEmbeds);
+                      embed.addField("Queued On", videos[song_number].queuedOn, musicbot.inlineEmbeds);
+                      if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
+                      if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
+                      const resMem = client.users.get(videos[song_number].requester);
+                      if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(videos[song_number].requester).username}`, videos[song_number].requesterAvatarURL);
+                      if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${videos[song_number].requester})\``, videos[song_number].requesterAvatarURL);
+                      msg.channel.send({
+                        embed
+                      }).then(() => {
+                        queue.songs.push(videos[song_number]);
+                        if (queue.songs.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
+                      })
+                      .catch(console.log);
+                    };
+                  })
+                  .catch(collected => {
+                    if (collected.toString()
+                    .match(/error|Error|TypeError|RangeError|Uncaught/)) return firstMsg.edit(`\`\`\`xl\nSearching canceled. ${collected}\n\`\`\``);
+                    return firstMsg.edit(`\`\`\`xl\nSearching canceled.\n\`\`\``);
+                  });
+                })
+              }
             };
 
             const max = searchResult.totalResults >= 10 ? 9 : searchResult.totalResults - 1;
@@ -860,9 +1037,17 @@ exports.start = (client, options) => {
   musicbot.clearFunction = (msg, suffix, args) => {
     if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(musicbot.note("fail", "No queue found for this server."));
     musicbot.emptyQueue(msg.guild.id).then(res => {
-      return msg.channel.send(musicbot.note("fail", "Queue cleared."));
+      msg.channel.send(musicbot.note("note", "Queue cleared."));
       const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-      if (voiceConnection !== null) return voiceConnection.disconnect();
+      if (voiceConnection !== null) {
+        const dispatcher = voiceConnection.player.dispatcher;
+        if (!dispatcher || dispatcher === null) {
+          if (musicbot.logging) return console.log(new Error(`dispatcher null on skip cmd [${msg.guild.name}] [${msg.author.username}]`));
+          return msg.channel.send(musicbot.note("fail", "Something went wrong."));
+        };
+        if (voiceConnection.paused) dispatcher.end();
+        dispatcher.end();
+      }
     }).catch(res => {
       console.error(new Error(`[clearCmd] [${msg.guild.id}] ${res}`))
       return msg.channel.send(musicbot.note("fail", "Something went wrong clearing the queue."));
@@ -914,7 +1099,9 @@ exports.start = (client, options) => {
         run: obj.run,
         alt: obj.alt,
         help: obj.help,
-        name: obj.name
+        name: obj.name,
+        exclude: obj.exclude,
+        masked: obj.masked
       };
       if (obj.alt.length > 0) {
         obj.alt.forEach((a) => {
@@ -995,31 +1182,30 @@ exports.start = (client, options) => {
             console.log(`Dispatcher/connection: ${error}`);
             if (msg && msg.channel) msg.channel.send(musicbot.note('fail', `Something went wrong with the connection. Retrying queue...`));
             console.error(error);
-            musicbot.executeQueue(msg, queue);
+            musicbot.executeQueue(msg, musicbot.queues.get(msg.guild.id));
           });
 
           dispatcher.on('error', (error) => {
             console.log(`Dispatcher: ${error.stack}`);
             if (msg && msg.channel) msg.channel.send(musicbot.note('fail', `Something went wrong while playing music. Retrying queue...`));
             console.error(error);
-            musicbot.executeQueue(msg, queue);
+            musicbot.executeQueue(msg, musicbot.queues.get(msg.guild.id));
           });
 
           dispatcher.on('end', () => {
             setTimeout(() => {
               let loop = musicbot.queues.get(msg.guild.id).loop;
-              if (queue.songs.length > 0) {
+              if (musicbot.queues.get(msg.guild.id).songs.length > 0) {
                 if (loop == "none" || loop == null) {
-                  queue.songs.shift();
-                  musicbot.updatePositions(queue.songs, msg.guild.id).then(res => {
+                  musicbot.queues.get(msg.guild.id).songs.shift();
+                  musicbot.updatePositions(musicbot.queues.get(msg.guild.id).songs, msg.guild.id).then(res => {
                     musicbot.queues.get(msg.guild.id).songs = res;
                     musicbot.executeQueue(msg, musicbot.queues.get(msg.guild.id));
                   }).catch(() => { console.error(new Error("something went wrong moving the queue")); });
                 } else if (loop == "queue" || loop == "song") {
-                  musicbot.executeQueue(msg, queue);
+                  musicbot.executeQueue(msg, musicbot.queues.get(msg.guild.id));
                 };
-              } else if (queue.songs.length <= 0) {
-                console.log(queue);
+              } else if (musicbot.queues.get(msg.guild.id).songs.length <= 0) {
                 if (msg && msg.channel) msg.channel.send(musicbot.note('note', 'Playback finished.'));
                 musicbot.emptyQueue(msg.guild.id);
                 const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
@@ -1036,6 +1222,20 @@ exports.start = (client, options) => {
       });
 
   }
+
+  musicbot.setPrefix = (server, prefix) => {
+    return new Promise((resolve, reject) => {
+      if (!server || !prefix) reject(new Error("invalid argument"));
+      if (typeof server !== 'string' || typeof prefix !== 'string') reject(new TypeError("did not equal string"));
+
+      if (typeof musicbot.botPrefix === "object") {
+        musicbot.botPrefix.set(server, prefix);
+      } else {
+        musicbot.botPrefix = new Map();
+        musicbot.botPrefix.set(server, prefix);
+      }
+    });
+  };
 
   musicbot.note = (type, text) => {
     if (type === 'wrap') {
@@ -1069,6 +1269,7 @@ exports.start = (client, options) => {
       await musicbot.loadCommand(musicbot.remove);
       await musicbot.loadCommand(musicbot.help);
       await musicbot.loadCommand(musicbot.skip);
+      await musicbot.loadCommand(musicbot.leave);
       await musicbot.loadCommand(musicbot.search);
       await musicbot.loadCommand(musicbot.pause);
       await musicbot.loadCommand(musicbot.resume);

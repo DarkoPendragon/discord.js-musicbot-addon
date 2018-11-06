@@ -8,7 +8,7 @@ class Bot extends Discord.Client {
 }
 const client = new Bot();
 
-client.music.start({
+client.music.start(client, {
   youtubeKey: "YouTubeAPIKeyHere" // Set the api key used for YouTube.
 });
 

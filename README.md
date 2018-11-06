@@ -1,4 +1,4 @@
-[![npm package](https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/discord.js-musicbot-addon/)    [![Downlaods](https://img.shields.io/npm/dt/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon)  [![Version](https://img.shields.io/npm/v/discord.js-musicbot-addon.svg?maxAge=3600)](https://www.npmjs.com/package/discord.js-musicbot-addon) -->
+[![npm package](https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/discord.js-musicbot-addon/)
 ***
 This module is a simple Node.js based music extension/bot for Discord.js projects using YouTube. This was originally an update of an older addon for newer versions of Discord.js but not serves as it's own module.   
 
@@ -6,7 +6,7 @@ __The commands available are: (default names)__
 * `musichelp [command]`: Displays help text for commands by this addon, or help for a specific command.
 * `play <url>|<search string>`: Play audio from YouTube.
 * `search <search string>`: Search's for up to 10 videos from YT.
-* `skip [number]`: Skip a song or multi songs with skip [some number],
+* `skip [number]`: Skip a song or multi songs with skip [some number].
 * `queue [position]`: Display the current queue.
 * `pause`: Pause music playback.
 * `resume`: Resume music playback.
@@ -36,11 +36,12 @@ Required for voice. Discord.js _prefers_ node-opus.
 
 __Installation:__  
 * `npm install discord.js-musicbot-addon`  
+If you have troubles installing, see [this link](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting) or [join the discord server](https://discord.gg/FKYrX4X).
 
 # Basic Example.
 ***  
 This addon is easy to use, and doesn't require any extra configuration besides a YouTube Data API key to run.  
-More examples can be found on the repo or once downloaded in `examples`.  
+More examples can be found on the repo in `examples`.  
 
 __Example basic code, standalone:__
 ```javascript
@@ -97,7 +98,8 @@ _Note: All Boolean options default false._
 Music.start(client, {
   cooldown: {
     disabled: <true | false>, // TRUE or FALSE statement.
-    timer: 10000 // Time in milliseconds. 1000 = 1 second.
+    timer: 10000,             // Time in milliseconds. 1000 = 1 second.
+    exclude: ["commandName"]  // Valid commands are `play`, `remove`, `help`, `np`, `queue`, `volume`, `pause`, `resume`, `skip`, `clearqueue`, `loop`, `leave`.
   }
 });
 ```
@@ -107,11 +109,12 @@ Commands pass a bit different. Each command follows the same format as below. Va
 ```js
 music.start(client, {
   <command>: {
-    disabled: false,                  // True/False statement.
-    alt: ["name1","name2","name3"],   // Array of alt names (aliases).
-    help: "Help text.",               // String of help text.
-    name: "play"                      // Name of the command.
-    usage: "{{prefix}}play bad memes" // Usage text. {{prefix}} will insert the bots prefix.
+    disabled: false,                   // True/False statement.
+    alt: ["name1","name2","name3"],    // Array of alt names (aliases).
+    help: "Help text.",                // String of help text.
+    name: "play"                       // Name of the command.
+    usage: "{{prefix}}play bad memes", // Usage text. {{prefix}} will insert the bots prefix.
+    exclude: false                     // Excludes the command from the help command (cannot exclude the help command).
   }
 });
 ```
@@ -136,14 +139,21 @@ music.start(client, {
 });
 ```
 
-# Changelog
+# Last 3 Versions
 ***  
+## 13.0.2
+* Commands can now be excluded from help.
+* Fixed some documentation.
+* Commands can be excluded from cooldowns.
+* Leave command now loads.
+* It also works!
+* Fixed queue not playing correctly when loop is set to `queue`.
+* Fixed an error causing search not to set a videos position.
+* Some touch ups.
+
 ## 13.0.1
 * Wew already broke it lads.
 * Cooldown is fixed.
 
 ## 13.0.0
 * Redid entire module.
-
-## 12.x ~ 1.0
-* ~~Deprecated versions~~.
