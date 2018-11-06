@@ -13,6 +13,6 @@ client.on("message", (msg) => {
   const suffix = message.substring(musicbot.botPrefix.length + command.length).trim(); // Get the suffix (song).
 
   if (msg.content.startsWith(prefix) && command == "play") {
-    client.music.bot.playFunction(suffix, msg);
+    client.music.bot.playFunction(msg, suffix);
   }
 })
