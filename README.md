@@ -69,10 +69,11 @@ The options you can pass in `music.start(client, {options})` and their types is 
 _Note: All Boolean options default false._  
 
 ## Basic Options.
-| Option | Type | Description |  
+| Option | Type | Description |  messageNewSong
 | --- | --- | --- |  
 | youtubeKey | String | A YouTube Data API3 key. Required to run. |
 | botPrefix | String | The prefix of the bot. Defaults to "!". |
+| messageNewSong | Boolean | Whether or not to send a message when a new song starts playing. |
 | bigPicture | Boolean | Whether to use a large (true) image or small (false) for embeds. |
 | global | Boolean | Whether to use one global queue or server specific ones. |
 | maxQueueSize | Number | Max queue size allowed. Defaults 100. Set to 0 for unlimited. |
@@ -114,7 +115,7 @@ music.start(client, {
     help: "Help text.",                // String of help text.
     name: "play"                       // Name of the command.
     usage: "{{prefix}}play bad memes", // Usage text. {{prefix}} will insert the bots prefix.
-    exclude: false                     // Excludes the command from the help command (cannot exclude the help command).
+    exclude: false                     // Excludes the command from the help command.
   }
 });
 ```
@@ -141,6 +142,12 @@ music.start(client, {
 
 # Last 3 Versions
 ***  
+## 13.0.3
+* Added `messageNewSong`, allowing a message to be sent when a new song plays.
+* Added a fix to attempt to stop URLs with `&` in them not searching correctly.
+* Cooldown fixes.
+* Other touchups.
+
 ## 13.0.2
 * Commands can now be excluded from help.
 * Fixed some documentation.
@@ -154,6 +161,3 @@ music.start(client, {
 ## 13.0.1
 * Wew already broke it lads.
 * Cooldown is fixed.
-
-## 13.0.0
-* Redid entire module.

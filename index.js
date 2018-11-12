@@ -201,7 +201,8 @@ exports.start = (client, options) => {
       this.messageHelp = Boolean((options && options.messageHelp));
       this.inlineEmbeds = Boolean((options && options.inlineEmbeds));
       this.dateLocal = (options && options.dateLocal) || 'en-US';
-      this.bigPicture = Boolean((options && options.bigPicture)) || false
+      this.bigPicture = Boolean((options && options.bigPicture))
+      this.messageNewSong = Boolean((options && options.messageNewSong))
 
       // Cooldown Settins
       this.cooldown = {
@@ -327,18 +328,27 @@ exports.start = (client, options) => {
     if (message.startsWith(musicbot.botPrefix) && !msg.author.bot && msg.channel.type == "text") {
       if (musicbot.commands.has(command)) {
         let tCmd = musicbot.commands.get(command);
-        if (musicbot.recentTalk.has(msg.author.id) && !musicbot.cooldown.disabled && !musicbot.cooldown.exclude.includes(tCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
+        console.log(tCmd.masked);
+        if (musicbot.recentTalk.has(msg.author.id)) {
+          if (musicbot.cooldown.disabled == false && !musicbot.cooldown.exclude.includes(tCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
+        }
         if (!tCmd.disabled) {
-          if (!musicbot.cooldown.disabled) musicbot.recentTalk.add(msg.author.id);
-          setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
+          if (!musicbot.cooldown.disabled && !musicbot.cooldown.exclude.includes(tCmd.masked)) {
+            musicbot.recentTalk.add(msg.author.id);
+            setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
+          }
           return musicbot[tCmd.run](msg, suffix, args);
         }
       } else if (musicbot.aliases.has(command)) {
         let aCmd = musicbot.aliases.get(command);
-        if (musicbot.recentTalk.has(msg.author.id) && !musicbot.cooldown.disabled && !musicbot.cooldown.exclude.includes(aCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
+        if (musicbot.recentTalk.has(msg.author.id)) {
+          if (musicbot.cooldown.disabled == false && !musicbot.cooldown.exclude.includes(aCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
+        }
         if (!aCmd.disabled) {
-          if (!musicbot.cooldown.disabled) musicbot.recentTalk.add(msg.author.id);
-          setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
+          if (!musicbot.cooldown.disabled && !musicbot.cooldown.exclude.includes(aCmd.masked)) {
+            musicbot.recentTalk.add(msg.author.id);
+            setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
+          }
           return aCmd.run(msg, suffix, args);
         }
       };
@@ -351,6 +361,7 @@ exports.start = (client, options) => {
     let q = musicbot.getQueue(msg.guild.id)
     if (q.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
     var searchstring = suffix.trim();
+    if (searchstring.includes("https://youtu.be/") || searchstring.includes("https://www.youtube.com/") && searchstring.includes("&")) searchstring = searchstring.split("&")[0];
     msg.channel.send(musicbot.note("search", `\`Searching: ${searchstring}\`~`));
 
     new Promise(async (resolve, reject) => {
@@ -1057,10 +1068,10 @@ exports.start = (client, options) => {
   musicbot.removeFunction = (msg, suffix, args) => {
     if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(musicbot.note('fail', `No queue for this server found!`));
     if (!suffix)  return msg.channel.send(musicbot.note("fail", "No video position given."));
-    if (!musicbot.canSkip(msg.member, musicbot.queues.get(msg.guild.id))) return msg.channel.send(musicbot.note("fail", "You can't remove that as you didn't queue it."));
     if (parseInt(suffix - 1) == 0) return msg.channel.send(musicbot.note("fail", "You cannot clear the currently playing music."));
     let test = musicbot.queues.get(msg.guild.id).songs.find(x => x.position == parseInt(suffix - 1));
     if (test) {
+      if (test.requester !== msg.author.id) return msg.channel.send(musicbot.note("fail", "You cannot remove that item."));
       let newq = musicbot.queues.get(msg.guild.id).songs.filter(s => s !== test);
       musicbot.updatePositions(newq, msg.guild.id).then(res => {
         musicbot.queues.get(msg.guild.id).songs = res;
@@ -1166,6 +1177,21 @@ exports.start = (client, options) => {
             musicbot.emptyQueue(msg.guild.id);
             const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
             if (voiceConnection !== null) return voiceConnection.disconnect();
+          }
+        }
+
+        if (musicbot.messageNewSong == true && queue.last) {
+          let req = client.users.get(video.requester);
+          if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
+            const embed = new Discord.RichEmbed()
+            .setTitle("Now Playing", `${req !== null ? req.displayAvatarURL : null}`)
+            .setThumbnail(`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`)
+            .setDescription(`[${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}](${video.url}) by [${video.channelTitle}](${video.channelURL})`)
+            .setColor(musicbot.embedColor)
+            .setFooter(`Requested by ${req !== null ? req.username : "Unknwon User"}`, `${req !== null ? req.displayAvatarURL : null}`);
+            msg.channel.send({embed});
+          } else {
+            msg.channel.send(musicbot.note("note", `\`${video.title.replace(/`/g, "''")}\` by \`${video.channelURL.replace(/`/g, "''")}\``))
           }
         }
 
