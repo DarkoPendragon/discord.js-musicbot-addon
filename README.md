@@ -69,7 +69,7 @@ The options you can pass in `music.start(client, {options})` and their types is 
 _Note: All Boolean options default false._  
 
 ## Basic Options.
-| Option | Type | Description |  messageNewSong
+| Option | Type | Description |  
 | --- | --- | --- |  
 | youtubeKey | String | A YouTube Data API3 key. Required to run. |
 | botPrefix | String | The prefix of the bot. Defaults to "!". |
