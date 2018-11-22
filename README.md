@@ -36,31 +36,11 @@ Required for voice. Discord.js _prefers_ node-opus.
 
 __Installation:__  
 * `npm install discord.js-musicbot-addon`  
-If you have troubles installing, see [this link](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting) or [join the discord server](https://discord.gg/FKYrX4X).
+If you have troubles installing, see [this link](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting) or [join the discord server](https://discordapp.com/invite/FKYrX4X).
 
-# Basic Example.
+# Examples
 ***  
-This addon is easy to use, and doesn't require any extra configuration besides a YouTube Data API key to run.  
-More examples can be found on the repo in `examples`.  
-
-__Example basic code, standalone:__
-```javascript
-const Discord = require('discord.js'); // Require the Discord.js library.
-
-class Bot extends Discord.Client {
-  constructor(options) {
-    super(options);
-    this.music = require("discord.js-musicbot-addon");
-  }
-}
-const client = new Bot();
-
-client.music.start({
-  youtubeKey: "YouTubeAPIKeyHere" // Set the api key used for YouTube.
-});
-
-client.login("token"); // Connect the bot.
-```  
+See [this page](https://github.com/DarkoPendragon/discord.js-musicbot-addon/tree/master/examples/exmaples.md) on the repo for examples.
 
 # Options & Config.
 ***
@@ -69,48 +49,41 @@ The options you can pass in `music.start(client, {options})` and their types is 
 _Note: All Boolean options default false._  
 
 ## Basic Options.
-| Option | Type | Description |  messageNewSong
-| --- | --- | --- |  
-| youtubeKey | String | A YouTube Data API3 key. Required to run. |
-| botPrefix | String | The prefix of the bot. Defaults to "!". |
-| messageNewSong | Boolean | Whether or not to send a message when a new song starts playing. |
-| bigPicture | Boolean | Whether to use a large (true) image or small (false) for embeds. |
-| global | Boolean | Whether to use one global queue or server specific ones. |
-| maxQueueSize | Number | Max queue size allowed. Defaults 100. Set to 0 for unlimited. |
-| defVolume | Number | The default volume of music. 1 - 200, defaults 50. |
-| anyoneCanSkip | Boolean | Whether or not anyone can skip. |
-| messageHelp | Boolean | Whether to message the user on help command usage. If it can't, it will send it in the channel like normal. |
-| botAdmins | Object/Array | An array of Discord user ID's to be admins as the bot. They will ignore permissions for the bot. |
+| Option | Type | Description | Default |  
+| --- | --- | --- | --- |
+| youtubeKey | String | A YouTube Data API3 key. Required to run. | NaN |
+| botPrefix | String | The prefix of the bot. Defaults to "!". | ! |
+| messageNewSong | Boolean | Whether or not to send a message when a new song starts playing. | true |
+| bigPicture | Boolean | Whether to use a large (true) image or small (false) for embeds. | false |
+| maxQueueSize | Number | Max queue size allowed. Defaults 100. Set to 0 for unlimited. | 50 |
+| defVolume | Number | The default volume of music. 1 - 200. | 50 |
+| anyoneCanSkip | Boolean | Whether or not anyone can skip. | false |
+| messageHelp | Boolean | Whether to message the user on help command usage. If it can't, it will send it in the channel like normal. | false |
+| botAdmins | Object/Array | An array of Discord user ID's to be admins as the bot. They will ignore permissions for the bot. | [ ] |
+| anyoneCanAdjust | Boolean | Whether anyone can adjust volume. | false |
+| ownerOverMember | Boolean | Whether the owner over-rides `CanAdjust` and `CanSkip`. | flase |
+| anyoneCanLeave | Boolean | Whether anyone can make the bot leave the currently connected channel. | false |
+| ownerID | String | The ID of the Discord user to be seen as the owner. Required if using `ownerOverMember`. | NaN |
+| logging | Boolean | Some extra none needed logging (such as caught errors that didn't crash the bot, etc). | true |
+| requesterName | Boolean | Whether or not to display the username of the song requester. | true |
+| inlineEmbeds | Boolean | Whether or not to make embed fields inline (help command and some fields are excluded). | false |
+| musicPresence | Boolean | Whether or not to make the bot set its presence to currently playing music. | false |
+| clearPresence | Boolean | Whether or not to clear the presence instead of setting it to "nothing" | false |
 
-## Other Options.  
-| Option | Type | Description |  
-| --- | --- | --- |  
-| anyoneCanAdjust | Boolean | Whether anyone can adjust volume. |
-| ownerOverMember | Boolean | Whether the owner over-rides `CanAdjust` and `CanSkip`. |
-| anyoneCanLeave | Boolean | Whether anyone can make the bot leave the currently connected channel. |
-| ownerID | String | The ID of the Discord user to be seen as the owner. Required if using `ownerOverMember`. |
-| logging | Boolean | Some extra none needed logging (such as caught errors that didn't crash the bot, etc). |
-| requesterName | Boolean | Whether or not to display the username of the song requester. |
-| inlineEmbeds | Boolean | Whether or not to make embed fields inline (help command and some fields are excluded). |
-| cooldown | Object | See below. |
-
-## Cooldown Example
-```js
-Music.start(client, {
-  cooldown: {
-    disabled: <true | false>, // TRUE or FALSE statement.
-    timer: 10000,             // Time in milliseconds. 1000 = 1 second.
-    exclude: ["commandName"]  // Valid commands are `play`, `remove`, `help`, `np`, `queue`, `volume`, `pause`, `resume`, `skip`, `clearqueue`, `loop`, `leave`.
-  }
-});
-```
+## Cooldown
+| Option | Type | Description | Default |  
+| --- | --- | --- | --- |
+| cooldown | Object | The main cooldown object | |
+| cooldown.enabled | Boolean | Whether or not cooldowns are enabled. | true |
+| cooldown.timer | Number | Time in MS that cooldowns last. | 10000 |
+| cooldown.exclude | Object/Array | Array of command names to exclude. Uses default names, not set names | ["volume","queue","pause","resume","np"] |  
 
 ## Command Options.  
 Commands pass a bit different. Each command follows the same format as below. Valid commands are `play`, `remove`, `help`, `np`, `queue`, `volume`, `pause`, `resume`, `skip`, `clearqueue`, `loop`, `leave`.
 ```js
 music.start(client, {
   <command>: {
-    disabled: false,                   // True/False statement.
+    enabled: false,                    // True/False statement.
     alt: ["name1","name2","name3"],    // Array of alt names (aliases).
     help: "Help text.",                // String of help text.
     name: "play"                       // Name of the command.
@@ -120,28 +93,13 @@ music.start(client, {
 });
 ```
 
-
-An example of a few custom options would be:  
-```javascript
-music.start(client, {
-  botPrefix: ">",
-  maxQueueSize: 0,
-  ownerOverMember: true,
-  ownerID: '123456789101112',
-  youtubeKey: 'some-key_here',
-  play: {
-    alt: ["pl4y"],
-    help: "Queue some shit.",
-    name: "ploy"
-  },
-  skip: {
-    alt: ["skippy"]
-  }
-});
-```
-
 # Last 3 Versions
 ***  
+## 13.1.0
+* Fixed the leave command.
+* Changed up the options a bit. New defaults.
+* Added a Music Presence feature form [issue number 69](https://github.com/DarkoPendragon/discord.js-musicbot-addon/issues/69).
+
 ## 13.0.3
 * Added `messageNewSong`, allowing a message to be sent when a new song plays.
 * Added a fix to attempt to stop URLs with `&` in them not searching correctly.
@@ -157,7 +115,3 @@ music.start(client, {
 * Fixed queue not playing correctly when loop is set to `queue`.
 * Fixed an error causing search not to set a videos position.
 * Some touch ups.
-
-## 13.0.1
-* Wew already broke it lads.
-* Cooldown is fixed.

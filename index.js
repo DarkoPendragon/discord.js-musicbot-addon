@@ -23,10 +23,11 @@ exports.start = (client, options) => {
       this.commandsArray = [];
       this.aliases = new Map();
       this.queues = new Map();
+      this.client = client;
 
       // Play Command options
       this.play = {
-        disabled: Boolean((options && options.play && options.play.disabled)),
+        enabled: (options.play == undefined ? true : options && options.play && options.play.enabled),
         run: "playFunction",
         alt: (options && options.play && options.play.alt) || [],
         help: (options && options.play && options.play.help) || "Queue a song/playlist by URL or name.",
@@ -38,7 +39,7 @@ exports.start = (client, options) => {
 
       // Help Command options
       this.help = {
-        disabled: Boolean((options && options.help && options.help.disabled)),
+        enabled: (options.help == undefined ? true : options && options.help && options.help.enabled),
         run: "helpFunction",
         alt: (options && options.help && options.help.alt) || [],
         help: (options && options.help && options.help.help) || "Help for commands.",
@@ -50,7 +51,7 @@ exports.start = (client, options) => {
 
       // Pause Command options
       this.pause = {
-        disabled: Boolean((options && options.pause && options.pause.disabled)),
+        enabled: (options.pause == undefined ? true : options && options.pause && options.pause.enabled),
         run: "pauseFunction",
         alt: (options && options.pause && options.pause.alt) || [],
         help: (options && options.pause && options.pause.help) || "Pauses playing music.",
@@ -62,7 +63,7 @@ exports.start = (client, options) => {
 
       // Resume Command options
       this.resume = {
-        disabled: Boolean((options && options.resume && options.resume.disabled)),
+        enabled: (options.resume == undefined ? true : options && options.resume && options.resume.enabled),
         run: "resumeFunction",
         alt: (options && options.resume && options.resume.alt) || [],
         help: (options && options.resume && options.resume.help) || "Resumes a paused queue.",
@@ -74,7 +75,7 @@ exports.start = (client, options) => {
 
       // Leave Command options
       this.leave = {
-        disabled: Boolean((options && options.leave && options.leave.disabled)),
+        enabled: (options.leave == undefined ? true : options && options.leave && options.leave.enabled),
         run: "leaveFunction",
         alt: (options && options.leave && options.leave.alt) || [],
         help: (options && options.leave && options.leave.help) || "Leaves the voice channel.",
@@ -86,7 +87,7 @@ exports.start = (client, options) => {
 
       // Queue Command options
       this.queue = {
-        disabled: Boolean((options && options.queue && options.queue.disabled)),
+        enabled: (options.queue == undefined ? true : options && options.queue && options.queue.enabled),
         run: "queueFunction",
         alt: (options && options.queue && options.queue.alt) || [],
         help: (options && options.queue && options.queue.help) || "View the current queue.",
@@ -98,7 +99,7 @@ exports.start = (client, options) => {
 
       // Nowplaying Command options
       this.np = {
-        disabled: Boolean((options && options.np && options.np.disabled)),
+        enabled: (options.np == undefined ? true : options && options.np && options.np.enabled),
         run: "npFunction",
         alt: (options && options.np && options.np.alt) || [],
         help: (options && options.np && options.np.help) || "Shows the now playing text.",
@@ -110,7 +111,7 @@ exports.start = (client, options) => {
 
       // Loop Command options
       this.loop = {
-        disabled: Boolean((options && options.loop && options.loop.disabled)),
+        enabled: (options.loop == undefined ? true : options && options.loop && options.loop.enabled),
         run: "loopFunction",
         alt: (options && options.loop && options.loop.alt) || [],
         help: (options && options.loop && options.loop.help) || "Sets the loop state for the queue.",
@@ -122,7 +123,7 @@ exports.start = (client, options) => {
 
       // Search Command options
       this.search = {
-        disabled: Boolean((options && options.search && options.search.disabled)),
+        enabled: (options.search == undefined ? true : options && options.search && options.search.enabled),
         run: "searchFunction",
         alt: (options && options.search && options.search.alt) || [],
         help: (options && options.search && options.search.help) || "Searchs for up to 10 videos from YouTube.",
@@ -134,7 +135,7 @@ exports.start = (client, options) => {
 
       // Clear Command options
       this.clearqueue = {
-        disabled: Boolean((options && options.clear && options.clear.disabled)),
+        enabled: (options.clearqueue == undefined ? true : options && options.clearqueue && options.clearqueue.enabled),
         run: "clearFunction",
         alt: (options && options.clear && options.clear.alt) || [],
         help: (options && options.clear && options.clear.help) || "Clears the entire queue.",
@@ -146,7 +147,7 @@ exports.start = (client, options) => {
 
       // Volume Command options
       this.volume = {
-        disabled: Boolean((options && options.volume && options.volume.disabled)),
+        enabled: (options.volume == undefined ? true : options && options.volume && options.volume.enabled),
         run: "volumeFunction",
         alt: (options && options.volume && options.volume.alt) || [],
         help: (options && options.volume && options.volume.help) || "Changes the volume output of the bot.",
@@ -157,7 +158,7 @@ exports.start = (client, options) => {
       };
 
       this.remove = {
-        disabled: Boolean((options && options.remove && options.remove.disabled)),
+        enabled: (options.remove == undefined ? true : options && options.remove && options.remove.enabled),
         run: "removeFunction",
         alt: (options && options.remove && options.remove.alt) || [],
         help: (options && options.remove && options.remove.help) || "Remove a song from the queue by position in the queue.",
@@ -169,7 +170,7 @@ exports.start = (client, options) => {
 
       // Skip Command options
       this.skip = {
-        disabled: Boolean((options && options.skip && options.skip.disabled)),
+        enabled: (options.skip == undefined ? true : options && options.skip && options.skip.enabled),
         run: "skipFunction",
         alt: (options && options.skip && options.skip.alt) || [],
         help: (options && options.skip && options.skip.help) || "Skip a song or songs with `skip [number]`",
@@ -180,36 +181,36 @@ exports.start = (client, options) => {
       };
 
       this.embedColor = (options && options.embedColor) || 'GREEN';
-      // this.anyoneCanJoin = (options && options.anyoneCanJoin);
-      this.anyoneCanSkip = Boolean((options && options.anyoneCanSkip));
-      this.anyoneCanLeave = Boolean((options && options.anyoneCanLeave));
+      this.anyoneCanSkip = (options && options.anyoneCanSkip ? options && options.anyoneCanSkip : false);
+      this.anyoneCanLeave = (options && options.anyoneCanLeave ? options && options.anyoneCanLeave : false);
       this.djRole = (options && options.djRole) || "DJ";
-      this.anyoneCanPause = Boolean((options && options.anyoneCanPause));
-      this.anyoneCanAdjust = Boolean((options && options.anyoneCanAdjust));
+      this.anyoneCanPause = (options && options.anyoneCanPause ? options && options.anyoneCanPause : false);;
+      this.anyoneCanAdjust = (options && options.anyoneCanAdjust ? options && options.anyoneCanAdjust : false);
       this.youtubeKey = (options && options.youtubeKey);
       this.botPrefix = (options && options.botPrefix) || "!";
-      // this.thumbnailType = (options && options.thumbnailType) || "high";
       this.defVolume = (options && options.defVolume) || 50;
       this.maxQueueSize = (options && options.maxQueueSize) || 50;
       this.ownerOverMember = Boolean((options && options.ownerOverMember));
       this.botAdmins = (options && options.botAdmins) || [];
       this.ownerID = (options && options.ownerID);
-      this.logging = Boolean((options && options.logging));
-      this.requesterName = Boolean((options && options.requesterName));
+      this.logging = (options && options.logging ? options && options.logging : true);;
+      this.requesterName = (options && options.requesterName ? options && options.requesterName : true);;
       this.inlineEmbeds = Boolean((options && options.inlineEmbeds));
-      this.clearOnLeave = Boolean((options && options.clearOnLeave));
+      this.clearOnLeave = (options && options.clearOnLeave ? options && options.clearOnLeave : true);
       this.messageHelp = Boolean((options && options.messageHelp));
-      this.inlineEmbeds = Boolean((options && options.inlineEmbeds));
       this.dateLocal = (options && options.dateLocal) || 'en-US';
-      this.bigPicture = Boolean((options && options.bigPicture))
-      this.messageNewSong = Boolean((options && options.messageNewSong))
+      this.bigPicture = Boolean((options && options.bigPicture));
+      this.messageNewSong = (options && options.messageNewSong ? options && options.messageNewSong : true);
 
       // Cooldown Settins
       this.cooldown = {
-        disabled: Boolean(options && options.cooldown && options.cooldown.disabled),
+        enabled: (options && options.cooldown ? options && options.cooldown.enabled : true),
         timer: parseInt((options && options.cooldown && options.cooldown.timer) || 10000),
         exclude: (options && options.cooldown && options.cooldown.exclude) || ["volume","queue","pause","resume","np"]
       };
+
+      this.musicPresence = (options && options.musicPresence);
+      this.clearPresence = (options && options.clearPresence);
       this.recentTalk = new Set();
     }
 
@@ -295,12 +296,38 @@ exports.start = (client, options) => {
       });
     };
 
-  }
+    updatePresence(queue, client) {
+      if (this.musicPresence == false) return;
+      return new Promise((resolve, reject) => {
+        if (!queue || !client) reject("invalid arguments");
+        if (queue.songs.length > 0) {
+          client.user.setPresence({
+            game: {
+              name: "🎵 | " + queue.last.title,
+              type: 'PLAYING'
+            }
+          });
+        } else {
+          if (musicbot.clearPresence) {
+            client.user.setPresence({ game: { name: null} });
+          } else {
+            client.user.setPresence({
+              game: {
+                name: "🎵 | nothing",
+                type: 'PLAYING'
+              }
+            });
+          }
+        };
+      });
+    };
+  };
+
   var musicbot = new Music(client, options);
   exports.bot = musicbot;
 
   musicbot.searcher = new YTSearcher(musicbot.youtubeKey);
-  musicbot.changeKey = () => {
+  musicbot.changeKey = (key) => {
     return new Promise((resolve, reject) => {
       if (!key || typeof key !== "string") reject("key must be a string");
       musicbot.youtubeKey = key;
@@ -315,6 +342,7 @@ exports.start = (client, options) => {
     if (musicbot.cooldown.exclude.includes("play")) console.warn(`[MUSIC] Excluding PLAY CMD from cooldowns can cause issues.`);
     if (musicbot.cooldown.exclude.includes("remove")) console.warn(`[MUSIC] Excluding REMOVE CMD from cooldowns can cause issues.`);
     if (musicbot.cooldown.exclude.includes("search")) console.warn(`[MUSIC] Excluding SEARCH CMD from cooldowns can cause issues.`);
+    setTimeout(() => { if (musicbot.musicPresence == true && musicbot.client.guilds.length > 1) console.warn(`[MUSIC] MusicPresence is enabled with more than one server!`); }, 2000);
   });
 
   client.on("message", (msg) => {
@@ -328,12 +356,11 @@ exports.start = (client, options) => {
     if (message.startsWith(musicbot.botPrefix) && !msg.author.bot && msg.channel.type == "text") {
       if (musicbot.commands.has(command)) {
         let tCmd = musicbot.commands.get(command);
-        console.log(tCmd.masked);
-        if (musicbot.recentTalk.has(msg.author.id)) {
-          if (musicbot.cooldown.disabled == false && !musicbot.cooldown.exclude.includes(tCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
-        }
-        if (!tCmd.disabled) {
-          if (!musicbot.cooldown.disabled && !musicbot.cooldown.exclude.includes(tCmd.masked)) {
+        if (tCmd.enabled) {
+          if (!musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(tCmd.masked)) {
+            if (musicbot.recentTalk.has(msg.author.id)) {
+              if (musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(tCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
+            }
             musicbot.recentTalk.add(msg.author.id);
             setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
           }
@@ -341,11 +368,11 @@ exports.start = (client, options) => {
         }
       } else if (musicbot.aliases.has(command)) {
         let aCmd = musicbot.aliases.get(command);
-        if (musicbot.recentTalk.has(msg.author.id)) {
-          if (musicbot.cooldown.disabled == false && !musicbot.cooldown.exclude.includes(aCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
-        }
-        if (!aCmd.disabled) {
-          if (!musicbot.cooldown.disabled && !musicbot.cooldown.exclude.includes(aCmd.masked)) {
+        if (aCmd.enabled) {
+          if (musicbot.recentTalk.has(msg.author.id)) {
+            if (musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(aCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
+          }
+          if (!musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(aCmd.masked)) {
             musicbot.recentTalk.add(msg.author.id);
             setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
           }
@@ -568,17 +595,6 @@ exports.start = (client, options) => {
       voiceConnection.player.dispatcher.end();
       voiceConnection.disconnect();
       msg.channel.send(musicbot.note('note', 'Successfully left the voice channel.'));
-
-      setTimeout(() => {
-        let vc = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-        if (!vc.player.dispatcher) return;
-        try {
-          vc.player.dispatcher.end();
-          vc.disconnect();
-        } catch (e) {
-          console.error(`[leaevCmd] [${msg.guild.name}] ${e.stack}`);
-        }
-      }, 2500);
     } else {
       const chance = Math.floor((Math.random() * 100) + 1);
       if (chance <= 10) return msg.channel.send(musicbot.note('fail', `I'm afraid I can't let you do that, ${msg.author.username}.`))
@@ -589,8 +605,7 @@ exports.start = (client, options) => {
   musicbot.npFunction = (msg, suffix, args) => {
     const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
     const queue = musicbot.getQueue(msg.guild.id, true);
-    if (voiceConnection === null && queue.length > 0) return msg.channel.send(musicbot.note('fail', 'No music is being played, but an ongoing queue is avainable.'));
-    else if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
+    if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
     const dispatcher = voiceConnection.player.dispatcher;
 
     if (musicbot.queues.get(msg.guild.id).songs.length <= 0) return msg.channel.send(musicbot.note('note', 'Queue empty.'));
@@ -1106,7 +1121,7 @@ exports.start = (client, options) => {
   musicbot.loadCommand = (obj) => {
     return new Promise((resolve, reject) => {
       let props = {
-        disabled: obj.disabled,
+        enabled: obj.enabled,
         run: obj.run,
         alt: obj.alt,
         help: obj.help,
@@ -1114,6 +1129,7 @@ exports.start = (client, options) => {
         exclude: obj.exclude,
         masked: obj.masked
       };
+      if (props.enabled == undefined || null) props.enabled = true;
       if (obj.alt.length > 0) {
         obj.alt.forEach((a) => {
           musicbot.aliases.set(a, props);
@@ -1196,7 +1212,9 @@ exports.start = (client, options) => {
         }
 
         try {
-          musicbot.setLast(msg.guild.id, video);
+          musicbot.setLast(msg.guild.id, video).then(() => {
+            musicbot.updatePresence(musicbot.queues.get(msg.guild.id), msg.client).catch((res) => { console.warn(`[MUSIC] Problem updating MusicPresence`); });
+          });
 
           let dispatcher = connection.playStream(ytdl(video.url, {
             filter: 'audioonly'
