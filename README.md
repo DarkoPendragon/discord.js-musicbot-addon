@@ -1,5 +1,11 @@
-[![npm package](https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/discord.js-musicbot-addon/)
-***
+<div align="center">
+  <p>
+    <a href="https://nodei.co/npm/discord.js-musicbot-addon
+/"><img src="https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&stars=true" alt="NPM info" /></a>
+  </p>
+</div>
+  
+***  
 This module is a simple Node.js based music extension/bot for Discord.js projects using YouTube. This was originally an update of an older addon for newer versions of Discord.js but not serves as it's own module.   
 
 __The commands available are: (default names)__  
