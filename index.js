@@ -389,62 +389,103 @@ exports.start = (client, options) => {
     if (q.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
     var searchstring = suffix.trim();
     if (searchstring.includes("https://youtu.be/") || searchstring.includes("https://www.youtube.com/") && searchstring.includes("&")) searchstring = searchstring.split("&")[0];
-    msg.channel.send(musicbot.note("search", `\`Searching: ${searchstring}\`~`));
 
-    new Promise(async (resolve, reject) => {
-      let result = await musicbot.searcher.search(searchstring, { type: 'video' });
-      resolve(result.first)
-    }).then((res) => {
-      if (!res) return msg.channel.send(musicbot.note("fail", "Something went wrong. Try again!"));
-      res.requester = msg.author.id;
-      res.channelURL = `https://www.youtube.com/channel/${res.channelId}`;
-      res.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
-      if (musicbot.requesterName) res.requesterAvatarURL = msg.author.displayAvatarURL;
-      const queue = musicbot.getQueue(msg.guild.id)
-      res.position = queue.songs.length ? queue.songs.length : 0;
-      queue.songs.push(res);
 
-      if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
-        const embed = new Discord.RichEmbed();
-        try {
-          embed.setAuthor('Adding To Queue', client.user.avatarURL);
-          var songTitle = res.title.replace(/\\/g, '\\\\')
-          .replace(/\`/g, '\\`')
-          .replace(/\*/g, '\\*')
-          .replace(/_/g, '\\_')
-          .replace(/~/g, '\\~')
-          .replace(/`/g, '\\`');
-          embed.setColor(musicbot.embedColor);
-          embed.addField(res.channelTitle, `[${songTitle}](${res.url})`, musicbot.inlineEmbeds);
-          embed.addField("Queued On", res.queuedOn, musicbot.inlineEmbeds);
-          if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${res.id}/maxresdefault.jpg`);
-          if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${res.id}/maxresdefault.jpg`);
-          const resMem = client.users.get(res.requester);
-          if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(res.requester).username}`, res.requesterAvatarURL);
-          if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${res.requester})\``, res.requesterAvatarURL);
-          msg.channel.send({
-            embed
-          });
-        } catch (e) {
-          console.error(`[${msg.guild.name}] [playCmd] ` + e.stack);
+    if (searchstring.startsWith('http') && searchstring.includes("list=")) {
+      msg.channel.send(musicbot.note("search", `Searching playlist items~`));
+      var playid = searchstring.toString()
+      .split('list=')[1];
+      if (playid.toString()
+      .includes('?')) playid = playid.split('?')[0];
+      if (playid.toString()
+      .includes('&t=')) playid = playid.split('&t=')[0];
+
+      ytpl(playid, function(err, playlist) {
+        if(err) return msg.channel.send(musicbot.note('fail', `Something went wrong fetching that playlist!`));
+        if (playlist.items.length <= 0) return msg.channel.send(musicbot.note('fail', `Couldn't get any videos from that playlist.`));
+        var index = 0;
+        var ran = 0;
+        const queue = musicbot.getQueue(msg.guild.id);
+
+        playlist.items.forEach(video => {
+
+          ran++;
+          if (queue.songs.length == (musicbot.maxQueueSize + 1) && musicbot.maxQueueSize !== 0) return;
+
+          video.url = `https://www.youtube.com/watch?v=` + video.id;
+          video.requester = msg.author.id;
+          video.position = musicbot.queues.get(msg.guild.id).songs ? musicbot.queues.get(msg.guild.id).songs.length : 0;
+          video.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
+          video.requesterAvatarURL = msg.author.displayAvatarURL;
+          queue.songs.push(video);
+          if (!video || !video.url) console.log(`No video found for ${index}:${ran}`);
+          if (queue.songs.length === 1) musicbot.executeQueue(msg, queue);
+          index++;
+
+          if (ran >= playlist.items.length) {
+            if (index == 0) msg.channel.send(musicbot.note('fail', `Coudln't get any songs from that playlist!`))
+            else if (index == 1) msg.channel.send(musicbot.note('note', `Queued one song.`));
+            else if (index > 1) msg.channel.send(musicbot.note('note', `Queued ${index} songs.`));
+          }
+        });
+      });
+    } else {
+      msg.channel.send(musicbot.note("search", `\`Searching: ${searchstring}\`~`));
+      new Promise(async (resolve, reject) => {
+        let result = await musicbot.searcher.search(searchstring, { type: 'video' });
+        resolve(result.first)
+      }).then((res) => {
+        if (!res) return msg.channel.send(musicbot.note("fail", "Something went wrong. Try again!"));
+        res.requester = msg.author.id;
+        res.channelURL = `https://www.youtube.com/channel/${res.channelId}`;
+        res.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
+        if (musicbot.requesterName) res.requesterAvatarURL = msg.author.displayAvatarURL;
+        const queue = musicbot.getQueue(msg.guild.id)
+        res.position = queue.songs.length ? queue.songs.length : 0;
+        queue.songs.push(res);
+
+        if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
+          const embed = new Discord.RichEmbed();
+          try {
+            embed.setAuthor('Adding To Queue', client.user.avatarURL);
+            var songTitle = res.title.replace(/\\/g, '\\\\')
+            .replace(/\`/g, '\\`')
+            .replace(/\*/g, '\\*')
+            .replace(/_/g, '\\_')
+            .replace(/~/g, '\\~')
+            .replace(/`/g, '\\`');
+            embed.setColor(musicbot.embedColor);
+            embed.addField(res.channelTitle, `[${songTitle}](${res.url})`, musicbot.inlineEmbeds);
+            embed.addField("Queued On", res.queuedOn, musicbot.inlineEmbeds);
+            if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${res.id}/maxresdefault.jpg`);
+            if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${res.id}/maxresdefault.jpg`);
+            const resMem = client.users.get(res.requester);
+            if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(res.requester).username}`, res.requesterAvatarURL);
+            if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${res.requester})\``, res.requesterAvatarURL);
+            msg.channel.send({
+              embed
+            });
+          } catch (e) {
+            console.error(`[${msg.guild.name}] [playCmd] ` + e.stack);
+          };
+        } else {
+          try {
+            var songTitle = res.title.replace(/\\/g, '\\\\')
+            .replace(/\`/g, '\\`')
+            .replace(/\*/g, '\\*')
+            .replace(/_/g, '\\_')
+            .replace(/~/g, '\\~')
+            .replace(/`/g, '\\`');
+            msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(res.requester).username}\nQueued On: ${res.queuedOn}`)
+          } catch (e) {
+            console.error(`[${msg.guild.name}] [npCmd] ` + e.stack);
+          };
         };
-      } else {
-        try {
-          var songTitle = res.title.replace(/\\/g, '\\\\')
-          .replace(/\`/g, '\\`')
-          .replace(/\*/g, '\\*')
-          .replace(/_/g, '\\_')
-          .replace(/~/g, '\\~')
-          .replace(/`/g, '\\`');
-          msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(res.requester).username}\nQueued On: ${res.queuedOn}`)
-        } catch (e) {
-          console.error(`[${msg.guild.name}] [npCmd] ` + e.stack);
-        };
-      };
-      if (queue.songs.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
-    }).catch((res) => {
-      throw res;
-    })
+        if (queue.songs.length === 1 || !client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id)) musicbot.executeQueue(msg, queue);
+      }).catch((res) => {
+        throw res;
+      });
+    };
   };
 
   musicbot.helpFunction = (msg, suffix, args) => {
@@ -1062,6 +1103,7 @@ exports.start = (client, options) => {
 
   musicbot.clearFunction = (msg, suffix, args) => {
     if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(musicbot.note("fail", "No queue found for this server."));
+    if (!musicbot.isAdmin(msg.member)) return msg.channel.send(musicbot.note("fail", `Only Admins or people with the ${musicbot.djRole} can clear queues.`));
     musicbot.emptyQueue(msg.guild.id).then(res => {
       msg.channel.send(musicbot.note("note", "Queue cleared."));
       const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
@@ -1187,7 +1229,7 @@ exports.start = (client, options) => {
           };
         }
         if (!video) {
-          video = queue.songs[0];
+          video = musicbot.queues.get(msg.guild.id).songs ? musicbot.queues.get(msg.guild.id).songs[0] : false;
           if (!video) {
             msg.channel.send(musicbot.note('note', 'Playback finished!'));
             musicbot.emptyQueue(msg.guild.id);

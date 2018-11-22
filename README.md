@@ -95,6 +95,11 @@ music.start(client, {
 
 # Last 3 Versions
 ***  
+## 13.2.0
+* Added a playlist feature for the `play` command.
+* Made `clearqueue` check if a member is an admin (or dj) before clearing.
+* Updated `examples.md`.
+
 ## 13.1.0
 * Fixed the leave command.
 * Changed up the options a bit. New defaults.
@@ -105,13 +110,3 @@ music.start(client, {
 * Added a fix to attempt to stop URLs with `&` in them not searching correctly.
 * Cooldown fixes.
 * Other touchups.
-
-## 13.0.2
-* Commands can now be excluded from help.
-* Fixed some documentation.
-* Commands can be excluded from cooldowns.
-* Leave command now loads.
-* It also works!
-* Fixed queue not playing correctly when loop is set to `queue`.
-* Fixed an error causing search not to set a videos position.
-* Some touch ups.
