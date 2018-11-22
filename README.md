@@ -40,7 +40,7 @@ If you have troubles installing, see [this link](https://github.com/DarkoPendrag
 
 # Examples
 ***  
-See [this page](https://github.com/DarkoPendragon/discord.js-musicbot-addon/tree/master/examples/exmaples.md) on the repo for examples.
+See [this page](https://github.com/DarkoPendragon/discord.js-musicbot-addon/blob/master/examples/examples.md) on the repo for examples.
 
 # Options & Config.
 ***
