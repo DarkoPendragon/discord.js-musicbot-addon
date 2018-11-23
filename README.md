@@ -4,7 +4,7 @@
 /"><img src="https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&stars=true" alt="NPM info" /></a>
   </p>
 </div>
-  
+
 ***  
 This module is a simple Node.js based music extension/bot for Discord.js projects using YouTube. This was originally an update of an older addon for newer versions of Discord.js but not serves as it's own module.   
 
@@ -101,18 +101,15 @@ music.start(client, {
 
 # Last 3 Versions
 ***  
+## 13.3.0
+* Fixed fatal Promise handaling errors.
+* Fixed `musicPresence`, `clearPresence` and the `updatePresence` function.
+* Dealt with [issue #71](https://github.com/DarkoPendragon/discord.js-musicbot-addon/issues/71).
+
+## 13.2.1
+* Made the `remove` command run if the author is an admin.
+
 ## 13.2.0
 * Added a playlist feature for the `play` command.
 * Made `clearqueue` check if a member is an admin (or dj) before clearing.
 * Updated `examples.md`.
-
-## 13.1.0
-* Fixed the leave command.
-* Changed up the options a bit. New defaults.
-* Added a Music Presence feature form [issue number 69](https://github.com/DarkoPendragon/discord.js-musicbot-addon/issues/69).
-
-## 13.0.3
-* Added `messageNewSong`, allowing a message to be sent when a new song plays.
-* Added a fix to attempt to stop URLs with `&` in them not searching correctly.
-* Cooldown fixes.
-* Other touchups.
