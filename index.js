@@ -193,14 +193,14 @@ try {
         this.ownerOverMember = Boolean((options && options.ownerOverMember));
         this.botAdmins = (options && options.botAdmins) || [];
         this.ownerID = (options && options.ownerID);
-        this.logging = (options && options.logging ? options && options.logging : true);;
-        this.requesterName = (options && options.requesterName ? options && options.requesterName : true);;
+        this.logging = (options && typeof options.logging !== 'undefined' ? options && options.logging : true);
+        this.requesterName = (options.requesterName ? options && options.requesterName : true);;
         this.inlineEmbeds = Boolean((options && options.inlineEmbeds));
-        this.clearOnLeave = (options && options.clearOnLeave ? options && options.clearOnLeave : true);
+        this.clearOnLeave = (options.clearOnLeave ? options && options.clearOnLeave : true);
         this.messageHelp = Boolean((options && options.messageHelp));
         this.dateLocal = (options && options.dateLocal) || 'en-US';
         this.bigPicture = Boolean((options && options.bigPicture));
-        this.messageNewSong = (options && options.messageNewSong ? options && options.messageNewSong : true);
+        this.messageNewSong = (options.messageNewSong ? options && options.messageNewSong : true);
 
         // Cooldown Settins
         this.cooldown = {
@@ -299,7 +299,6 @@ try {
       updatePresence(queue, client, clear) {
         return new Promise((resolve, reject) => {
           if (!queue || !client) reject("invalid arguments");
-          console.log(queue);
           if (queue.songs.length > 0 && queue.last) {
             client.user.setPresence({
               game: {
@@ -412,14 +411,15 @@ try {
 
           playlist.items.forEach(video => {
             ran++;
-            if (queue.songs.length == (musicbot.maxQueueSize + 1) && musicbot.maxQueueSize !== 0) return;
+            if (queue.songs.length == (musicbot.maxQueueSize + 1) && musicbot.maxQueueSize !== 0 || !video) return;
             video.url = `https://www.youtube.com/watch?v=` + video.id;
+            video.channelTitle = video.author.name;
+            cideo.channelURL = video.author.ref;
             video.requester = msg.author.id;
             video.position = musicbot.queues.get(msg.guild.id).songs ? musicbot.queues.get(msg.guild.id).songs.length : 0;
             video.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
             video.requesterAvatarURL = msg.author.displayAvatarURL;
             queue.songs.push(video);
-            if (!video || !video.url) console.log(`No video found for ${index}:${ran}`);
             if (queue.songs.length === 1) musicbot.executeQueue(msg, queue);
             index++;
 
@@ -1240,7 +1240,7 @@ try {
             }
           }
 
-          if (musicbot.messageNewSong == true && queue.last) {
+          if (musicbot.messageNewSong == true && queue.last && musicbot.queues.get(msg.guild.id).loop !== "song") {
             let req = client.users.get(video.requester);
             if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
               const embed = new Discord.RichEmbed()
