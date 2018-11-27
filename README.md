@@ -100,7 +100,12 @@ music.start(client, {
 ```
 
 # Last 3 Versions
-***  
+***
+## 13.3.1
+* [Merged PR #75](https://github.com/DarkoPendragon/discord.js-musicbot-addon/pull/75) to fix some options.
+* Removed logging involving the entire queue on play.
+* Ohter touch ups.
+
 ## 13.3.0
 * Fixed fatal Promise handaling errors.
 * Fixed `musicPresence`, `clearPresence` and the `updatePresence` function.
@@ -108,8 +113,3 @@ music.start(client, {
 
 ## 13.2.1
 * Made the `remove` command run if the author is an admin.
-
-## 13.2.0
-* Added a playlist feature for the `play` command.
-* Made `clearqueue` check if a member is an admin (or dj) before clearing.
-* Updated `examples.md`.
