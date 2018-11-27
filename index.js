@@ -184,7 +184,7 @@ try {
         this.anyoneCanSkip = (options && options.anyoneCanSkip ? options && options.anyoneCanSkip : false);
         this.anyoneCanLeave = (options && options.anyoneCanLeave ? options && options.anyoneCanLeave : false);
         this.djRole = (options && options.djRole) || "DJ";
-        this.anyoneCanPause = (options && options.anyoneCanPause ? options && options.anyoneCanPause : false);;
+        this.anyoneCanPause = (options && options.anyoneCanPause ? options && options.anyoneCanPause : false);
         this.anyoneCanAdjust = (options && options.anyoneCanAdjust ? options && options.anyoneCanAdjust : false);
         this.youtubeKey = (options && options.youtubeKey);
         this.botPrefix = (options && options.botPrefix) || "!";
@@ -193,16 +193,16 @@ try {
         this.ownerOverMember = Boolean((options && options.ownerOverMember));
         this.botAdmins = (options && options.botAdmins) || [];
         this.ownerID = (options && options.ownerID);
-        this.logging = (options && options.logging ? options && options.logging : true);;
-        this.requesterName = (options && options.requesterName ? options && options.requesterName : true);;
+        this.logging = (options && typeof options.logging !== 'undefined' ? options && options.logging : true);
+        this.requesterName = (options && typeof options.requesterName !== 'undefined' ? options && options.requesterName : true);
         this.inlineEmbeds = Boolean((options && options.inlineEmbeds));
-        this.clearOnLeave = (options && options.clearOnLeave ? options && options.clearOnLeave : true);
+        this.clearOnLeave = (options && typeof options.clearOnLeave !== 'undefined' ? options && options.clearOnLeave : true);
         this.messageHelp = Boolean((options && options.messageHelp));
         this.dateLocal = (options && options.dateLocal) || 'en-US';
         this.bigPicture = Boolean((options && options.bigPicture));
-        this.messageNewSong = (options && options.messageNewSong ? options && options.messageNewSong : true);
+        this.messageNewSong = (options && typeof options.messageNewSong !== 'undefined' ? options && options.messageNewSong : true);
 
-        // Cooldown Settins
+        // Cooldown Settings
         this.cooldown = {
           enabled: (options && options.cooldown ? options && options.cooldown.enabled : true),
           timer: parseInt((options && options.cooldown && options.cooldown.timer) || 10000),
