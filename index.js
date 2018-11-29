@@ -414,7 +414,7 @@ try {
             if (queue.songs.length == (musicbot.maxQueueSize + 1) && musicbot.maxQueueSize !== 0 || !video) return;
             video.url = `https://www.youtube.com/watch?v=` + video.id;
             video.channelTitle = video.author.name;
-            cideo.channelURL = video.author.ref;
+            video.channelURL = video.author.ref;
             video.requester = msg.author.id;
             video.position = musicbot.queues.get(msg.guild.id).songs ? musicbot.queues.get(msg.guild.id).songs.length : 0;
             video.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
