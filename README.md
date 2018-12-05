@@ -52,13 +52,12 @@ See [this page](https://github.com/DarkoPendragon/discord.js-musicbot-addon/blob
 ***
 __Most options are optional and thus not needed.__  
 The options you can pass in `music.start(client, {options})` and their types is as followed:  
-_Note: All Boolean options default false._  
 
 ## Basic Options.
 | Option | Type | Description | Default |  
 | --- | --- | --- | --- |
 | youtubeKey | String | A YouTube Data API3 key. Required to run. | NaN |
-| botPrefix | String | The prefix of the bot. Defaults to "!". | ! |
+| botPrefix | String | The prefix of the bot. Defaults to "!". Can also be a Map of prefix's. | ! |
 | messageNewSong | Boolean | Whether or not to send a message when a new song starts playing. | true |
 | bigPicture | Boolean | Whether to use a large (true) image or small (false) for embeds. | false |
 | maxQueueSize | Number | Max queue size allowed. Defaults 100. Set to 0 for unlimited. | 50 |
@@ -75,7 +74,20 @@ _Note: All Boolean options default false._
 | inlineEmbeds | Boolean | Whether or not to make embed fields inline (help command and some fields are excluded). | false |
 | musicPresence | Boolean | Whether or not to make the bot set its presence to currently playing music. | false |
 | clearPresence | Boolean | Whether or not to clear the presence instead of setting it to "nothing" | false |
+| insertMusic | Boolean | Whether or not to insert the music bot data into `<Client>.music` on start. | false |
 
+## Multi-Prefix Option Example
+```js
+<Client>.guilds.forEach
+<Music>.start(<Client>, {
+  youtubeKey: "Data Key",
+  botPrefix: <MapObject>
+});
+
+// Exmaple Map Structure
+{serverID: { prefix: "!" } }
+```
+See [examples](https://github.com/DarkoPendragon/discord.js-musicbot-addon/blob/master/examples/examples.md) for more info.
 ## Cooldown
 | Option | Type | Description | Default |  
 | --- | --- | --- | --- |

@@ -8,6 +8,7 @@ exports.start = (client, options) => {
 try {
     if (process.version.slice(1).split('.')[0] < 8) {
       console.error(new Error(`[MusicBot] node v8 or higher is needed, please update`));
+      process.exit(1);
     };
 
     /**
@@ -27,7 +28,7 @@ try {
 
         // Play Command options
         this.play = {
-          enabled: (options.play == undefined ? true : options && options.play && options.play.enabled),
+          enabled: (options.play == undefined ? true : (options.play && typeof options.play.enabled !== 'undefined' ? options.play && options.play.enabled : true)),
           run: "playFunction",
           alt: (options && options.play && options.play.alt) || [],
           help: (options && options.play && options.play.help) || "Queue a song/playlist by URL or name.",
@@ -39,7 +40,7 @@ try {
 
         // Help Command options
         this.help = {
-          enabled: (options.help == undefined ? true : options && options.help && options.help.enabled),
+          enabled: (options.help == undefined ? true : (options.help && typeof options.help.enabled !== 'undefined' ? options.help && options.help.enabled : true)),
           run: "helpFunction",
           alt: (options && options.help && options.help.alt) || [],
           help: (options && options.help && options.help.help) || "Help for commands.",
@@ -51,7 +52,7 @@ try {
 
         // Pause Command options
         this.pause = {
-          enabled: (options.pause == undefined ? true : options && options.pause && options.pause.enabled),
+          enabled: (options.pause == undefined ? true : (options.pause && typeof options.pause.enabled !== 'undefined' ? options.pause && options.pause.enabled : true)),
           run: "pauseFunction",
           alt: (options && options.pause && options.pause.alt) || [],
           help: (options && options.pause && options.pause.help) || "Pauses playing music.",
@@ -63,7 +64,7 @@ try {
 
         // Resume Command options
         this.resume = {
-          enabled: (options.resume == undefined ? true : options && options.resume && options.resume.enabled),
+          enabled: (options.resume == undefined ? true : (options.resume && typeof options.resume.enabled !== 'undefined' ? options.resume && options.resume.enabled : true)),
           run: "resumeFunction",
           alt: (options && options.resume && options.resume.alt) || [],
           help: (options && options.resume && options.resume.help) || "Resumes a paused queue.",
@@ -75,7 +76,7 @@ try {
 
         // Leave Command options
         this.leave = {
-          enabled: (options.leave == undefined ? true : options && options.leave && options.leave.enabled),
+          enabled: (options.leave == undefined ? true : (options.leave && typeof options.leave.enabled !== 'undefined' ? options.leave && options.leave.enabled : true)),
           run: "leaveFunction",
           alt: (options && options.leave && options.leave.alt) || [],
           help: (options && options.leave && options.leave.help) || "Leaves the voice channel.",
@@ -87,7 +88,7 @@ try {
 
         // Queue Command options
         this.queue = {
-          enabled: (options.queue == undefined ? true : options && options.queue && options.queue.enabled),
+          enabled: (options.queue == undefined ? true : (options.queue && typeof options.queue.enabled !== 'undefined' ? options.queue && options.queue.enabled : true)),
           run: "queueFunction",
           alt: (options && options.queue && options.queue.alt) || [],
           help: (options && options.queue && options.queue.help) || "View the current queue.",
@@ -99,7 +100,7 @@ try {
 
         // Nowplaying Command options
         this.np = {
-          enabled: (options.np == undefined ? true : options && options.np && options.np.enabled),
+          enabled: (options.np == undefined ? true : (options.np && typeof options.np.enabled !== 'undefined' ? options.np && options.np.enabled : true)),
           run: "npFunction",
           alt: (options && options.np && options.np.alt) || [],
           help: (options && options.np && options.np.help) || "Shows the now playing text.",
@@ -111,7 +112,7 @@ try {
 
         // Loop Command options
         this.loop = {
-          enabled: (options.loop == undefined ? true : options && options.loop && options.loop.enabled),
+          enabled: (options.loop == undefined ? true : (options.loop && typeof options.loop.enabled !== 'undefined' ? options.loop && options.loop.enabled : true)),
           run: "loopFunction",
           alt: (options && options.loop && options.loop.alt) || [],
           help: (options && options.loop && options.loop.help) || "Sets the loop state for the queue.",
@@ -123,7 +124,7 @@ try {
 
         // Search Command options
         this.search = {
-          enabled: (options.search == undefined ? true : options && options.search && options.search.enabled),
+          enabled: (options.search == undefined ? true : (options.search && typeof options.search.enabled !== 'undefined' ? options.search && options.search.enabled : true)),
           run: "searchFunction",
           alt: (options && options.search && options.search.alt) || [],
           help: (options && options.search && options.search.help) || "Searchs for up to 10 videos from YouTube.",
@@ -135,7 +136,7 @@ try {
 
         // Clear Command options
         this.clearqueue = {
-          enabled: (options.clearqueue == undefined ? true : options && options.clearqueue && options.clearqueue.enabled),
+          enabled: (options.clearqueue == undefined ? true : (options.clearqueue && typeof options.clearqueue.enabled !== 'undefined' ? options.clearqueue && options.clearqueue.enabled : true)),
           run: "clearFunction",
           alt: (options && options.clear && options.clear.alt) || [],
           help: (options && options.clear && options.clear.help) || "Clears the entire queue.",
@@ -147,7 +148,7 @@ try {
 
         // Volume Command options
         this.volume = {
-          enabled: (options.volume == undefined ? true : options && options.volume && options.volume.enabled),
+          enabled: (options.volume == undefined ? true : (options.volume && typeof options.volume.enabled !== 'undefined' ? options.volume && options.volume.enabled : true)),
           run: "volumeFunction",
           alt: (options && options.volume && options.volume.alt) || [],
           help: (options && options.volume && options.volume.help) || "Changes the volume output of the bot.",
@@ -158,7 +159,7 @@ try {
         };
 
         this.remove = {
-          enabled: (options.remove == undefined ? true : options && options.remove && options.remove.enabled),
+          enabled: (options.remove == undefined ? true : (options.remove && typeof options.remove.enabled !== 'undefined' ? options.remove && options.remove.enabled : true)),
           run: "removeFunction",
           alt: (options && options.remove && options.remove.alt) || [],
           help: (options && options.remove && options.remove.help) || "Remove a song from the queue by position in the queue.",
@@ -170,7 +171,7 @@ try {
 
         // Skip Command options
         this.skip = {
-          enabled: (options.skip == undefined ? true : options && options.skip && options.skip.enabled),
+          enabled: (options.skip == undefined ? true : (options.skip && typeof options.skip.enabled !== 'undefined' ? options.skip && options.skip.enabled : true)),
           run: "skipFunction",
           alt: (options && options.skip && options.skip.alt) || [],
           help: (options && options.skip && options.skip.help) || "Skip a song or songs with `skip [number]`",
@@ -181,26 +182,28 @@ try {
         };
 
         this.embedColor = (options && options.embedColor) || 'GREEN';
-        this.anyoneCanSkip = (options && options.anyoneCanSkip ? options && options.anyoneCanSkip : false);
-        this.anyoneCanLeave = (options && options.anyoneCanLeave ? options && options.anyoneCanLeave : false);
+        this.anyoneCanSkip = (options && typeof options.anyoneCanSkip !== 'undefined' ? options && options.anyoneCanSkip : false);
+        this.anyoneCanLeave = (options && typeof options.anyoneCanLeave !== 'undefined' ? options && options.anyoneCanLeave : false);
         this.djRole = (options && options.djRole) || "DJ";
-        this.anyoneCanPause = (options && options.anyoneCanPause ? options && options.anyoneCanPause : false);
-        this.anyoneCanAdjust = (options && options.anyoneCanAdjust ? options && options.anyoneCanAdjust : false);
+        this.anyoneCanPause = (options && typeof options.anyoneCanPause !== 'undefined' ? options && options.anyoneCanPause : false);
+        this.anyoneCanAdjust = (options && typeof options.anyoneCanAdjust !== 'undefined' ? options && options.anyoneCanAdjust : false);
         this.youtubeKey = (options && options.youtubeKey);
         this.botPrefix = (options && options.botPrefix) || "!";
         this.defVolume = (options && options.defVolume) || 50;
         this.maxQueueSize = (options && options.maxQueueSize) || 50;
-        this.ownerOverMember = Boolean((options && options.ownerOverMember));
+        this.ownerOverMember = (options && typeof options.ownerOverMember !== 'undefined' ? options && options.ownerOverMember : false);
         this.botAdmins = (options && options.botAdmins) || [];
         this.ownerID = (options && options.ownerID);
         this.logging = (options && typeof options.logging !== 'undefined' ? options && options.logging : true);
         this.requesterName = (options && typeof options.requesterName !== 'undefined' ? options && options.requesterName : true);
-        this.inlineEmbeds = Boolean((options && options.inlineEmbeds));
+        this.inlineEmbeds = (options && typeof options.inlineEmbeds !== 'undefined' ? options && options.inlineEmbeds : false);
         this.clearOnLeave = (options && typeof options.clearOnLeave !== 'undefined' ? options && options.clearOnLeave : true);
-        this.messageHelp = Boolean((options && options.messageHelp));
+        this.messageHelp = (options && typeof options.messageHelp !== 'undefined' ? options && options.messageHelp : false);
         this.dateLocal = (options && options.dateLocal) || 'en-US';
-        this.bigPicture = Boolean((options && options.bigPicture));
+        this.bigPicture = (options && typeof options.bigPicture !== 'undefined' ? options && options.bigPicture : false);
         this.messageNewSong = (options && typeof options.messageNewSong !== 'undefined' ? options && options.messageNewSong : true);
+        this.insertMusic = (options && typeof options.insertMusic !== 'undefined' ? options && options.insertMusic : false);
+        this.defaultPrefix = (options && options.defaultPrefix) || "!";
 
         // Cooldown Settings
         this.cooldown = {
@@ -323,10 +326,17 @@ try {
           };
         });
       };
+
+      updatePrefix(server, prefix) {
+        if (typeof prefix == undefined) prefix = this.defaultPrefix;
+        if (typeof this.botPrefix != "object") this.botPrefix = new Map();
+          this.botPrefix.set(server, {prefix: prefix});
+      };
     };
 
     var musicbot = new Music(client, options);
-    exports.bot = musicbot;
+    if (musicbot.insertMusic == true) client.music = musicbot;
+    else exports.bot = musicbot;
 
     musicbot.searcher = new YTSearcher(musicbot.youtubeKey);
     musicbot.changeKey = (key) => {
@@ -349,13 +359,12 @@ try {
 
     client.on("message", (msg) => {
       const message = msg.content.trim();
-      const command = message.substring(musicbot.botPrefix.length).split(/[ \n]/)[0].trim();
-      const suffix = message.substring(musicbot.botPrefix.length + command.length).trim();
-      const args = message.slice(musicbot.botPrefix.length + command.length).trim().split(/ +/g);
-      let prefix = musicbot.botPrefix;
-      if (typeof prefix === 'object') prefix = prefix.has(msg.guild.id) ? prefix.get(msg.guild.id) : musicbot.botPrefix;
+      const prefix = typeof musicbot.botPrefix == "object" ? (musicbot.botPrefix.has(msg.guild.id) ? musicbot.botPrefix.get(msg.guild.id).prefix : musicbot.defaultPrefix) : musicbot.botPrefix;
+      const command = message.substring(prefix.length).split(/[ \n]/)[0].trim();
+      const suffix = message.substring(prefix.length + command.length).trim();
+      const args = message.slice(prefix.length + command.length).trim().split(/ +/g);
 
-      if (message.startsWith(musicbot.botPrefix) && !msg.author.bot && msg.channel.type == "text") {
+      if (message.startsWith(prefix) && !msg.author.bot && msg.channel.type == "text") {
         if (musicbot.commands.has(command)) {
           let tCmd = musicbot.commands.get(command);
           if (tCmd.enabled) {
@@ -378,7 +387,7 @@ try {
               musicbot.recentTalk.add(msg.author.id);
               setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
             }
-            return aCmd.run(msg, suffix, args);
+            return musicbot[aCmd.run](msg, suffix, args);
           }
         };
       };

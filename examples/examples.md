@@ -124,5 +124,56 @@ client.on("message", (msg) => {
 });
 ```
 
+# Multi-Prefix Setup
+First, you'll need a list of your servers and the custom prefix for the server if it uses one. You'll also need to specify the default prefix.
+```js
+var options = {
+  427239929924288532: {
+    id: 427239929924288532,
+    djRole: "DJ",
+    prefix: "!"
+  },
+  464524721174609928: {
+    id: 464524721174609928,
+    prefix: "dev!",
+    modRole: "Modz"
+  }
+}
+
+// You'll notice the options have more than just a prefix.
+// We'll just get the prefix for each, and put it into the bot.
+// This is a very dumbed down way to do this.
+
+let newObj = new Map(); // Make a new map.
+options.forEach(option => {
+  // "option" will be the servers in "options" in order.
+
+  // Here we set the prefix for the server ID.
+  newObj.set(options.id, {prefix: option.prefix});
+});
+
+// Now we start the module with the newObj map.
+<Music>.start(<Client>, {
+  youtubeKey: "",
+  botPrefix: newObj,
+  defaultPrefix: "!"
+});
+
+// You can also just update the prefix latter:
+// If you're using insertMusic remove the ".bot" from this.
+<Music>.bot.updatePrefix("serverID", "prefix");
+```
+
+# Insert the MusicBot object automatically
+In newer updates you can set the bot to automatically add the MusicBot object to `<Client>.music`. This eliminates the need for `<Client>.music.bot` and essentially replaces it.  
+You can do this simply by setting `insertMusic` to true in the options on start:
+```js
+// Following the above examples
+Music.start(client, {
+  youtubeKey: "",   // Again, you ALWAYS need this.
+  insertMusic: true // Set to true, the Client will now have "Client.music".
+});
+```
+
 # Other questions?
 Feel free [to join my Discord](https://discordapp.com/invite/FKYrX4X) and I or someone else will assist you.
