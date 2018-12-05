@@ -43,6 +43,7 @@ Required for voice. Discord.js _prefers_ node-opus.
 __Installation:__  
 * `npm install discord.js-musicbot-addon`  
 If you have troubles installing, see [this link](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting) or [join the discord server](https://discordapp.com/invite/FKYrX4X).
+Note that the NPM version will be *slightly behind* the GitHub version.
 
 # Examples
 ***  
@@ -110,18 +111,3 @@ music.start(client, {
   }
 });
 ```
-
-# Last 3 Versions
-***
-## 13.3.1
-* [Merged PR #75](https://github.com/DarkoPendragon/discord.js-musicbot-addon/pull/75) to fix some options.
-* Removed logging involving the entire queue on play.
-* Ohter touch ups.
-
-## 13.3.0
-* Fixed fatal Promise handaling errors.
-* Fixed `musicPresence`, `clearPresence` and the `updatePresence` function.
-* Dealt with [issue #71](https://github.com/DarkoPendragon/discord.js-musicbot-addon/issues/71).
-
-## 13.2.1
-* Made the `remove` command run if the author is an admin.
