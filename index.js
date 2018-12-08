@@ -1319,20 +1319,6 @@ try {
 
     }
 
-    musicbot.setPrefix = (server, prefix) => {
-      return new Promise((resolve, reject) => {
-        if (!server || !prefix) reject(new Error("invalid argument"));
-        if (typeof server !== 'string' || typeof prefix !== 'string') reject(new TypeError("did not equal string"));
-
-        if (typeof musicbot.botPrefix === "object") {
-          musicbot.botPrefix.set(server, prefix);
-        } else {
-          musicbot.botPrefix = new Map();
-          musicbot.botPrefix.set(server, prefix);
-        }
-      });
-    };
-
     musicbot.note = (type, text) => {
       if (type === 'wrap') {
         let ntext = text
