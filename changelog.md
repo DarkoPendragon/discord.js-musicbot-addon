@@ -2,6 +2,9 @@
 Note that the NPM version will be behind the GitHub version, but more stable.  
 If any issues arise open an issue, or for a faster response join [the Discord server](https://discord.gg/FKYrX4X).
 ***
+## pre-13.4.1
+* Touch ups.
+
 ## 13.4.0
 * Fixed aliase commands not working (`aCmd is not a function`).
 * Added `insertMusic`, `defaultPrefix`.
