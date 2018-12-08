@@ -380,10 +380,10 @@ try {
         } else if (musicbot.aliases.has(command)) {
           let aCmd = musicbot.aliases.get(command);
           if (aCmd.enabled) {
-            if (musicbot.recentTalk.has(msg.author.id)) {
-              if (musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(aCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
-            }
             if (!musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(aCmd.masked)) {
+              if (musicbot.recentTalk.has(msg.author.id)) {
+                if (musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(aCmd.masked)) return msg.channel.send(musicbot.note("fail", "You must wait to use music commands again."));
+              }
               musicbot.recentTalk.add(msg.author.id);
               setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
             }
