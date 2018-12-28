@@ -414,7 +414,7 @@ try {
         ytpl(playid, function(err, playlist) {
           if(err) return msg.channel.send(musicbot.note('fail', `Something went wrong fetching that playlist!`));
           if (playlist.items.length <= 0) return msg.channel.send(musicbot.note('fail', `Couldn't get any videos from that playlist.`));
-          if (playlist.total_items >= 50) return return msg.channel.send(musicbot.note('fail', `Too many videos to queue. A maximum of 50 is allowed.`));
+          if (playlist.total_items >= 50) return msg.channel.send(musicbot.note('fail', `Too many videos to queue. A maximum of 50 is allowed.`));
           var index = 0;
           var ran = 0;
           const queue = musicbot.getQueue(msg.guild.id);
