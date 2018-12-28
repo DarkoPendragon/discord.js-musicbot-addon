@@ -199,7 +199,7 @@ try {
         this.inlineEmbeds = (options && typeof options.inlineEmbeds !== 'undefined' ? options && options.inlineEmbeds : false);
         this.clearOnLeave = (options && typeof options.clearOnLeave !== 'undefined' ? options && options.clearOnLeave : true);
         this.messageHelp = (options && typeof options.messageHelp !== 'undefined' ? options && options.messageHelp : false);
-        this.dateLocal = (options && options.dateLocal) || 'en-US';
+        this.dateLocal = (options && options.dateLocal) || 'pl-PL';
         this.bigPicture = (options && typeof options.bigPicture !== 'undefined' ? options && options.bigPicture : false);
         this.messageNewSong = (options && typeof options.messageNewSong !== 'undefined' ? options && options.messageNewSong : true);
         this.insertMusic = (options && typeof options.insertMusic !== 'undefined' ? options && options.insertMusic : false);
