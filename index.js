@@ -127,7 +127,7 @@ try {
           enabled: (options.search == undefined ? true : (options.search && typeof options.search.enabled !== 'undefined' ? options.search && options.search.enabled : true)),
           run: "searchFunction",
           alt: (options && options.search && options.search.alt) || [],
-          help: (options && options.search && options.search.help) || "Szuka 10 pasujących utworów na YouTube. Możesz wybrać który chcesz dodać wpisując odpowiednią cyfrę.",
+          help: (options && options.search && options.search.help) || "Szuka 10 pasujących utworów na YouTube. Możesz wybrać który chcesz dodać wpisując odpowiednią cyfrę, albo `anuluj`, aby anulować.",
           name: (options && options.search && options.search.name) || "search",
           usage: (options && options.search && options.search.usage) || null,
           exclude: Boolean((options && options.search && options.search.exclude)),
