@@ -3,7 +3,8 @@ const {YTSearcher} = require('ytsearcher');
 const ytpl = require('ytpl');
 const Discord = require('discord.js');
 const PACKAGE = require('./package.json');
-
+const moment = require('moment')
+moment.locale('pl-PL')
 exports.start = (client, options) => {
 try {
     if (process.version.slice(1).split('.')[0] < 8) {
@@ -427,7 +428,7 @@ try {
             video.channelURL = video.author.ref;
             video.requester = msg.author.id;
             video.position = musicbot.queues.get(msg.guild.id).songs ? musicbot.queues.get(msg.guild.id).songs.length : 0;
-            video.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
+            video.queuedOn = moment().format('LLLL');
             video.requesterAvatarURL = msg.author.displayAvatarURL;
             queue.songs.push(video);
             if (queue.songs.length === 1) musicbot.executeQueue(msg, queue);
@@ -449,7 +450,7 @@ try {
           if (!res) return msg.channel.send(musicbot.note("fail", "Coś się zepsuło. Spróbuj ponownie!"));
           res.requester = msg.author.id;
           res.channelURL = `https://www.youtube.com/channel/${res.channelId}`;
-          res.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
+          res.queuedOn = moment().format('LLLL');
           if (musicbot.requesterName) res.requesterAvatarURL = msg.author.displayAvatarURL;
           const queue = musicbot.getQueue(msg.guild.id)
           res.position = queue.songs.length ? queue.songs.length : 0;
@@ -1085,7 +1086,7 @@ try {
                 result.requester = msg.author.id;
                 if (musicbot.requesterName) result.requesterAvatarURL = msg.author.displayAvatarURL;
                 result.channelURL = `https://www.youtube.com/channel/${result.channelId}`;
-                result.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
+                result.queuedOn = moment().format('LLLL');
                 videos.push(result);
                 if (i === max) {
                   i = 101;
