@@ -467,7 +467,7 @@ try {
               .replace(/`/g, '\\`');
               embed.setColor(musicbot.embedColor);
               embed.addField(res.channelTitle, `[${songTitle}](${res.url})`, musicbot.inlineEmbeds);
-              embed.addField("Queued On", res.queuedOn, musicbot.inlineEmbeds);
+              embed.addField("Dodano", res.queuedOn, musicbot.inlineEmbeds);
               if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${res.id}/maxresdefault.jpg`);
               if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${res.id}/maxresdefault.jpg`);
               const resMem = client.users.get(res.requester);
@@ -710,11 +710,11 @@ try {
         let video = queue.songs.find(s => s.position == parseInt(suffix) - 1);
         if (!video) return msg.channel.send(musicbot.note("fail", "Nie znalazłem tego utworu!"));
         const embed = new Discord.RichEmbed()
-        .setAuthor('Queued Song', client.user.avatarURL)
+        .setAuthor('Dodano piosenkę do kolejki', client.user.avatarURL)
         .setColor(musicbot.embedColor)
         .addField(video.channelTitle, `[${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}](${video.url})`, musicbot.inlineEmbeds)
-        .addField("Queued On", video.queuedOn, musicbot.inlineEmbeds)
-        .addField("Position", video.position + 1, musicbot.inlineEmbeds);
+        .addField("Dodano", video.queuedOn, musicbot.inlineEmbeds)
+        .addField("Pozycja", video.position + 1, musicbot.inlineEmbeds);
         if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`);
         if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`);
         const resMem = client.users.get(video.requester);
@@ -915,7 +915,7 @@ try {
                         .replace(/`/g, '\\`');
                         embed.setColor(musicbot.embedColor);
                         embed.addField(videos[song_number].channelTitle, `[${songTitle}](${videos[song_number].url})`, musicbot.inlineEmbeds);
-                        embed.addField("Queued On", videos[song_number].queuedOn, musicbot.inlineEmbeds);
+                        embed.addField("Dodano", videos[song_number].queuedOn, musicbot.inlineEmbeds);
                         if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
                         if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
                         const resMem = client.users.get(videos[song_number].requester);
