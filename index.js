@@ -506,7 +506,7 @@ try {
           .has('EMBED_LINKS')) {
           const embed = new Discord.RichEmbed();
           embed.setAuthor("Komendy", msg.author.displayAvatarURL);
-          embed.setDescription(`Użyj \`${musicbot.botPrefix}${musicbot.help.name} nazwa komendy\` aby uzyskać pomoc komendy. Każdy z rolą \`${musicbot.djRole}\` może użyć dowolnej komendy. UWAGA! Używaj niezmiennego prefixu == !`);
+          embed.setDescription(`Użyj \`${musicbot.botPrefix}${musicbot.help.name} nazwa komendy\` aby uzyskać pomoc komendy. Każdy z rolą \`${musicbot.djRole}\` może użyć dowolnej komendy. UWAGA! Używaj niezmiennego prefixu ==.`);
           // embed.addField(musicbot.helpCmd, musicbot.helpHelp);
           const newCmds = Array.from(musicbot.commands);
           let index = 0;
