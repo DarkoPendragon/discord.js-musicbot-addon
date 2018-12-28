@@ -1,6 +1,6 @@
 {
-  "name": "discord.js-polski-bot-muzyczny",
-  "version": "13.4.0.1",
+  "name": "discord.js-musicbot-addon",
+  "version": "13.4.0",
   "description": "A simple Node.js based music extension/bot for Discord.js projects using YouTube.",
   "main": "index.js",
   "scripts": {
@@ -14,12 +14,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MrBoombastic/discord.js-polski-bot-muzyczny"
+    "url": "https://github.com/DarkoPendragon/discord.js-musicbot-addon"
   },
   "bugs": {
-    "url": "https://github.com/MrBoombastic/discord.js-polski-bot-muzyczny"
+    "url": "https://github.com/DarkoPendragon/discord.js-musicbot-addon/issues"
   },
-  "homepage": "https://github.com/MrBoombastic/discord.js-polski-bot-muzyczny",
+  "homepage": "https://github.com/DarkoPendragon/discord.js-musicbot-addon",
   "keywords": [
     "discord",
     "discord.js",
@@ -28,6 +28,6 @@
     "addon",
     "plugin"
   ],
-  "author": "demisex, translated by MrBoombastic",
+  "author": "demisex",
   "license": "ISC"
 }
