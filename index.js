@@ -1256,7 +1256,7 @@ try {
               const embed = new Discord.RichEmbed()
               .setTitle("Teraz odtwarzam", `${req !== null ? req.displayAvatarURL : null}`)
               .setThumbnail(`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`)
-              .setDescription(`[${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}](${video.url}) by [${video.channelTitle}](${video.channelURL})`)
+              .setDescription(`[${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}](${video.url}) przez [${video.channelTitle}](${video.channelURL})`)
               .setColor(musicbot.embedColor)
               .setFooter(`Dodał ${req !== null ? req.username : "Nieznany użytkownik"}`, `${req !== null ? req.displayAvatarURL : null}`);
               msg.channel.send({embed});
