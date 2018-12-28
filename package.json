@@ -10,7 +10,8 @@
   "dependencies": {
     "ytdl-core": "^0.20.3",
     "ytpl": "^0.1.14",
-    "ytsearcher": "^1.2.0"
+    "ytsearcher": "^1.2.0",
+    "moment": "^2.23.0"
   },
   "repository": {
     "type": "git",
