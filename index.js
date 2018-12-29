@@ -399,9 +399,9 @@ try {
 
 		musicbot.playFunction = (msg, suffix, args) => {
 			if (msg.member.voiceChannel === undefined) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie jesteś na kanale głosowym!`) .setColor(musicbot.warningColor)));
-			if (!suffix) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie podano co mam odtwarzać!`) .setColor(musicbot.warningColor)));
+			if (!suffix) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie podano co mam odtwarzać!`)) .setColor(musicbot.warningColor));
 			let q = musicbot.getQueue(msg.guild.id);
-			if (q.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Osiągnięto maksymalny rozmiar kolejki!`) .setColor(musicbot.errorColor)));
+			if (q.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Osiągnięto maksymalny rozmiar kolejki!`)) .setColor(musicbot.errorColor));
 			var searchstring = suffix.trim();
 			if (searchstring.includes("https://youtu.be/") || searchstring.includes("https://www.youtube.com/") && searchstring.includes("&")) searchstring = searchstring.split("&")[0];
 
@@ -416,9 +416,9 @@ try {
 				.includes('&t=')) playid = playid.split('&t=')[0];
 
 				ytpl(playid, function(err, playlist) {
-					if(err) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie mogłem wczytać tej playlisty!`) .setColor(musicbot.errorColor)));
-					if (playlist.items.length <= 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Ta playlista posiada 0 piosenek!`) .setColor(musicbot.warningColor)));
-					if (playlist.total_items >= 50) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Playlista nie może posiadać więcej piosenek niż 50!`) .setColor(musicbot.warningColor)));
+					if(err) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie mogłem wczytać tej playlisty!`)) .setColor(musicbot.errorColor));
+					if (playlist.items.length <= 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Ta playlista posiada 0 piosenek!`)) .setColor(musicbot.warningColor));
+					if (playlist.total_items >= 50) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Playlista nie może posiadać więcej piosenek niż 50!`)) .setColor(musicbot.warningColor));
 					var index = 0;
 					var ran = 0;
 					const queue = musicbot.getQueue(msg.guild.id);
@@ -438,9 +438,9 @@ try {
 						index++;
 
 						if (ran >= playlist.items.length) {
-							if (index == 0) msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Playlista nie posiada żadnej piosenki!`) .setColor(musicbot.warningColor)))
-							else if (index == 1) msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Dodałem 1 utwór!`) .setColor(musicbot.doneColor)));
-							else if (index > 1) msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Dodałem ${index} utworów!`) .setColor(musicbot.doneColor)));
+							if (index == 0) msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Playlista nie posiada żadnej piosenki!`)) .setColor(musicbot.warningColor));
+							else if (index == 1) msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Dodałem 1 utwór!`)) .setColor(musicbot.doneColor));
+							else if (index > 1) msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Dodałem ${index} utworów!`)) .setColor(musicbot.doneColor));
 						}
 					});
 				});
@@ -450,7 +450,7 @@ try {
 					let result = await musicbot.searcher.search(searchstring, { type: 'video' });
 					resolve(result.first)
 				}).then((res) => {
-					if (!res) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Coś się popsuło! Spróbuj ponownie`) .setColor(musicbot.errorColor)));
+					if (!res) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Coś się popsuło! Spróbuj ponownie`)) .setColor(musicbot.errorColor));
 					res.requester = msg.author.id;
 					res.channelURL = `https://www.youtube.com/channel/${res.channelId}`;
 					res.queuedOn = moment().format('LLLL');
@@ -510,7 +510,7 @@ try {
 					.has('EMBED_LINKS')) {
 					const embed = new Discord.RichEmbed();
 					embed.setAuthor("Komendy", msg.author.displayAvatarURL);
-					embed.setDescription(`Użyj \`${musicbot.botPrefix}${musicbot.help.name} nazwa komendy\` aby uzyskać pomoc komendy. Każdy z rolą \`${musicbot.djRole}\` może użyć dowolnej komendy. UWAGA! Używaj niezmiennego prefixu ==.`);
+					embed.setDescription(`Użyj \`${musicbot.botPrefix}${musicbot.help.name} nazwa komendy\` aby uzyskać pomoc komendy. Każdy z rolą \`${musicbot.djRole}\` może użyć dowolnej komendy.`);
 					// embed.addField(musicbot.helpCmd, musicbot.helpHelp);
 					const newCmds = Array.from(musicbot.commands);
 					let index = 0;
@@ -603,67 +603,67 @@ try {
 
 		musicbot.skipFunction = (msg, suffix, args) => {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nic nie jest odtwarzanie!`) .setColor(musicbot.warningColor)));
+			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nic nie jest odtwarzanie!`)) .setColor(musicbot.warningColor));
 			const queue = musicbot.getQueue(msg.guild.id);
-			if (!musicbot.canSkip(msg.member, queue)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz pominąć tej piosenki, ponieważ to nie ty ją dodałeś!`) .setColor(musicbot.warningColor)));
+			if (!musicbot.canSkip(msg.member, queue)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz pominąć tej piosenki, ponieważ to nie ty ją dodałeś!`)) .setColor(musicbot.warningColor));
 
-			if (musicbot.queues.get(msg.guild.id).loop == "song") return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz pominąć piosenki skoro jest w pętli!`) .setColor(musicbot.warningColor)));
+			if (musicbot.queues.get(msg.guild.id).loop == "song") return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz pominąć piosenki skoro jest w pętli!`)) .setColor(musicbot.warningColor));
 
 			const dispatcher = voiceConnection.player.dispatcher;
 			if (!dispatcher || dispatcher === null) {
 				if (musicbot.logging) return console.log(new Error(`dispatcher null on skip cmd [${msg.guild.name}] [${msg.author.username}]`));
-				return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Coś poszło nie tak!`) .setColor(musicbot.errorColor)));
+				return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Coś poszło nie tak!`)) .setColor(musicbot.errorColor));
 			};
 			if (voiceConnection.paused) dispatcher.end();
 			dispatcher.end();
-			msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Pominięto piosenkę!`) .setColor(musicbot.doneColor)));
+			msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Pominięto piosenkę!`)) .setColor(musicbot.doneColor));
 		};
 
 		musicbot.pauseFunction = (msg, suffix, args) => {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 			if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'Nic aktualnie nie gra.'));
-			if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz zatrzymać odtwarzania kolejki!`) .setColor(musicbot.warningColor)));
+			if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz zatrzymać odtwarzania kolejki!`)) .setColor(musicbot.warningColor));
 			const dispatcher = voiceConnection.player.dispatcher;
-			if (dispatcher.paused) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Kolejka jest już zatrzymana!`) .setColor(musicbot.warningColor)))
+			if (dispatcher.paused) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Kolejka jest już zatrzymana!`)) .setColor(musicbot.warningColor));
 			else dispatcher.pause();
-			msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Zatrzymano odtwarzanie!`) .setColor(musicbot.doneColor)));
+			msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Zatrzymano odtwarzanie!`)) .setColor(musicbot.doneColor));
 		};
 
 		musicbot.resumeFunction = (msg, suffix, args) => {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nic nie jest odtwarzanie!`) .setColor(musicbot.warningColor)));
-			if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz wznowić odtwarzania!`) .setColor(musicbot.warningColor)));
+			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nic nie jest odtwarzanie!`)) .setColor(musicbot.warningColor));
+			if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz wznowić odtwarzania!`)) .setColor(musicbot.warningColor));
 
 			const dispatcher = voiceConnection.player.dispatcher;
-			if (!dispatcher.paused) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Muzyka już gra!`) .setColor(musicbot.warningColor)))
+			if (!dispatcher.paused) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Muzyka już gra!`)) .setColor(musicbot.warningColor));
 			else dispatcher.resume();
-			msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Wznowiono odtwarzanie!`) .setColor(musicbot.doneColor)));
+			msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Wznowiono odtwarzanie!`)) .setColor(musicbot.doneColor));
 		};
 
 		musicbot.leaveFunction = (msg, suffix) => {
 			if (musicbot.isAdmin(msg.member) || musicbot.anyoneCanLeave === true) {
 				const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-				if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie jestem na kanale głosowym!`) .setColor(musicbot.warningColor)));
+				if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie jestem na kanale głosowym!`)) .setColor(musicbot.warningColor));
 				musicbot.emptyQueue(msg.guild.id);
 
 				if (!voiceConnection.player.dispatcher) return;
 				voiceConnection.player.dispatcher.end();
 				voiceConnection.disconnect();
-				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Opuściłem kanał głosowy!`) .setColor(musicbot.doneColor)));
+				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Opuściłem kanał głosowy!`)) .setColor(musicbot.doneColor));
 			} else {
 				//const chance = Math.floor((Math.random() * 100) + 1);
 				//if (chance <= 10) return msg.channel.send(musicbot.note('fail', `Nie możesz tego zrobić, ${msg.author.username}.`))
-				return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie masz uprawnień, aby mnie wyrzucić!`) .setColor(musicbot.warningColor)));
+				return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie masz uprawnień, aby mnie wyrzucić!`)) .setColor(musicbot.warningColor));
 			}
 		}
 
 		musicbot.npFunction = (msg, suffix, args) => {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 			const queue = musicbot.getQueue(msg.guild.id, true);
-			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nic nie jest grane!`) .setColor(musicbot.warningColor)));
+			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nic nie jest grane!`)) .setColor(musicbot.warningColor));
 			const dispatcher = voiceConnection.player.dispatcher;
 
-			if (musicbot.queues.get(msg.guild.id).songs.length <= 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Kolejka jest pusta!`) .setColor(musicbot.warningColor)));
+			if (musicbot.queues.get(msg.guild.id).songs.length <= 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Kolejka jest pusta!`)) .setColor(musicbot.warningColor));
 
 			if (msg.channel.permissionsFor(msg.guild.me)
 				.has('EMBED_LINKS')) {
@@ -706,12 +706,12 @@ try {
 		};
 
 		musicbot.queueFunction = (msg, suffix, args) => {
-			if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie ma kolejki na tym serwerze!`) .setColor(musicbot.warningColor)));
-			else if (musicbot.queues.get(msg.guild.id).songs.length <= 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Kolejka jest pusta!`) .setColor(musicbot.warningColor)));
+			if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie ma kolejki na tym serwerze!`)) .setColor(musicbot.warningColor));
+			else if (musicbot.queues.get(msg.guild.id).songs.length <= 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Kolejka jest pusta!`)) .setColor(musicbot.warningColor));
 			const queue = musicbot.queues.get(msg.guild.id);
 			if (suffix) {
 				let video = queue.songs.find(s => s.position == parseInt(suffix) - 1);
-				if (!video) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie znalazłem takiego utworu!`) .setColor(musicbot.warningColor)));
+				if (!video) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie znalazłem takiego utworu!`)) .setColor(musicbot.warningColor));
 				const embed = new Discord.RichEmbed()
 				.setAuthor('Dodano piosenkę do kolejki', client.user.avatarURL)
 				.setColor(musicbot.embedColor)
@@ -776,10 +776,10 @@ try {
 		};
 
 		musicbot.searchFunction = (msg, suffix, args) => {
-			if (msg.member.voiceChannel === undefined) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie jesteś na kanale głosowym!`) .setColor(musicbot.warningColor)));
-			if (!suffix) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie podano co mam wyszukać!`) .setColor(musicbot.warningColor)));
+			if (msg.member.voiceChannel === undefined) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie jesteś na kanale głosowym!`)) .setColor(musicbot.warningColor));
+			if (!suffix) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie podano co mam wyszukać!`)) .setColor(musicbot.warningColor));
 			const queue = musicbot.getQueue(msg.guild.id);
-			if (queue.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Osiągnięto maksymalną długość kolejki!`) .setColor(musicbot.warningColor)));
+			if (queue.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Osiągnięto maksymalną długość kolejki!`)) .setColor(musicbot.warningColor));
 
 			let searchstring = suffix.trim();
 			msg.channel.send(musicbot.note('search', `Szukam: \`${searchstring}\` 🔍`))
@@ -1102,68 +1102,68 @@ try {
 
 		musicbot.volumeFunction = (msg, suffix, args) => {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nic nie jest odtwarzane!`) .setColor(musicbot.warningColor)));
-			if (!musicbot.canAdjust(msg.member, musicbot.queues.get(msg.guild.id))) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Tylko administratorzy i osoby z rolą DJ'a (${musicbot.djRole}) mogą to zrobić!`) .setColor(musicbot.warningColor)));
+			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nic nie jest odtwarzane!`)) .setColor(musicbot.warningColor));
+			if (!musicbot.canAdjust(msg.member, musicbot.queues.get(msg.guild.id))) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Tylko administratorzy i osoby z rolą DJ'a (${musicbot.djRole}) mogą to zrobić!`)) .setColor(musicbot.warningColor));
 			const dispatcher = voiceConnection.player.dispatcher;
 
-			if (!suffix) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie podano głośności!`) .setColor(musicbot.warningColor)));
+			if (!suffix) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie podano głośności!`)) .setColor(musicbot.warningColor));
 			suffix = parseInt(suffix);
-			if (suffix > 200 || suffix <= 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Głośność musi wynosić pomiędzy 0 a 200`) .setColor(musicbot.warningColor)));
+			if (suffix > 200 || suffix <= 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Głośność musi wynosić pomiędzy 0 a 200`)) .setColor(musicbot.warningColor));
 
 			dispatcher.setVolume((suffix / 100));
 			musicbot.queues.get(msg.guild.id).volume = suffix;
-			msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Zmieniono głośność na: ${suffix}%`) .setColor(musicbot.doneColor)));
+			msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Zmieniono głośność na: ${suffix}%`)) .setColor(musicbot.doneColor));
 		};
 
 		musicbot.clearFunction = (msg, suffix, args) => {
-			if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie znalazłem kolejki na tym serwerze`) .setColor(musicbot.warningColor)));
-			if (!musicbot.isAdmin(msg.member)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Tylko administratorzy i użytkownicy z rolą DJ'a (${musicbot.djRole}) mogą czyścić kolejkę`) .setColor(musicbot.warningColor)));
+			if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie znalazłem kolejki na tym serwerze`)) .setColor(musicbot.warningColor));
+			if (!musicbot.isAdmin(msg.member)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Tylko administratorzy i użytkownicy z rolą DJ'a (${musicbot.djRole}) mogą czyścić kolejkę`)) .setColor(musicbot.warningColor));
 			musicbot.emptyQueue(msg.guild.id).then(res => {
-				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Kolejka została wyczyszczona`) .setColor(musicbot.doneColor)));
+				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Kolejka została wyczyszczona`)) .setColor(musicbot.doneColor));
 				const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 				if (voiceConnection !== null) {
 					const dispatcher = voiceConnection.player.dispatcher;
 					if (!dispatcher || dispatcher === null) {
 						if (musicbot.logging) return console.log(new Error(`dispatcher null on clear cmd [${msg.guild.name}] [${msg.author.username}]`));
-						return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Coś poszło nie tak`) .setColor(musicbot.errorColor)));
+						return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Coś poszło nie tak`)) .setColor(musicbot.errorColor));
 					};
 					if (voiceConnection.paused) dispatcher.end();
 					dispatcher.end();
 				}
 			}).catch(res => {
 				console.error(new Error(`[clearCmd] [${msg.guild.id}] ${res}`))
-				return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Coś poszło nie tak`) .setColor(musicbot.errorColor)));
+				return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Coś poszło nie tak`)) .setColor(musicbot.errorColor));
 			})
 		};
 
 		musicbot.removeFunction = (msg, suffix, args) => {
-			if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie znalazłem kolejki na tym serwerze!`) .setColor(musicbot.warningColor)));
-			if (!suffix)  return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie podano który utwór mam wyrzucić!`) .setColor(musicbot.warningColor)));
-			if (parseInt(suffix - 1) == 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz wyrzucić utworu który jest aktualnie grany!`) .setColor(musicbot.errorColor)));
+			if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie znalazłem kolejki na tym serwerze!`)) .setColor(musicbot.warningColor));
+			if (!suffix)  return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie podano który utwór mam wyrzucić!`)) .setColor(musicbot.warningColor));
+			if (parseInt(suffix - 1) == 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz wyrzucić utworu który jest aktualnie grany!`)) .setColor(musicbot.errorColor));
 			let test = musicbot.queues.get(msg.guild.id).songs.find(x => x.position == parseInt(suffix - 1));
 			if (test) {
-				if (test.requester !== msg.author.id && !musicbot.isAdmin(msg.member)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz wyrzucić tego utworu!`) .setColor(musicbot.errorColor)));
+				if (test.requester !== msg.author.id && !musicbot.isAdmin(msg.member)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz wyrzucić tego utworu!`)) .setColor(musicbot.errorColor));
 				let newq = musicbot.queues.get(msg.guild.id).songs.filter(s => s !== test);
 				musicbot.updatePositions(newq, msg.guild.id).then(res => {
 					musicbot.queues.get(msg.guild.id).songs = res;
-					msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note("note", `Wyrzucono z kolejki:  \`${test.title.replace(/`/g, "'")}\``) .setColor(musicbot.doneColor)));
+					msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note("note", `Wyrzucono z kolejki:  \`${test.title.replace(/`/g, "'")}\``)) .setColor(musicbot.doneColor));
 				})
 			} else {
-				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie mogłem znaleźć tego utworu lub coś poszło nie tak!`) .setColor(musicbot.warningColor)));
+				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie mogłem znaleźć tego utworu lub coś poszło nie tak!`)) .setColor(musicbot.warningColor));
 			}
 		};
 
 		musicbot.loopFunction = (msg, suffix, args) => {
-			if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie znalzłem kolejki na tym serwerze`) .setColor(musicbot.warningColor)));
+			if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie znalzłem kolejki na tym serwerze`)) .setColor(musicbot.warningColor));
 			if (musicbot.queues.get(msg.guild.id).loop == "none" || musicbot.queues.get(msg.guild.id).loop == null) {
 				musicbot.queues.get(msg.guild.id).loop = "song";
-				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Włączono zapętlanie jednego utworu :repeat_one:`) .setColor(musicbot.doneColor)));
+				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Włączono zapętlanie jednego utworu :repeat_one:`)) .setColor(musicbot.doneColor));
 			} else if (musicbot.queues.get(msg.guild.id).loop == "song") {
 				musicbot.queues.get(msg.guild.id).loop = "queue";
-				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Włączono zapętlanie całej kolejki :repeat:`) .setColor(musicbot.doneColor)));
+				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Włączono zapętlanie całej kolejki :repeat:`)) .setColor(musicbot.doneColor));
 			} else if (musicbot.queues.get(msg.guild.id).loop == "queue") {
 				musicbot.queues.get(msg.guild.id).loop = "none";
-				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Wyłączono zapętlenie :arrow_forward:`) .setColor(musicbot.doneColor)));
+				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Wyłączono zapętlenie :arrow_forward:`)) .setColor(musicbot.doneColor));
 				const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 				const dispatcher = voiceConnection.player.dispatcher;
 				let wasPaused = dispatcher.paused;
@@ -1200,7 +1200,7 @@ try {
 
 		musicbot.executeQueue = (msg, queue) => {
 			if (queue.songs.length <= 0) {
-				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Zakończono odtwarzanie`) .setColor(musicbot.doneColor)));
+				msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Zakończono odtwarzanie`)) .setColor(musicbot.doneColor));
 				musicbot.queues.set(msg.guild.id, {songs: [], last: null, loop: "none", id: msg.guild.id, volume: musicbot.defVolume});
 				if (musicbot.musicPresence) musicbot.updatePresence(musicbot.queues.get(msg.guild.id), msg.client, musicbot.clearPresence).catch((res) => { console.warn(`[MUSIC] Problem updating MusicPresence`); });
 				const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
@@ -1219,7 +1219,7 @@ try {
 									console.log(error);
 								});
 						} else if (!msg.member.voiceChannel.joinable) {
-							msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie mam uprawnień, aby dołączyć na kanał głosowy`) .setColor(musicbot.warningColor)))
+							msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie mam uprawnień, aby dołączyć na kanał głosowy`)) .setColor(musicbot.warningColor));
 							reject();
 						} else {
 							musicbot.emptyQueue(msg.guild.id).then(() => {
@@ -1246,7 +1246,7 @@ try {
 					if (!video) {
 						video = musicbot.queues.get(msg.guild.id).songs ? musicbot.queues.get(msg.guild.id).songs[0] : false;
 						if (!video) {
-							msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Odtwarzanie zakończone`) .setColor(musicbot.doneColor)));
+							msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Odtwarzanie zakończone`)) .setColor(musicbot.doneColor));
 							musicbot.emptyQueue(msg.guild.id);
 							const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 							if (voiceConnection !== null) return voiceConnection.disconnect();
