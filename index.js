@@ -398,7 +398,7 @@ try {
 		});
 
 		musicbot.playFunction = (msg, suffix, args) => {
-			if (msg.member.voiceChannel === undefined) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie jesteś na kanale głosowym!`) .setColor(musicbot.warningColor)));
+			if (msg.member.voiceChannel === undefined) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie jesteś na kanale głosowym!`)) .setColor(musicbot.warningColor));
 			if (!suffix) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie podano co mam odtwarzać!`)) .setColor(musicbot.warningColor));
 			let q = musicbot.getQueue(msg.guild.id);
 			if (q.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Osiągnięto maksymalny rozmiar kolejki!`)) .setColor(musicbot.errorColor));
