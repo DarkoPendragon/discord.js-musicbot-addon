@@ -374,7 +374,7 @@ try {
 					if (tCmd.enabled) {
 						if (!musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(tCmd.masked)) {
 							if (musicbot.recentTalk.has(msg.author.id)) {
-								if (musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(tCmd.masked)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Musisz poczekać zanim użyjesz ponownie tej komendy!`) .setColor(musicbot.warningColor)));
+								if (musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(tCmd.masked)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Musisz poczekać zanim użyjesz ponownie tej komendy!`)) .setColor(musicbot.warningColor));
 							}
 							musicbot.recentTalk.add(msg.author.id);
 							setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
@@ -386,7 +386,7 @@ try {
 					if (aCmd.enabled) {
 						if (!musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(aCmd.masked)) {
 							if (musicbot.recentTalk.has(msg.author.id)) {
-								if (musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(aCmd.masked)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Musisz poczekać zanim użyjesz ponownie tej komendy!`) .setColor(musicbot.warningColor)));
+								if (musicbot.cooldown.enabled == true && !musicbot.cooldown.exclude.includes(aCmd.masked)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Musisz poczekać zanim użyjesz ponownie tej komendy!`)) .setColor(musicbot.warningColor));
 							}
 							musicbot.recentTalk.add(msg.author.id);
 							setTimeout(() => { musicbot.recentTalk.delete(msg.author.id) }, musicbot.cooldown.timer);
