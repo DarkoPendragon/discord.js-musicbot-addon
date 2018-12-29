@@ -1108,7 +1108,7 @@ try {
 
 			if (!suffix) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie podano głośności!`)) .setColor(musicbot.warningColor));
 			suffix = parseInt(suffix);
-			if (suffix > 200 || suffix <= 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Głośność musi wynosić pomiędzy 0 a 200`)) .setColor(musicbot.warningColor));
+			if (suffix > 200 || suffix <= 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Głośność musi wynosić pomiędzy 1 a 200`)) .setColor(musicbot.warningColor));
 
 			dispatcher.setVolume((suffix / 100));
 			musicbot.queues.get(msg.guild.id).volume = suffix;
