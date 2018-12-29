@@ -510,7 +510,7 @@ try {
 					.has('EMBED_LINKS')) {
 					const embed = new Discord.RichEmbed();
 					embed.setAuthor("Komendy", msg.author.displayAvatarURL);
-					embed.setDescription(`Użyj \`${musicbot.botPrefix}${musicbot.help.name} nazwa komendy\` aby uzyskać pomoc komendy. Każdy z rolą \`${musicbot.djRole}\` może użyć dowolnej komendy.`);
+					embed.setDescription(`Oto komendy muzyczne tego bota. Pamiętaj o stosowaniu odpowiedniego prefixu.`); //ew dodać info o DJ
 					// embed.addField(musicbot.helpCmd, musicbot.helpHelp);
 					const newCmds = Array.from(musicbot.commands);
 					let index = 0;
@@ -541,7 +541,7 @@ try {
 						}
 					};
 				} else {
-					var cmdmsg = `= Komendy muzyczne =\nUżyj ${musicbot.botPrefix}${musicbot.help.name} [komenda] aby uzyskać pomoc dla komendy. Każdy z rolą \`${musicbot.djRole}\` może użyć dowolnej komendy.\n`;
+					var cmdmsg = `Oto komendy muzyczne tego bota. Pamiętaj o stosowaniu odpowiedniego prefixu.`; //ew. dodać info o DJ
 					let index = 0;
 					let max = musicbot.commandsArray.length;
 					for (var i = 0; i < musicbot.commandsArray.length; i++) {
