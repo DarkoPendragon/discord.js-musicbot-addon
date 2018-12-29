@@ -621,7 +621,7 @@ try {
 
 		musicbot.pauseFunction = (msg, suffix, args) => {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-			if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'Nic aktualnie nie gra.'));
+			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nic nie jest odtwarzane!`)) .setColor(musicbot.warningColor));
 			if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz zatrzymać odtwarzania kolejki!`)) .setColor(musicbot.warningColor));
 			const dispatcher = voiceConnection.player.dispatcher;
 			if (dispatcher.paused) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Kolejka jest już zatrzymana!`)) .setColor(musicbot.warningColor));
@@ -1139,7 +1139,7 @@ try {
 		musicbot.removeFunction = (msg, suffix, args) => {
 			if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie znalazłem kolejki na tym serwerze!`)) .setColor(musicbot.warningColor));
 			if (!suffix)  return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie podano który utwór mam wyrzucić!`)) .setColor(musicbot.warningColor));
-			if (parseInt(suffix - 1) == 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz wyrzucić utworu który jest aktualnie grany!`)) .setColor(musicbot.errorColor));
+			if (parseInt(suffix - 1) == 0) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz wyrzucić utworu który jest aktualnie odtwarzany!`)) .setColor(musicbot.errorColor));
 			let test = musicbot.queues.get(msg.guild.id).songs.find(x => x.position == parseInt(suffix - 1));
 			if (test) {
 				if (test.requester !== msg.author.id && !musicbot.isAdmin(msg.member)) return msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('fail', `Nie możesz wyrzucić tego utworu!`)) .setColor(musicbot.errorColor));
