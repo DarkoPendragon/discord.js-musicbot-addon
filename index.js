@@ -1305,7 +1305,7 @@ try {
 										musicbot.executeQueue(msg, musicbot.queues.get(msg.guild.id));
 									};
 								} else if (musicbot.queues.get(msg.guild.id).songs.length <= 0) {
-									if (msg && msg.channel) msg.channel.send(musicbot.note('note', 'Odtwarzanie zakończone.'));
+									if (msg && msg.channel) msg.channel.send(new Discord.RichEmbed() .setDescription(musicbot.note('note', `Odtwarzanie zakończone`)) .setColor(musicbot.doneColor));
 									musicbot.queues.set(msg.guild.id, {songs: [], last: null, loop: "none", id: msg.guild.id, volume: musicbot.defVolume});
 									if (musicbot.musicPresence) musicbot.updatePresence(musicbot.queues.get(msg.guild.id), msg.client, musicbot.clearPresence).catch((res) => { console.warn(`[MUSIC] Problem updating MusicPresence`); });
 									const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
