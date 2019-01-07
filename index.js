@@ -204,6 +204,7 @@ try {
         this.messageNewSong = (options && typeof options.messageNewSong !== 'undefined' ? options && options.messageNewSong : true);
         this.insertMusic = (options && typeof options.insertMusic !== 'undefined' ? options && options.insertMusic : false);
         this.defaultPrefix = (options && options.defaultPrefix) || "!";
+        this.leaveAfterPlayFinish = (options && typeof options.leaveAfterPlayFinish !== 'undefined' ? options && options.leaveAfterPlayFinish : false);
 
         // Cooldown Settings
         this.cooldown = {
@@ -1200,8 +1201,10 @@ try {
         msg.channel.send(musicbot.note('note', 'Playback finished~'));
         musicbot.queues.set(msg.guild.id, {songs: [], last: null, loop: "none", id: msg.guild.id, volume: musicbot.defVolume});
         if (musicbot.musicPresence) musicbot.updatePresence(musicbot.queues.get(msg.guild.id), msg.client, musicbot.clearPresence).catch((res) => { console.warn(`[MUSIC] Problem updating MusicPresence`); });
-        const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-        if (voiceConnection !== null) return voiceConnection.disconnect();
+        if (this.leaveAfterPlayFinish) {
+          const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+          if (voiceConnection !== null) return voiceConnection.disconnect();
+        }
       };
 
       new Promise((resolve, reject) => {
@@ -1245,8 +1248,10 @@ try {
             if (!video) {
               msg.channel.send(musicbot.note('note', 'Playback finished!'));
               musicbot.emptyQueue(msg.guild.id);
-              const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-              if (voiceConnection !== null) return voiceConnection.disconnect();
+              if (this.leaveAfterPlayFinish) {
+                const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+                if (voiceConnection !== null) return voiceConnection.disconnect();
+              }
             }
           }
 
@@ -1305,8 +1310,10 @@ try {
                   if (msg && msg.channel) msg.channel.send(musicbot.note('note', 'Playback finished.'));
                   musicbot.queues.set(msg.guild.id, {songs: [], last: null, loop: "none", id: msg.guild.id, volume: musicbot.defVolume});
                   if (musicbot.musicPresence) musicbot.updatePresence(musicbot.queues.get(msg.guild.id), msg.client, musicbot.clearPresence).catch((res) => { console.warn(`[MUSIC] Problem updating MusicPresence`); });
-                  const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-                  if (voiceConnection !== null) return voiceConnection.disconnect();
+                  if (this.leaveAfterPlayFinish) {
+                    const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+                    if (voiceConnection !== null) return voiceConnection.disconnect();
+                  }
                 }
               }, 1250);
             });
