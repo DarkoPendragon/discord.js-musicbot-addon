@@ -1,6 +1,6 @@
 ---
 name: Bug/Error Report
-about: Follow this tempate to submit a bug report.
+about: Follow this template to submit a bug report.
 
 ---
 

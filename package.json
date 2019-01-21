@@ -1,16 +1,16 @@
 {
   "name": "discord.js-musicbot-addon",
-  "version": "12.0.6",
-  "description": "A configurable music bot for Discord.js using YouTube! Add it to an already made bot, or run it by itself.",
+  "version": "13.4.0",
+  "description": "A simple Node.js based music extension/bot for Discord.js projects using YouTube.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "youtube-playlist-info": "^0.1.0",
     "ytdl-core": "^0.20.3",
-    "ytsearcher": "^1.0.3"
+    "ytpl": "^0.1.14",
+    "ytsearcher": "^1.2.0"
   },
   "repository": {
     "type": "git",
