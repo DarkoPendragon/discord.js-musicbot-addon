@@ -8,9 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "ytdl-core": "^0.20.3",
+    "ytdl-core": "^0.29.1",
     "ytpl": "^0.1.14",
-    "ytsearcher": "^1.2.0"
+    "ytsearcher": "^1.2.2"
   },
   "repository": {
     "type": "git",
