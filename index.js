@@ -11,12 +11,6 @@ try {
       process.exit(1);
     };
 
-    /**
-      * Class of the Music Bot.
-      * @class
-      * @param {Client} A Discord.js client
-      * @param {object} Object passed for options
-    */
     class Music {
       constructor(client, options) {
         // Data Objects
@@ -217,12 +211,6 @@ try {
         this.recentTalk = new Set();
       }
 
-      /**
-      * Updates positions of all songs in a queue.
-      * @function doSomething
-      * @memberOf my.namespace.Music
-      * @param {object} A Discord.js client
-      */
       async updatePositions(obj, server) {
         return new Promise((resolve, reject) => {
           if (!obj || typeof obj !== "object") reject();
