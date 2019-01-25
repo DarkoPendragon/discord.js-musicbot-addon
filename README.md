@@ -76,6 +76,9 @@ The options you can pass in `music.start(client, {options})` and their types is 
 | musicPresence | Boolean | Whether or not to make the bot set its presence to currently playing music. | false |
 | clearPresence | Boolean | Whether or not to clear the presence instead of setting it to "nothing" | false |
 | insertMusic | Boolean | Whether or not to insert the music bot data into `<Client>.music` on start. | false |
+| channelWhitelist | Object/Array | Sets a list of ID's allow when running messages. | [ ] |
+| channelBlacklist | Object/Array | Sets a list of ID's ignore when running messages. | [ ] |
+| nextPresence | [PresenceData](https://discord.js.org/#/docs/main/stable/typedef/PresenceData) | PresenceData to set after instead of clearing it (clearPresence). | null |
 
 ## Multi-Prefix Option Example
 ```js

@@ -198,6 +198,9 @@ try {
         this.messageNewSong = (options && typeof options.messageNewSong !== 'undefined' ? options && options.messageNewSong : true);
         this.insertMusic = (options && typeof options.insertMusic !== 'undefined' ? options && options.insertMusic : false);
         this.defaultPrefix = (options && options.defaultPrefix) || "!";
+        this.channelWhitelist = (options && options.channelWhitelist) || [];
+        this.channelBlacklist = (options && options.channelBlacklist) || [];
+        this.nextPresence = (options && options.nextPresence) || null;
 
         // Cooldown Settings
         this.cooldown = {
@@ -287,8 +290,9 @@ try {
         });
       };
 
-      updatePresence(queue, client, clear) {
+      async updatePresence(queue, client, clear) {
         return new Promise((resolve, reject) => {
+          if (this.nextPresence !== null) clear = false;
           if (!queue || !client) reject("invalid arguments");
           if (queue.songs.length > 0 && queue.last) {
             client.user.setPresence({
@@ -303,12 +307,27 @@ try {
               client.user.setPresence({ game: { name: null} });
               resolve(client.user.presence);
             } else {
-              client.user.setPresence({
-                game: {
-                  name: "🎵 | nothing",
-                  type: 'PLAYING'
-                }
-              });
+              if (this.nextPresence !== null) {
+                let props;
+                if (this.nextPresence.status && ["online","dnd","idle","invisible"].includes(this.nextPresence.status)) props.status = this.nextPresence.status;
+                if (this.nextPresence.afk && typeof this.nextPresence.afk == "boolean") props.afk = this.nextPresence.afk;
+                if (this.nextPresence.game && typeof this.nextPresence.game == "string") props.game = {name: this.nextPresence.game}
+                else if (this.nextPresence.game && typeof this.nextPresence.game == "object") props.game = this.nextPresence.game;
+                client.user.setPresence(props).catch((res) => {
+                  console.error("[MUSICBOT] Could not update presence\n" + res);
+                  client.user.setPresence({ game: { name: null} });
+                  resolve(client.user.presence);
+                }).then((res) => {
+                  resolve(res);
+                });
+              } else {
+                client.user.setPresence({
+                  game: {
+                    name: "🎵 | nothing",
+                    type: 'PLAYING'
+                  }
+                });
+              }
               resolve(client.user.presence);
             };
           };
@@ -346,13 +365,15 @@ try {
     });
 
     client.on("message", (msg) => {
+      if (msg.author.bot || musicbot.channelBlacklist.includes(msg.channel.id)) return;
+      if (musicbot.channelWhitelist.length > 0 && !musicbot.channelWhitelist.includes(msg.channel.id)) return;
       const message = msg.content.trim();
       const prefix = typeof musicbot.botPrefix == "object" ? (musicbot.botPrefix.has(msg.guild.id) ? musicbot.botPrefix.get(msg.guild.id).prefix : musicbot.defaultPrefix) : musicbot.botPrefix;
       const command = message.substring(prefix.length).split(/[ \n]/)[0].trim();
       const suffix = message.substring(prefix.length + command.length).trim();
       const args = message.slice(prefix.length + command.length).trim().split(/ +/g);
 
-      if (message.startsWith(prefix) && !msg.author.bot && msg.channel.type == "text") {
+      if (message.startsWith(prefix) && msg.channel.type == "text") {
         if (musicbot.commands.has(command)) {
           let tCmd = musicbot.commands.get(command);
           if (tCmd.enabled) {
@@ -436,6 +457,7 @@ try {
         }).then((res) => {
           if (!res) return msg.channel.send(musicbot.note("fail", "Something went wrong. Try again!"));
           res.requester = msg.author.id;
+          if (searchstring.startsWith("https://www.youtube.com/") || searchstring.startsWith("https://youtu.be/")) res.url = searchstring;
           res.channelURL = `https://www.youtube.com/channel/${res.channelId}`;
           res.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
           if (musicbot.requesterName) res.requesterAvatarURL = msg.author.displayAvatarURL;
@@ -1203,7 +1225,7 @@ try {
                 .catch((error) => {
                   console.log(error);
                 });
-            } else if (!msg.member.voiceChannel.joinable) {
+            } else if (!msg.member.voiceChannel.joinable || msg.member.voiceChannel.full) {
               msg.channel.send(musicbot.note('fail', 'I do not have permission to join your voice channel!'))
               reject();
             } else {

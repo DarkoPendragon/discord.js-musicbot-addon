@@ -2,6 +2,11 @@
 Note that the NPM version will be behind the GitHub version, but more stable.  
 If any issues arise open an issue, or for a faster response join [the Discord server](https://discord.gg/FKYrX4X).
 ***
+## 13.4.2
+* Some small fixes.
+* Added `channelBlacklist` and `channelWhitelist`.
+* Added `nextPresence`.
+
 ## 13.4.1
 * Merged PR #83 and #82.
 
@@ -14,7 +19,7 @@ If any issues arise open an issue, or for a faster response join [the Discord se
 ## 13.3.1
 * [Merged PR #75](https://github.com/DarkoPendragon/discord.js-musicbot-addon/pull/75) to fix some options.
 * Removed logging involving the entire queue on play.
-* Ohter touch ups.
+* Other touch ups.
 
 ## 13.3.0
 * Fixed fatal Promise handaling errors.
