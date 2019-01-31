@@ -79,6 +79,7 @@ The options you can pass in `music.start(client, {options})` and their types is 
 | insertMusic | Boolean | Whether or not to insert the music bot data into `<Client>.music` on start. | false |
 | channelWhitelist | Object/Array | Sets a list of ID's allow when running messages. | [ ] |
 | channelBlacklist | Object/Array | Sets a list of ID's ignore when running messages. | [ ] |
+| bitRate | String | Sets the preferred bitRate for the Discord.js stream to use. | "120000" |
 | nextPresence | [PresenceData](https://discord.js.org/#/docs/main/stable/typedef/PresenceData) | PresenceData to set after instead of clearing it (clearPresence). | null |
 
 ## Multi-Prefix Option Example
