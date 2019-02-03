@@ -1114,7 +1114,7 @@ try {
       if (!musicbot.canAdjust(msg.member, musicbot.queues.get(msg.guild.id))) return msg.channel.send(musicbot.note('fail', `Only admins or DJ's may change volume.`));
       const dispatcher = voiceConnection.player.dispatcher;
 
-      if (!suffix) return msg.channel.send(musicbot.note('fail', 'No volume specified.'));
+      if (!suffix || isNaN(suffix)) return msg.channel.send(musicbot.note('fail', 'No volume specified.'));
       suffix = parseInt(suffix);
       if (suffix > 200 || suffix <= 0) return msg.channel.send(musicbot.note('fail', 'Volume out of range, must be within 1 to 200'));
 

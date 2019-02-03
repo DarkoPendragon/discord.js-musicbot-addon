@@ -2,6 +2,9 @@
 Note that the NPM version will be behind the GitHub version, but more stable.  
 If any issues arise open an issue, or for a faster response join [the Discord server](https://discord.gg/FKYrX4X).
 ***
+## 13.4.4
+* Added a `isNan` check for the volume command (issue #88).
+
 ## 13.4.3
 * Added the `bitRate` option.
 

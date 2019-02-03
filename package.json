@@ -1,6 +1,6 @@
 {
   "name": "discord.js-musicbot-addon",
-  "version": "13.4.3",
+  "version": "13.4.4",
   "description": "A simple Node.js based music extension/bot for Discord.js projects using YouTube.",
   "main": "index.js",
   "scripts": {
