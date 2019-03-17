@@ -1,4 +1,4 @@
-# Discord MusicBot Addon ale po Polsku xD
+# Discord MusicBot Addon ale po polsku
 Dalsza część opisu po angielsku, bo jest to tylko kopia discord.js-musicbot-addon, tylko że przetłumaczona.
 
 ***  
