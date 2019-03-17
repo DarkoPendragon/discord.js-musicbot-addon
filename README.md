@@ -37,7 +37,7 @@ Allows the bot to join voice as well as speak.
 Required for voice. Discord.js _prefers_ node-opus.  
 
 __Installation:__  
-* `npm i git+https://github.com/MrBoombastic/discord.js-polski-bot-muzyczny/`  
+* `npm i git+https://github.com/MrBoombastic/discord.js-muzykobot/`  
 If you have troubles installing, see [this link](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting) or [join the discord server](https://discordapp.com/invite/FKYrX4X).
 Note that the NPM version will be *slightly behind* the GitHub version.
 
