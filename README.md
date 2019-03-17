@@ -1,4 +1,6 @@
 # Discord MusicBot Addon ale po Polsku xD
+Dalsza część opisu po angielsku, bo jest to tylko kopia discord.js-musicbot-addon, tylko że przetłumaczona.
+
 ***  
 This module is a simple Node.js based music extension/bot for Discord.js projects using YouTube. This was originally an update of an older addon for newer versions of Discord.js but not serves as it's own module.   
 
