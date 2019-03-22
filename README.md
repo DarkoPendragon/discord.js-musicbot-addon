@@ -1,6 +1,4 @@
 # Discord.JS Muzykobot
-Dalsza część opisu po angielsku, bo jest to tylko kopia discord.js-musicbot-addon, tylko że przetłumaczona.
-
 ***
 To prosty moduł Node.JS bazowany na innych projektach botów muzycznych dla Discord.JS.
 
