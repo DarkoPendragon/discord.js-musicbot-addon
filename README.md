@@ -22,7 +22,7 @@ __Uprawnienia:__
 * If `ownerOverMember` is true, the set ID of the user (`ownerID`) will over-ride permissions from the bot.
 
 ***
-# Instalacjia
+# Instalacja
 ***  
 __Pre-installation:__  
 1. `npm install discord.js`  
