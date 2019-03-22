@@ -1,56 +1,56 @@
-# Discord MusicBot Addon ale po polsku
+# Discord.JS Muzykobot
 Dalsza część opisu po angielsku, bo jest to tylko kopia discord.js-musicbot-addon, tylko że przetłumaczona.
 
-***  
-This module is a simple Node.js based music extension/bot for Discord.js projects using YouTube. This was originally an update of an older addon for newer versions of Discord.js but not serves as it's own module.   
+***
+To prosty moduł Node.JS bazowany na innych projektach botów muzycznych dla Discord.JS.
 
-__The commands available are: (default names)__  
-* `musichelp [command]`: Displays help text for commands by this addon, or help for a specific command.
-* `play <url>|<search string>`: Play audio from YouTube.
-* `search <search string>`: Search's for up to 10 videos from YT.
-* `skip [number]`: Skip a song or multi songs with skip [some number].
-* `queue [position]`: Display the current queue.
+__Lista komend: (nazwy domyślne)__  
+* `musichelp [nazwa komendy]`: Displays help text for commands by this addon, or help for a specific command.
+* `play <url>|<wyszukiwana piosenka>`: Play audio from YouTube.
+* `search <wyszukiwania piosenka>`: Search's for up to 10 videos from YT.
+* `skip [liczba]`: Skip a song or multi songs with skip [some number].
+* `queue [pozycja]`: Display the current queue.
 * `pause`: Pause music playback.
 * `resume`: Resume music playback.
-* `remove [position]`: Remove a song from the queue by position.
+* `remove [pozycja]`: Remove a song from the queue by position.
 * `volume`: Adjust the playback volume between 1 and 200.
 * `leave`: Clears the song queue and leaves the channel.
 * `clearqueue`: Clears the song queue.
 * `np`: Show the current playing song.  
 
-__Permissions:__  
+__Uprawnienia:__  
 * If `anyoneCanSkip` is true, anyone can skip songs in the queue.
 * If `anyoneCanAdjust` is true, anyone can adjust the volume.
 * If `ownerOverMember` is true, the set ID of the user (`ownerID`) will over-ride permissions from the bot.
 
 ***
-# Installation
+# Instalacjia
 ***  
 __Pre-installation:__  
 1. `npm install discord.js`  
-It is recommended to have the stable branch.  
+Zalecana wersja stable. Obecnie to wersja 11.4.2.
 
-2. `ffmpeg installed` __correctly__ for your OS/env.  
-Allows the bot to join voice as well as speak.  
+2. `ffmpeg`  
+Bardzo ważna biblioteka. Nie instaluj ffmpeg-binaries, tylko normalne paczki dla systemu.
 
 3. `npm install node-opus` or `npm install opusscript`  
-Required for voice. Discord.js _prefers_ node-opus.  
+Zalecany node-opus.
 
 __Installation:__  
-* `npm i git+https://github.com/MrBoombastic/discord.js-muzykobot/`  
-If you have troubles installing, see [this link](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting) or [join the discord server](https://discordapp.com/invite/FKYrX4X).
-Note that the NPM version will be *slightly behind* the GitHub version.
+* `npm i discord.js-muzykobot`  
+Jakieś problemy? [Klik!](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting)
+Pamiętaj, że wersja z NPM jest odrobinkę opóźniona w stosunku do wersji z gita.
 
-# Examples
+# Przykłady
 ***  
 See [this page](https://github.com/DarkoPendragon/discord.js-musicbot-addon/blob/master/examples/examples.md) on the repo for examples.
 
-# Options & Config.
+# Opcje i konfiguracja
 ***
 __Most options are optional and thus not needed.__  
 The options you can pass in `music.start(client, {options})` and their types is as followed:  
 
-## Basic Options.
+## Podstawowe opcje
 | Option | Type | Description | Default |  
 | --- | --- | --- | --- |
 | youtubeKey | String | A YouTube Data API3 key. Required to run. | NaN |
@@ -73,7 +73,7 @@ The options you can pass in `music.start(client, {options})` and their types is 
 | clearPresence | Boolean | Whether or not to clear the presence instead of setting it to "nothing" | false |
 | insertMusic | Boolean | Whether or not to insert the music bot data into `<Client>.music` on start. | false |
 
-## Multi-Prefix Option Example
+## Przykład bota z wieloma prefixami
 ```js
 <Client>.guilds.forEach
 <Music>.start(<Client>, {
@@ -84,7 +84,7 @@ The options you can pass in `music.start(client, {options})` and their types is 
 // Exmaple Map Structure
 {serverID: { prefix: "!" } }
 ```
-See [examples](https://github.com/DarkoPendragon/discord.js-musicbot-addon/blob/master/examples/examples.md) for more info.
+Zobacz [przykłady](https://github.com/DarkoPendragon/discord.js-musicbot-addon/blob/master/examples/examples.md).
 ## Cooldown
 | Option | Type | Description | Default |  
 | --- | --- | --- | --- |
@@ -93,7 +93,7 @@ See [examples](https://github.com/DarkoPendragon/discord.js-musicbot-addon/blob/
 | cooldown.timer | Number | Time in MS that cooldowns last. | 10000 |
 | cooldown.exclude | Object/Array | Array of command names to exclude. Uses default names, not set names | ["volume","queue","pause","resume","np"] |  
 
-## Command Options.  
+## Opcje komend  
 Commands pass a bit different. Each command follows the same format as below. Valid commands are `play`, `remove`, `help`, `np`, `queue`, `volume`, `pause`, `resume`, `skip`, `clearqueue`, `loop`, `leave`.
 ```js
 music.start(client, {
