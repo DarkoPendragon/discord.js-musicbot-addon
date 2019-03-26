@@ -2,6 +2,10 @@
 Note that the NPM version will be behind the GitHub version, but more stable.  
 If any issues arise open an issue, or for a faster response join [the Discord server](https://discord.gg/bXvgdjV).
 ***
+## 13.5.0
+* Fixed a queue issue causing it to skip a song every now and then.
+* Added module checkers to help some people.
+
 ## 13.4.4
 * Added a `isNan` check for the volume command (issue #88).
 
