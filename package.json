@@ -1,6 +1,6 @@
 {
   "name": "discord.js-muzykobot",
-  "version": "13.5.0",
+  "version": "13.5.01",
   "description": "A simple Node.js based music extension/bot for Discord.js projects using YouTube.",
   "main": "index.js",
   "scripts": {
