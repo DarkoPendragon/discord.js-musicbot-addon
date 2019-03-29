@@ -7,10 +7,16 @@ const moment = require('moment')
 moment.locale('pl-PL')
 exports.start = (client, options) => {
 	try {
-		if (process.version.slice(1).split('.')[0] < 8) {
-			console.error(new Error(`[MusicBot] Wymagana wersja node to większa niż 8, aby korzystać z tego modułu zaktualizuj node`));
-			process.exit(1);
-		};
+		if (process.version.slice(1).split('.')[0] < 8) console.error(new Error(`[MusicBot] node v8 or higher is needed, please update`));
+    function moduleAvailable(name) {
+      try {
+        require.resolve(name);
+        return true;
+      } catch(e){}
+      return false;
+    };
+    if (moduleAvailable("ffmpeg-binaries")) console.error(new Error("[MUSIC] ffmpeg-binaries was found, this will likely cause problems"));
+    if (!moduleAvailable("ytdl-core") || !moduleAvailable("ytdl") || !moduleAvailable("ytsearcher")) console.error(new Error("[MUSIC] one or more youtube specific modules not found, this module will not work"));
 		class Music {
 			constructor(client, options) {
 				// Data Objects
