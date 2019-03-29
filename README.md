@@ -3,28 +3,28 @@
 To prosty moduł Node.JS bazowany na innych projektach botów muzycznych dla Discord.JS.
 
 __Lista komend: (nazwy domyślne)__  
-* `musichelp [nazwa komendy]`: Displays help text for commands by this addon, or help for a specific command.
-* `play <url>|<wyszukiwana piosenka>`: Play audio from YouTube.
-* `search <wyszukiwania piosenka>`: Search's for up to 10 videos from YT.
-* `skip [liczba]`: Skip a song or multi songs with skip [some number].
-* `queue [pozycja]`: Display the current queue.
-* `pause`: Pause music playback.
-* `resume`: Resume music playback.
-* `remove [pozycja]`: Remove a song from the queue by position.
-* `volume`: Adjust the playback volume between 1 and 200.
-* `leave`: Clears the song queue and leaves the channel.
-* `clearqueue`: Clears the song queue.
-* `np`: Show the current playing song.  
+* `musichelp [nazwa komendy]`: Wyświetla listę komend muzycznych.
+* `play <url>|<wyszukiwana piosenka>`: Puszcza muzykę z platformy [YouTube](https://youtube.com/)
+* `search <wyszukiwania piosenka>`: Wyszukuje 10 piosenek o podobnym tytule z platformy [YouTube](https://youtube.com/).
+* `skip [liczba]`: Pomija jedną lub kilka piosenek z kolejki.
+* `queue [pozycja]`: Wyświetla aktualną kolejkę dla serwera.
+* `pause`: Zatrzymuje odtwarzanie muzyki.
+* `resume`: Wznawia odtwarzanie muzyki.
+* `remove [pozycja]`: Usuwa piosenkę o danej pozycji z kolejki.
+* `volume`: Ustawia głośność odtwarzania [0-200].
+* `leave`: Czyści kolejkę i wychodzi z kanału.
+* `clearqueue`: Czyści kolejkę.
+* `np`: Pokazuje informacje o aktualnie granej piosence. 
 
 __Uprawnienia:__  
-* If `anyoneCanSkip` is true, anyone can skip songs in the queue.
-* If `anyoneCanAdjust` is true, anyone can adjust the volume.
-* If `ownerOverMember` is true, the set ID of the user (`ownerID`) will over-ride permissions from the bot.
+* Jeżeli `anyoneCanSkip` jest ustawione na `true`, to każdy użytkownik może pominąć piosenki.
+* Jeżeli `anyoneCanAdjust` jest ustawione na `true`, to każdy użytkownik może zmienić głośność.
+* Jeżeli `ownerOverMember` jest ustawione na `true`, to właściciel bota (`ownerID`) ma uprawnienia do wykonywania wszystkich komend muzycznych.
 
 ***
 # Instalacja
 ***  
-__Pre-installation:__  
+__Przed instalacją pakietu:__  
 1. `npm install discord.js`  
 Zalecana wersja stable. Obecnie to wersja 11.4.2.
 
@@ -34,42 +34,42 @@ Bardzo ważna biblioteka. Nie instaluj ffmpeg-binaries, tylko normalne paczki dl
 3. `npm install node-opus` or `npm install opusscript`  
 Zalecany node-opus.
 
-__Installation:__  
+__Instalacja:__  
 * `npm i discord.js-muzykobot`  
 Jakieś problemy? [Klik!](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting)
 Pamiętaj, że wersja z NPM jest odrobinkę opóźniona w stosunku do wersji z gita.
 
 # Przykłady
 ***  
-See [this page](https://github.com/DarkoPendragon/discord.js-musicbot-addon/blob/master/examples/examples.md) on the repo for examples.
+Sprawdź [tę stronę](https://github.com/MrBoombastic/discord.js-muzykobot/blob/master/examples/examples.md), aby zobaczyć przykłady użycia.
 
 # Opcje i konfiguracja
 ***
-__Most options are optional and thus not needed.__  
-The options you can pass in `music.start(client, {options})` and their types is as followed:  
+__Większość opcji jest dodatkowych i nie są wymagane.__  
+Opcje można podać w `music.start(client, {options})`. Lista opcji:
 
 ## Podstawowe opcje
-| Option | Type | Description | Default |  
+| Nazwa | Typ | Opis | Domyślna wartość |  
 | --- | --- | --- | --- |
-| youtubeKey | String | A YouTube Data API3 key. Required to run. | NaN |
-| botPrefix | String | The prefix of the bot. Defaults to "!". Can also be a Map of prefix's. | ! |
-| messageNewSong | Boolean | Whether or not to send a message when a new song starts playing. | true |
-| bigPicture | Boolean | Whether to use a large (true) image or small (false) for embeds. | false |
-| maxQueueSize | Number | Max queue size allowed. Defaults 100. Set to 0 for unlimited. | 50 |
-| defVolume | Number | The default volume of music. 1 - 200. | 50 |
-| anyoneCanSkip | Boolean | Whether or not anyone can skip. | false |
-| messageHelp | Boolean | Whether to message the user on help command usage. If it can't, it will send it in the channel like normal. | false |
-| botAdmins | Object/Array | An array of Discord user ID's to be admins as the bot. They will ignore permissions for the bot. | [ ] |
-| anyoneCanAdjust | Boolean | Whether anyone can adjust volume. | false |
-| ownerOverMember | Boolean | Whether the owner over-rides `CanAdjust` and `CanSkip`. | flase |
-| anyoneCanLeave | Boolean | Whether anyone can make the bot leave the currently connected channel. | false |
-| ownerID | String | The ID of the Discord user to be seen as the owner. Required if using `ownerOverMember`. | NaN |
-| logging | Boolean | Some extra none needed logging (such as caught errors that didn't crash the bot, etc). | true |
-| requesterName | Boolean | Whether or not to display the username of the song requester. | true |
-| inlineEmbeds | Boolean | Whether or not to make embed fields inline (help command and some fields are excluded). | false |
-| musicPresence | Boolean | Whether or not to make the bot set its presence to currently playing music. | false |
-| clearPresence | Boolean | Whether or not to clear the presence instead of setting it to "nothing" | false |
-| insertMusic | Boolean | Whether or not to insert the music bot data into `<Client>.music` on start. | false |
+| youtubeKey | String | Klucz YouTube Data API3. Wymagany do uruchomienia! | NaN |
+| botPrefix | String | Ciąg znaków używany przed nazwą komendy. Można użyć również mapy z prefixami | ! |
+| messageNewSong | Boolean | Czy bot ma wysyłać informacje o rozpoczęciu nowej piosenki | true |
+| bigPicture | Boolean | Czy bot ma użyć dużych (true) czy małych (false) obrazów w wiadomości | false |
+| maxQueueSize | Number | Maksymalna długość kolejki na serwerze. 0 oznacza nielimitowaną długość | 50 |
+| defVolume | Number | Domyślna głośność. [0-200] | 50 |
+| anyoneCanSkip | Boolean | Czy każdy może pominąć piosenkę | false |
+| messageHelp | Boolean | Czy ma wysyłać listę komend na DM użytownika (true), czy na kanał (false) | false |
+| botAdmins | Object/Array | Tablica ID adminów bota. Omijają uprawnienienia komend muzycznych | [ ] |
+| anyoneCanAdjust | Boolean | Czy każdy może zmienić głośność. | false |
+| ownerOverMember | Boolean | Czy właściciel bota omija uprawnienia `CanAdjust` i `CanSkip` | false |
+| anyoneCanLeave | Boolean | Czy każdy może wyrzucić bota z kanału | false |
+| ownerID | String | ID użytkownika discorda;. wymagane jeśli używasz `ownerOverMember`. | NaN |
+| logging | Boolean | Dodatkowe logi (np. błędy które nie przerwały pracy bota) | true |
+| requesterName | Boolean | Czy ma wyświetlać nazwę użytkownika który dodał piosenkę. | true |
+| inlineEmbeds | Boolean | Czy pola wiadomości mają być w jednej linii. | false |
+| musicPresence | Boolean | Czy bot ma zmieniać swój status (grę) na aktualnie graną piosenkę. | false |
+| clearPresence | Boolean | Czy ma usuwać status (grę) zamiast ustawiać ją na "nic" | false |
+| insertMusic | Boolean | Dodanie informacji muzycznego bota do `<Client>.music` przy uruchomieniu. | false |
 
 ## Przykład bota z wieloma prefixami
 ```js
@@ -84,15 +84,15 @@ The options you can pass in `music.start(client, {options})` and their types is 
 ```
 Zobacz [przykłady](https://github.com/DarkoPendragon/discord.js-musicbot-addon/blob/master/examples/examples.md).
 ## Cooldown
-| Option | Type | Description | Default |  
+| Nazwa | Typ | Opis | Domyślna wartość |    
 | --- | --- | --- | --- |
-| cooldown | Object | The main cooldown object | |
-| cooldown.enabled | Boolean | Whether or not cooldowns are enabled. | true |
-| cooldown.timer | Number | Time in MS that cooldowns last. | 10000 |
-| cooldown.exclude | Object/Array | Array of command names to exclude. Uses default names, not set names | ["volume","queue","pause","resume","np"] |  
+| cooldown | Object | Główna nazwa obiektu | |
+| cooldown.enabled | Boolean | Czy cooldown komend ma być włączony. | true |
+| cooldown.timer | Number | Czas cooldownu w milisekundach. | 10000 |
+| cooldown.exclude | Object/Array | Tablica wyjątków na które cooldown nie będzie działać. Trzeba podać **domyślne** nazwy komend, a nie ustawione! | ["volume","queue","pause","resume","np"] |  
 
 ## Opcje komend  
-Commands pass a bit different. Each command follows the same format as below. Valid commands are `play`, `remove`, `help`, `np`, `queue`, `volume`, `pause`, `resume`, `skip`, `clearqueue`, `loop`, `leave`.
+Przykład opcji komend. Takie opcje można ustawić dla komend: `play`, `remove`, `help`, `np`, `queue`, `volume`, `pause`, `resume`, `skip`, `clearqueue`, `loop`, `leave`.
 ```js
 music.start(client, {
   <command>: {
