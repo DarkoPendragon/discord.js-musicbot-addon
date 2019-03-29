@@ -1290,7 +1290,7 @@ exports.start = (client, options) => {
 					} else if (queue.loop == "single") {
 						video = queue.last;
 					} else {
-						video = queue.songs.find(s => s.position == queue.last.position + 1);
+						video = queue.songs.find(s => s.position == queue.last.position);
 					};
 				}
 				if (!video) {
