@@ -632,7 +632,7 @@ exports.start = (client, options) => {
 
 		musicbot.skipFunction = (msg, suffix, args) => {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nic nie jest odtwarzanie!`)).setColor(musicbot.warningColor));
+			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nic nie jest odtwarzane!`)).setColor(musicbot.warningColor));
 			const queue = musicbot.getQueue(msg.guild.id);
 			if (!musicbot.canSkip(msg.member, queue)) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nie możesz pominąć tej piosenki, ponieważ to nie ty ją dodałeś!`)).setColor(musicbot.warningColor));
 
@@ -660,7 +660,7 @@ exports.start = (client, options) => {
 
 		musicbot.resumeFunction = (msg, suffix, args) => {
 			const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nic nie jest odtwarzanie!`)).setColor(musicbot.warningColor));
+			if (voiceConnection === null) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nic nie jest odtwarzane!`)).setColor(musicbot.warningColor));
 			if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nie możesz wznowić odtwarzania!`)).setColor(musicbot.warningColor));
 
 			const dispatcher = voiceConnection.player.dispatcher;
