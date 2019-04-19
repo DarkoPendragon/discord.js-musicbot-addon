@@ -493,11 +493,11 @@ exports.start = (client, options) => {
 								embed.addField("Dodano", res.queuedOn, musicbot.inlineEmbeds);
 								// NOTE PLAY
 								if (res.duration >= 3600000) {
-									embed.addField("Czas trwania", `${date.hours() < 9 ? `0${date.hours()}` : date.hours()}:${date.minutes() < 9 ? `0${date.minutes()}` : date.minutes()}:${date.seconds() < 9 ? `0${date.seconds()}` : date.seconds()}`, musicbot.inlineEmbeds);
+									embed.addField("Czas trwania", `${date.hours() < 10 ? `0${date.hours()}` : date.hours()}:${date.minutes() < 10 ? `0${date.minutes()}` : date.minutes()}:${date.seconds() < 10 ? `0${date.seconds()}` : date.seconds()}`, musicbot.inlineEmbeds);
 								} else if (res.duration >= 60000) {
-									embed.addField("Czas trwania", `${date.minutes() < 9 ? `0${date.minutes()}` : date.minutes()}:${date.seconds() < 9 ? `0${date.seconds()}` : date.seconds()}`, musicbot.inlineEmbeds);
+									embed.addField("Czas trwania", `${date.minutes() < 10 ? `0${date.minutes()}` : date.minutes()}:${date.seconds() < 10 ? `0${date.seconds()}` : date.seconds()}`, musicbot.inlineEmbeds);
 								} else {
-									embed.addField("Czas trwania", `0:${date.seconds() < 9 ? `0${date.seconds()}` : date.seconds()}`, musicbot.inlineEmbeds);
+									embed.addField("Czas trwania", `0:${date.seconds() < 10 ? `0${date.seconds()}` : date.seconds()}`, musicbot.inlineEmbeds);
 								}
 								//embed.addField("Czas trwania", `${date.hours()}:${date.minutes()}:${date.seconds()}`, musicbot.inlineEmbeds);
 								if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${res.id}/maxresdefault.jpg`);
@@ -713,20 +713,20 @@ exports.start = (client, options) => {
 
 					// NOTE dispatcher
 					if (dispatcher.time >= 3600000) {
-						disTime = `${disDate.hours() < 9 ? `0${disDate.hours()}` : disDate.hours()}:${disDate.minutes() < 9 ? `0${disDate.minutes()}` : disDate.minutes()}:${disDate.seconds() < 9 ? `0${disDate.seconds()}` : disDate.seconds()}`;
+						disTime = `${disDate.hours() < 10 ? `0${disDate.hours()}` : disDate.hours()}:${disDate.minutes() < 10 ? `0${disDate.minutes()}` : disDate.minutes()}:${disDate.seconds() < 10 ? `0${disDate.seconds()}` : disDate.seconds()}`;
 					} else if (dispatcher.time >= 60000) {
-						disTime = `${disDate.minutes() < 9 ? `0${disDate.minutes()}` : disDate.minutes()}:${disDate.seconds() < 9 ? `0${disDate.seconds()}` : disDate.seconds()}`;
+						disTime = `${disDate.minutes() < 10 ? `0${disDate.minutes()}` : disDate.minutes()}:${disDate.seconds() < 10 ? `0${disDate.seconds()}` : disDate.seconds()}`;
 					} else {
-						disTime = `0:${disDate.seconds() < 9 ? `0${disDate.seconds()}` : disDate.seconds()}`;
+						disTime = `0:${disDate.seconds() < 10 ? `0${disDate.seconds()}` : disDate.seconds()}`;
 					}
 					let songDate = moment.duration(queue.last.duration);
 					let songTime = '';
 					if (queue.last.duration >= 3600000) {
-						songTime = `${songDate.hours() < 9 ? `0${songDate.hours()}` : songDate.hours()}:${songDate.minutes() < 9 ? `0${songDate.minutes()}` : songDate.minutes()}:${songDate.seconds() < 9 ? `0${songDate.seconds()}` : songDate.seconds()}`;
+						songTime = `${songDate.hours() < 10 ? `0${songDate.hours()}` : songDate.hours()}:${songDate.minutes() < 10 ? `0${songDate.minutes()}` : songDate.minutes()}:${songDate.seconds() < 10 ? `0${songDate.seconds()}` : songDate.seconds()}`;
 					} else if (queue.last.duration >= 60000) {
-						songTime = `${songDate.minutes() < 9 ? `0${songDate.minutes()}` : songDate.minutes()}:${songDate.seconds() < 9 ? `0${songDate.seconds()}` : songDate.seconds()}`;
+						songTime = `${songDate.minutes() < 10 ? `0${songDate.minutes()}` : songDate.minutes()}:${songDate.seconds() < 10 ? `0${songDate.seconds()}` : songDate.seconds()}`;
 					} else {
-						songTime = `0:${songDate.seconds() < 9 ? `0${songDate.seconds()}` : songDate.seconds()}`;
+						songTime = `0:${songDate.seconds() < 10 ? `0${songDate.seconds()}` : songDate.seconds()}`;
 					}
 					embed.addField("Czas:", `${disTime} / ${songTime}`, musicbot.inlineEmbeds);
 					if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${queue.last.id}/maxresdefault.jpg`);
@@ -778,10 +778,11 @@ exports.start = (client, options) => {
 				if (queue.songs.length > 11) {
 					let pages = [];
 					let page = 1;
+					let user = client.users.get(video.requester).username;
 					const newSongs = queue.songs.musicArraySort(10);
 					newSongs.forEach(s => {
 						var i = s.map((video, index) => (
-							`**${video.position + 1}:** __${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}__`
+							`**${video.position + 1}:** __${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}__ (${user ? user.username : "???"})`
 						)).join('\n\n');
 						if (i !== undefined) pages.push(i)
 					});
