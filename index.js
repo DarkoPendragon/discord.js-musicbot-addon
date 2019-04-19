@@ -778,11 +778,10 @@ exports.start = (client, options) => {
 				if (queue.songs.length > 11) {
 					let pages = [];
 					let page = 1;
-					let user = client.users.get(video.requester).username;
 					const newSongs = queue.songs.musicArraySort(10);
 					newSongs.forEach(s => {
 						var i = s.map((video, index) => (
-							`**${video.position + 1}:** __${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}__ (${user ? user.username : "???"})`
+							`**${video.position + 1}:** __${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}__ (${client.users.get(video.requester) ? client.users.get(video.requester).username : "???"})`
 						)).join('\n\n');
 						if (i !== undefined) pages.push(i)
 					});
