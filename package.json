@@ -1,7 +1,7 @@
 {
   "name": "discord.js-muzykobot",
-  "version": "13.5.2",
-  "description": "A simple Node.js based music extension/bot for Discord.js projects using YouTube.",
+  "version": "13.5.3",
+  "description": "Dodatek dla botów Discord.JS do słuchania muzyki z YouTube.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -15,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MrBoombastic/discord.js-polski-bot-muzyczny"
+    "url": "https://github.com/MrBoombastic/discord.js-muzykobot"
   },
   "bugs": {
-    "url": "https://github.com/MrBoombastic/discord.js-polski-bot-muzyczny/issues"
+    "url": "https://github.com/MrBoombastic/discord.js-muzykobot"
   },
-  "homepage": "https://github.com/MrBoombastic/discord.js-polski-bot-muzyczny",
+  "homepage": "https://github.com/MrBoombastic/discord.js-muzykobot",
   "keywords": [
     "discord",
     "discord.js",
@@ -29,6 +29,6 @@
     "addon",
     "plugin"
   ],
-  "author": "MrBoombastic & demisex",
-  "license": "ISC"
+  "author": "MrBoombastic & Venom",
+  "license": "MIT"
 }
