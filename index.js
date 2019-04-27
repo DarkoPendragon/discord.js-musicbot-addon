@@ -609,7 +609,7 @@ exports.start = (client, options) => {
 					embed.setAuthor(command.name, msg.client.user.avatarURL);
 					embed.setDescription(command.help);
 					if (command.alt.length > 0) embed.addField(`Aliasy`, command.alt.join(", "), musicbot.inlineEmbeds);
-					if (command.usage && typeof command.usage == "string") embed.addFieldd(`Użycie`, command.usage.replace(/{{prefix}})/g, musicbot.botPrefix), musicbot.inlineEmbeds);
+					if (command.usage && typeof command.usage == "string") embed.addField(`Użycie`, command.usage.replace(/{{prefix}})/g, musicbot.botPrefix), musicbot.inlineEmbeds);
 					embed.setColor(musicbot.embedColor);
 					msg.channel.send({
 						embed
@@ -618,7 +618,7 @@ exports.start = (client, options) => {
 					command = musicbot.commands.get(command) || musicbot.aliases.get(command);
 					if (command.exclude) return msg.channel.send(musicbot.note('fail', `${suffix} nie jest poprawną komendą!`));
 					var cmdhelp = `= ${command.name} =\n`;
-					cmdhelp + `\n${command.help}`;
+					cmdhelp = cmdhelp + `\n${command.help}`;
 					if (command.usage !== null) cmdhelp = cmdhelp + `\nUżycie: ${command.usage.replace(/{{prefix}})/g, musicbot.botPrefix)}`;
 					if (command.alt.length > 0) cmdhelp = cmdhelp + `\nAliasy: ${command.alt.join(", ")}`;
 					msg.channel.send(cmdhelp, {
@@ -956,7 +956,7 @@ exports.start = (client, options) => {
 													if (song_number >= 0) {
 														firstMsg.delete();
 
-														videos[song_number].requester == msg.author.id;
+														videos[song_number].requester = msg.author.id;
 														videos[song_number].position = queue.songs.length ? queue.songs.length : 0;
 														var embed = new Discord.RichEmbed();
 														embed.setAuthor('Dodawanie do kolejki', client.user.avatarURL);
@@ -1095,7 +1095,7 @@ exports.start = (client, options) => {
 												if (song_number >= 0) {
 													firstMsg.delete();
 
-													videos[song_number].requester == msg.author.id;
+													videos[song_number].requester = msg.author.id;
 													videos[song_number].position = queue.songs.length ? queue.songs.length : 0;
 													var embed = new Discord.RichEmbed();
 													embed.setAuthor('Dodawanie do kolejki', client.user.avatarURL);
@@ -1189,8 +1189,8 @@ exports.start = (client, options) => {
 		musicbot.removeFunction = (msg, suffix, args) => {
 			if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nie znalazłem kolejki na tym serwerze!`)).setColor(musicbot.warningColor));
 			if (!suffix) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nie podano który utwór mam wyrzucić!`)).setColor(musicbot.warningColor));
-			if (parseInt(suffix - 1) == 0) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nie możesz wyrzucić utworu który jest aktualnie odtwarzany!`)).setColor(musicbot.errorColor));
-			let test = musicbot.queues.get(msg.guild.id).songs.find(x => x.position == parseInt(suffix - 1));
+			if (parseInt(suffix) - 1) == 0) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nie możesz wyrzucić utworu który jest aktualnie odtwarzany!`)).setColor(musicbot.errorColor));
+			let test = musicbot.queues.get(msg.guild.id).songs.find(x => x.position == parseInt(suffix) - 1);
 			if (test) {
 				if (test.requester !== msg.author.id && !musicbot.isAdmin(msg.member)) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nie możesz wyrzucić tego utworu!`)).setColor(musicbot.errorColor));
 				let newq = musicbot.queues.get(msg.guild.id).songs.filter(s => s !== test);
