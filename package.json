@@ -1,6 +1,6 @@
 {
   "name": "discord.js-muzykobot",
-  "version": "13.5.3",
+  "version": "13.5.4",
   "description": "Dodatek dla botów Discord.JS do słuchania muzyki z YouTube.",
   "main": "index.js",
   "scripts": {
