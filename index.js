@@ -281,14 +281,6 @@ try {
         });
       };
 
-      getLast(server) {
-        return new Promise((resolve, reject) => {
-          let q = this.queues.has(server) ? this.queues.get(server).last : null;
-          if (!q || !q.last) resolve(null)
-          else if (q.last) resolve(q.last);
-        });
-      };
-
       emptyQueue(server) {
         return new Promise((resolve, reject) => {
           if (!musicbot.queues.has(server)) reject(new Error(`[emptyQueue] no queue found for ${server}`));
