@@ -1302,7 +1302,7 @@ try {
               setTimeout(() => {
                 let loop = musicbot.queues.get(msg.guild.id).loop;
                 const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-                if (voiceConnection.channel.members.size <= 1){
+                if (voiceConnection !== null && voiceConnection.channel.members.size <= 1){
                     msg.channel.send(musicbot.note('note', 'No one in the voice channel, leaving...'))
                     musicbot.queues.set(msg.guild.id, {songs: [], last: null, loop: "none", id: msg.guild.id, volume: musicbot.defVolume});
                     if (musicbot.musicPresence) musicbot.updatePresence(musicbot.queues.get(msg.guild.id), msg.client, musicbot.clearPresence).catch((res) => { console.warn(`[MUSIC] Problem updating MusicPresence`); });
