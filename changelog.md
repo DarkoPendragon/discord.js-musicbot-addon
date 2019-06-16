@@ -1,6 +1,6 @@
 # NPM Version Change Log
 Note that the NPM version will be behind the GitHub version, but more stable.  
-If any issues arise open an issue, or for a faster response join [the Discord server](https://discord.gg/bXvgdjV).
+If any issues arise open an issue, or for a faster response join [the Discord server](https://discord.gg/JHMtwhG).
 ***
 ## 13.5.0
 * Fixed a queue issue causing it to skip a song every now and then.

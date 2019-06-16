@@ -176,4 +176,4 @@ Music.start(client, {
 ```
 
 # Other questions?
-Feel free [to join my Discord](https://discordapp.com/invite/bXvgdjV) and I or someone else will assist you.
+Feel free [to join my Discord](https://discordapp.com/invite/JHMtwhG) and I or someone else will assist you.
