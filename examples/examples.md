@@ -77,7 +77,7 @@ Now we'll go over calling functions outside of the module.
 <Music>.playFunction();   // PLAY command.
 <Music>.helpFunction();   // HELP command.
 <Music>.queueFunction();  // QUEUE command.
-<Music).npFunction();     // NOWPLAYING command.
+<Music>.npFunction();     // NOWPLAYING command.
 <Music>.loopFunction();   // LOOP command.
 <Music>.skipFunction();   // SKIP command.
 <Music>.pauseFunction();  // PAUSE command.
