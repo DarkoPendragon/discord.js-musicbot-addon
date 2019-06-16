@@ -68,7 +68,7 @@ The options you can pass in `music.start(client, {options})` and their types is 
 | messageHelp | Boolean | Whether to message the user on help command usage. If it can't, it will send it in the channel like normal. | false |
 | botAdmins | Object/Array | An array of Discord user ID's to be admins as the bot. They will ignore permissions for the bot. | [ ] |
 | anyoneCanAdjust | Boolean | Whether anyone can adjust volume. | false |
-| ownerOverMember | Boolean | Whether the owner over-rides `CanAdjust` and `CanSkip`. | flase |
+| ownerOverMember | Boolean | Whether the owner over-rides `CanAdjust` and `CanSkip`. | false |
 | anyoneCanLeave | Boolean | Whether anyone can make the bot leave the currently connected channel. | false |
 | ownerID | String | The ID of the Discord user to be seen as the owner. Required if using `ownerOverMember`. | NaN |
 | logging | Boolean | Some extra none needed logging (such as caught errors that didn't crash the bot, etc). | true |
