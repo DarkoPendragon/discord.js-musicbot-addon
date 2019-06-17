@@ -1,3 +1,9 @@
+<div align="center">
+  <p>
+    <a href="https://nodei.co/npm/discord.js-muzykobot/"><img src="https://nodei.co/npm/discord.js-muzykobot.png"></a>
+  </p>
+</div>  
+
 # Discord.JS Muzykobot
 ***
 To prosty moduł Node.JS bazowany na innych projektach botów muzycznych dla Discord.JS.
