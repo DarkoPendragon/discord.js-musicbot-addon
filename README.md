@@ -31,7 +31,7 @@ Zalecana wersja stable. Obecnie to wersja 11.4.2.
 2. `ffmpeg`  
 Bardzo ważna biblioteka. Nie instaluj ffmpeg-binaries, tylko normalne paczki dla systemu.
 
-3. `npm install node-opus` or `npm install opusscript`  
+3. `npm install node-opus` lub `npm install opusscript`  
 Zalecany node-opus.
 
 __Instalacja:__  
