@@ -180,6 +180,16 @@ try {
           exclude: Boolean((options && options.skip && options.skip.exclude)),
           masked: "skip"
         };
+        this.shuffle = {
+            enabled: (options.shuffle == undefined ? true : (options.shuffle && typeof options.shuffle.enabled !== 'undefined' ? options.shuffle && options.shuffle.enabled : true)),
+            run: "shuffleFunction",
+            alt: (options && options.shuffle && options.shuffle.alt) || [],
+            help: (options && options.shuffle && options.shuffle.help) || "Shuffle the queue",
+            name: (options && options.shuffle && options.shuffle.name) || "shuffle",
+            usage: (options && options.shuffle && options.shuffle.usage) || null,
+            exclude: Boolean((options && options.shuffle && options.shuffle.exclude)),
+            masked: "shuffle"
+        };
 
         this.embedColor = (options && options.embedColor) || 'GREEN';
         this.anyoneCanSkip = (options && typeof options.anyoneCanSkip !== 'undefined' ? options && options.anyoneCanSkip : false);
@@ -206,6 +216,7 @@ try {
         this.defaultPrefix = (options && options.defaultPrefix) || "!";
         this.channelWhitelist = (options && options.channelWhitelist) || [];
         this.channelBlacklist = (options && options.channelBlacklist) || [];
+        this.minShuffle = (options && options.shuffle) || 3;
         this.bitRate = (options && options.bitRate) || "120000";
 
         // Cooldown Settings
@@ -1208,7 +1219,21 @@ try {
         if (wasPaused) dispatcher.resume();
       }
     };
+    musicbot.shuffleFunction = (msg, suffix, args) => {
+      if (!msg.member.voiceChannel) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
+      if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(musicbot.note('fail', `No queue for this server found!`));
+      const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+      if (voiceConnection && voiceConnection.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
+      if (musicbot.queues.get(msg.guild.id).songs.length <= musicbot.minShuffle) return msg.channel.send(musicbot.note('fail', `Queue must a minimum of ${musicbot.minShuffle} songs to shuffle!`));
+      if (musicbot.queues.get(msg.guild.id).loop == "song") return msg.channel.send(musicbot.note("fail", `Cannot shuffle while loop is set to single..`));
+      const dispatcher = voiceConnection.player.dispatcher;
 
+      musicbot.queues.get(msg.guild.id).songs.shuffle();
+
+      if (voiceConnection.paused) dispatcher.end();
+      dispatcher.end();
+      return msg.channel.send(musicbot.note('note', `Queue was shuffled!`))
+    };
     musicbot.loadCommand = (obj) => {
       return new Promise((resolve, reject) => {
         let props = {
@@ -1407,6 +1432,7 @@ try {
         await musicbot.loadCommand(musicbot.loop);
         await musicbot.loadCommand(musicbot.clearqueue);
         await musicbot.loadCommand(musicbot.np);
+        await musicbot.loadCommand(musicbot.shuffle)
       } catch (e) {
         console.error(new Error(e));
       };
@@ -1416,7 +1442,16 @@ try {
     Object.defineProperty(Array.prototype, 'musicArraySort', {value: function(n) {
       return Array.from(Array(Math.ceil(this.length/n)), (_,i)=>this.slice(i*n,i*n+n));
     }});
-
+    Object.defineProperty(Array.prototype, 'shuffle', {value: function(){
+        let input = this;
+        for (let i = input.length - 1; i >= 0; i--) {
+            let randomIndex = Math.floor(Math.random() * (i + 1));
+            let itemAtIndex = input[randomIndex];
+            input[randomIndex] = input[i];
+            input[i] = itemAtIndex;
+        }
+        return input;
+    }});
 
   } catch (e) {
     console.error(e);
