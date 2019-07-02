@@ -423,7 +423,7 @@ exports.start = (client, options) => {
 
 
             if (searchstring.startsWith('http') && searchstring.includes("list=")) {
-                msg.channel.send(musicbot.note("search", `Szukam playlisty...`));
+                msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note("search", `Szukam playlisty...`)));
                 var playid = searchstring.toString()
                     .split('list=')[1];
                 if (playid.toString()
@@ -461,7 +461,7 @@ exports.start = (client, options) => {
                     });
                 });
             } else {
-                msg.channel.send(musicbot.note("search", `\`Szukam: ${searchstring}\` 🔍`));
+                msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note("search", `\`Szukam: ${searchstring}\` 🔍`)));
                 new Promise(async (resolve, reject) => {
                     let result = await musicbot.searcher.search(searchstring, { type: 'video' });
                     resolve(result.first)
@@ -607,7 +607,7 @@ exports.start = (client, options) => {
                     .has('EMBED_LINKS')) {
                     const embed = new Discord.RichEmbed();
                     command = musicbot.commands.get(command) || musicbot.aliases.get(command);
-                    if (command.exclude) return msg.channel.send(musicbot.note('fail', `${suffix} nie jest poprawną komendą!`));
+                    if (command.exclude) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `${suffix} nie jest poprawną komendą!`)).setColor(musicbot.errorColor));
                     embed.setAuthor(command.name, msg.client.user.avatarURL);
                     embed.setDescription(command.help);
                     if (command.alt.length > 0) embed.addField(`Aliasy`, command.alt.join(", "), musicbot.inlineEmbeds);
@@ -618,7 +618,7 @@ exports.start = (client, options) => {
                     });
                 } else {
                     command = musicbot.commands.get(command) || musicbot.aliases.get(command);
-                    if (command.exclude) return msg.channel.send(musicbot.note('fail', `${suffix} nie jest poprawną komendą!`));
+                    if (command.exclude) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `${suffix} nie jest poprawną komendą!`)).setColor(musicbot.errorColor));
                     var cmdhelp = `= ${command.name} =\n`;
                     cmdhelp = cmdhelp + `\n${command.help}`;
                     if (command.usage !== null) cmdhelp = cmdhelp + `\nUżycie: ${command.usage.replace(/{{prefix}})/g, musicbot.botPrefix)}`;
@@ -628,7 +628,7 @@ exports.start = (client, options) => {
                     });
                 };
             } else {
-                msg.channel.send(musicbot.note('fail', `${suffix} nie jest poprawną komendą!`));
+                msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `${suffix} nie jest poprawną komendą!`)).setColor(musicbot.errorColor));
             };
         };
 
@@ -689,7 +689,7 @@ exports.start = (client, options) => {
                 msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('note', `Opuściłem kanał głosowy!`)).setColor(musicbot.doneColor));
             } else {
                 //const chance = Math.floor((Math.random() * 100) + 1);
-                //if (chance <= 10) return msg.channel.send(musicbot.note('fail', `Nie możesz tego zrobić, ${msg.author.username}.`))
+                //if (chance <= 10) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nie możesz tego zrobić, ${msg.author.username}.`)).setColor(musicbot.errorColor))
                 return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Nie masz uprawnień, aby mnie wyrzucić!`)).setColor(musicbot.warningColor));
             }
         }
@@ -846,7 +846,7 @@ exports.start = (client, options) => {
             if (queue.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Osiągnięto maksymalną długość kolejki!`)).setColor(musicbot.warningColor));
 
             let searchstring = suffix.trim();
-            msg.channel.send(musicbot.note('search', `Szukam: \`${searchstring}\` 🔍`))
+            msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('search', `Szukam: \`${searchstring}\` 🔍`)))
                 .then(response => {
                     musicbot.searcher.search(searchstring, {
                         type: 'video'
@@ -1338,7 +1338,7 @@ exports.start = (client, options) => {
                             .setFooter(`Dodał ${req !== null ? req.username : "Nieznany użytkownik"}`, `${req !== null ? req.displayAvatarURL : null}`);
                         msg.channel.send({ embed });
                     } else {
-                        msg.channel.send(musicbot.note("note", `\`${video.title.replace(/`/g, "''")}\` przez \`${video.channelURL.replace(/`/g, "''")}\``))
+                        msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note("note", `\`${video.title.replace(/`/g, "''")}\` przez \`${video.channelURL.replace(/`/g, "''")}\``)))
                     }
                 }
 
@@ -1356,13 +1356,13 @@ exports.start = (client, options) => {
 
                     connection.on('error', (error) => {
                         console.error(error);
-                        if (msg && msg.channel) msg.channel.send(musicbot.note('fail', `Problem z połączeniem, próbuję ponownie!`));
+                        if (msg && msg.channel) msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Problem z połączeniem, próbuję ponownie!`)).setColor(musicbot.warningColor));
                         musicbot.executeQueue(msg, musicbot.queues.get(msg.guild.id));
                     });
 
                     dispatcher.on('error', (error) => {
                         console.error(error);
-                        if (msg && msg.channel) msg.channel.send(musicbot.note('fail', `Problem z połączeniem, próbuję ponownie!`));
+                        if (msg && msg.channel) msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('fail', `Problem z połączeniem, próbuję ponownie!`)).setColor(musicbot.warningColor));
                         musicbot.executeQueue(msg, musicbot.queues.get(msg.guild.id));
                     });
 
@@ -1371,7 +1371,7 @@ exports.start = (client, options) => {
                             let loop = musicbot.queues.get(msg.guild.id).loop;
                             const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
                             if (voiceConnection !== null && voiceConnection.channel.members.size <= 1) {
-                                msg.channel.send(musicbot.note('note', 'No one in the voice channel, leaving...'))
+                                msg.channel.send(new Discord.RichEmbed().setDescription(musicbot.note('note', 'Nikogo nie ma na kanale głosowym, wychodzę...')).setColor(musicbot.warningColor))
                                 musicbot.queues.set(msg.guild.id, { songs: [], last: null, loop: "none", id: msg.guild.id, volume: musicbot.defVolume });
                                 if (musicbot.musicPresence) musicbot.updatePresence(musicbot.queues.get(msg.guild.id), msg.client, musicbot.clearPresence).catch((res) => { console.warn(`[MUSIC] Problem updating MusicPresence`); });
                                 return voiceConnection.disconnect();
