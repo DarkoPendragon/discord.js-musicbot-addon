@@ -77,7 +77,7 @@ Now we'll go over calling functions outside of the module.
 <Music>.playFunction();   // PLAY command.
 <Music>.helpFunction();   // HELP command.
 <Music>.queueFunction();  // QUEUE command.
-<Music).npFunction();     // NOWPLAYING command.
+<Music>.npFunction();     // NOWPLAYING command.
 <Music>.loopFunction();   // LOOP command.
 <Music>.skipFunction();   // SKIP command.
 <Music>.pauseFunction();  // PAUSE command.
@@ -176,4 +176,4 @@ Music.start(client, {
 ```
 
 # Other questions?
-Feel free [to join my Discord](https://discordapp.com/invite/FKYrX4X) and I or someone else will assist you.
+Feel free [to join my Discord](https://discordapp.com/invite/JHMtwhG) and I or someone else will assist you.

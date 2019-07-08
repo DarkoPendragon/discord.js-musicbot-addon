@@ -6,17 +6,17 @@ const PACKAGE = require('./package.json');
 
 exports.start = (client, options) => {
 try {
-    if (process.version.slice(1).split('.')[0] < 8) {
-      console.error(new Error(`[MusicBot] node v8 or higher is needed, please update`));
-      process.exit(1);
+    if (process.version.slice(1).split('.')[0] < 8) console.error(new Error(`[MusicBot] node v8 or higher is needed, please update`));
+    function moduleAvailable(name) {
+      try {
+        require.resolve(name);
+        return true;
+      } catch(e){}
+      return false;
     };
+    if (moduleAvailable("ffmpeg-binaries")) console.error(new Error("[MUSIC] ffmpeg-binaries was found, this will likely cause problems"));
+    if (!moduleAvailable("ytdl-core") || !moduleAvailable("ytpl") || !moduleAvailable("ytsearcher")) console.error(new Error("[MUSIC] one or more youtube specific modules not found, this module will not work"));
 
-    /**
-      * Class of the Music Bot.
-      * @class
-      * @param {Client} A Discord.js client
-      * @param {object} Object passed for options
-    */
     class Music {
       constructor(client, options) {
         // Data Objects
@@ -204,7 +204,13 @@ try {
         this.messageNewSong = (options && typeof options.messageNewSong !== 'undefined' ? options && options.messageNewSong : true);
         this.insertMusic = (options && typeof options.insertMusic !== 'undefined' ? options && options.insertMusic : false);
         this.defaultPrefix = (options && options.defaultPrefix) || "!";
+        this.channelWhitelist = (options && options.channelWhitelist) || [];
+        this.channelBlacklist = (options && options.channelBlacklist) || [];
+        this.bitRate = (options && options.bitRate) || "120000";
+
+        // I added this
         this.leaveAfterPlayFinish = (options && typeof options.leaveAfterPlayFinish !== 'undefined' ? options && options.leaveAfterPlayFinish : false);
+
 
         // Cooldown Settings
         this.cooldown = {
@@ -215,15 +221,10 @@ try {
 
         this.musicPresence = options.musicPresence || false;
         this.clearPresence = options.clearPresence || false;
+        this.nextPresence = (options && options.nextPresence) || null;
         this.recentTalk = new Set();
       }
 
-      /**
-      * Updates positions of all songs in a queue.
-      * @function doSomething
-      * @memberOf my.namespace.Music
-      * @param {object} A Discord.js client
-      */
       async updatePositions(obj, server) {
         return new Promise((resolve, reject) => {
           if (!obj || typeof obj !== "object") reject();
@@ -284,14 +285,6 @@ try {
         });
       };
 
-      getLast(server) {
-        return new Promise((resolve, reject) => {
-          let q = this.queues.has(server) ? this.queues.get(server).last : null;
-          if (!q || !q.last) resolve(null)
-          else if (q.last) resolve(q.last);
-        });
-      };
-
       emptyQueue(server) {
         return new Promise((resolve, reject) => {
           if (!musicbot.queues.has(server)) reject(new Error(`[emptyQueue] no queue found for ${server}`));
@@ -300,8 +293,9 @@ try {
         });
       };
 
-      updatePresence(queue, client, clear) {
+      async updatePresence(queue, client, clear) {
         return new Promise((resolve, reject) => {
+          if (this.nextPresence !== null) clear = false;
           if (!queue || !client) reject("invalid arguments");
           if (queue.songs.length > 0 && queue.last) {
             client.user.setPresence({
@@ -316,12 +310,27 @@ try {
               client.user.setPresence({ game: { name: null} });
               resolve(client.user.presence);
             } else {
-              client.user.setPresence({
-                game: {
-                  name: "🎵 | nothing",
-                  type: 'PLAYING'
-                }
-              });
+              if (this.nextPresence !== null) {
+                let props;
+                if (this.nextPresence.status && ["online","dnd","idle","invisible"].includes(this.nextPresence.status)) props.status = this.nextPresence.status;
+                if (this.nextPresence.afk && typeof this.nextPresence.afk == "boolean") props.afk = this.nextPresence.afk;
+                if (this.nextPresence.game && typeof this.nextPresence.game == "string") props.game = {name: this.nextPresence.game}
+                else if (this.nextPresence.game && typeof this.nextPresence.game == "object") props.game = this.nextPresence.game;
+                client.user.setPresence(props).catch((res) => {
+                  console.error("[MUSICBOT] Could not update presence\n" + res);
+                  client.user.setPresence({ game: { name: null} });
+                  resolve(client.user.presence);
+                }).then((res) => {
+                  resolve(res);
+                });
+              } else {
+                client.user.setPresence({
+                  game: {
+                    name: "🎵 | nothing",
+                    type: 'PLAYING'
+                  }
+                });
+              }
               resolve(client.user.presence);
             };
           };
@@ -359,13 +368,15 @@ try {
     });
 
     client.on("message", (msg) => {
+      if (msg.author.bot || musicbot.channelBlacklist.includes(msg.channel.id)) return;
+      if (musicbot.channelWhitelist.length > 0 && !musicbot.channelWhitelist.includes(msg.channel.id)) return;
       const message = msg.content.trim();
       const prefix = typeof musicbot.botPrefix == "object" ? (musicbot.botPrefix.has(msg.guild.id) ? musicbot.botPrefix.get(msg.guild.id).prefix : musicbot.defaultPrefix) : musicbot.botPrefix;
       const command = message.substring(prefix.length).split(/[ \n]/)[0].trim();
       const suffix = message.substring(prefix.length + command.length).trim();
       const args = message.slice(prefix.length + command.length).trim().split(/ +/g);
 
-      if (message.startsWith(prefix) && !msg.author.bot && msg.channel.type == "text") {
+      if (message.startsWith(prefix) && msg.channel.type == "text") {
         if (musicbot.commands.has(command)) {
           let tCmd = musicbot.commands.get(command);
           if (tCmd.enabled) {
@@ -398,6 +409,9 @@ try {
       if (msg.member.voiceChannel === undefined) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
       if (!suffix) return msg.channel.send(musicbot.note('fail', 'No video specified!'));
       let q = musicbot.getQueue(msg.guild.id);
+
+      let vc = client.voiceConnections.find(val => val.channel.guild.id == msg.member.guild.id)
+      if (vc && vc.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
       if (q.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
       var searchstring = suffix.trim();
       if (searchstring.includes("https://youtu.be/") || searchstring.includes("https://www.youtube.com/") && searchstring.includes("&")) searchstring = searchstring.split("&")[0];
@@ -449,6 +463,7 @@ try {
         }).then((res) => {
           if (!res) return msg.channel.send(musicbot.note("fail", "Something went wrong. Try again!"));
           res.requester = msg.author.id;
+          if (searchstring.startsWith("https://www.youtube.com/") || searchstring.startsWith("https://youtu.be/")) res.url = searchstring;
           res.channelURL = `https://www.youtube.com/channel/${res.channelId}`;
           res.queuedOn = new Date().toLocaleDateString(musicbot.dateLocal, { weekday: 'long', hour: 'numeric' });
           if (musicbot.requesterName) res.requesterAvatarURL = msg.author.displayAvatarURL;
@@ -577,7 +592,7 @@ try {
           embed.setAuthor(command.name, msg.client.user.avatarURL);
           embed.setDescription(command.help);
           if (command.alt.length > 0) embed.addField(`Aliases`, command.alt.join(", "), musicbot.inlineEmbeds);
-          if (command.usage && typeof command.usage == "string") embed.addFieldd(`Usage`, command.usage.replace(/{{prefix}})/g, musicbot.botPrefix), musicbot.inlineEmbeds);
+          if (command.usage && typeof command.usage == "string") embed.addField(`Usage`, command.usage.replace(/{{prefix}})/g, musicbot.botPrefix), musicbot.inlineEmbeds);
           embed.setColor(musicbot.embedColor);
           msg.channel.send({
             embed
@@ -586,7 +601,7 @@ try {
           command = musicbot.commands.get(command) || musicbot.aliases.get(command);
           if (command.exclude) return msg.channel.send(musicbot.note('fail', `${suffix} is not a valid command!`));
           var cmdhelp = `= ${command.name} =\n`;
-          cmdhelp + `\n${command.help}`;
+          cmdhelp = cmdhelp + `\n${command.help}`;
           if (command.usage !== null) cmdhelp = cmdhelp + `\nUsage: ${command.usage.replace(/{{prefix}})/g, musicbot.botPrefix)}`;
           if (command.alt.length > 0) cmdhelp = cmdhelp + `\nAliases: ${command.alt.join(", ")}`;
           msg.channel.send(cmdhelp, {
@@ -599,8 +614,11 @@ try {
     };
 
     musicbot.skipFunction = (msg, suffix, args) => {
+      if (!msg.member.voiceChannel) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
       const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
       if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music being played.'));
+      if (voiceConnection && voiceConnection.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
+
       const queue = musicbot.getQueue(msg.guild.id);
       if (!musicbot.canSkip(msg.member, queue)) return msg.channel.send(musicbot.note('fail', `You cannot skip this as you didn't queue it.`));
 
@@ -617,8 +635,10 @@ try {
     };
 
     musicbot.pauseFunction = (msg, suffix, args) => {
+      if (!msg.member.voiceChannel) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
       const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
       if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music being played.'));
+      if (voiceConnection && voiceConnection.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
       if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(musicbot.note('fail', 'You cannot pause queues.'));
 
       const dispatcher = voiceConnection.player.dispatcher;
@@ -628,8 +648,10 @@ try {
     };
 
     musicbot.resumeFunction = (msg, suffix, args) => {
+      if (!msg.member.voiceChannel) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
       const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-      if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
+      if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music being played.'));
+      if (voiceConnection && voiceConnection.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
       if (!musicbot.isAdmin(msg.member) && !musicbot.anyoneCanPause) return msg.channel.send(musicbot.note('fail', `You cannot resume queues.`));
 
       const dispatcher = voiceConnection.player.dispatcher;
@@ -640,8 +662,10 @@ try {
 
     musicbot.leaveFunction = (msg, suffix) => {
       if (musicbot.isAdmin(msg.member) || musicbot.anyoneCanLeave === true) {
+        if (!msg.member.voiceChannel) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
         const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
         if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'I\'m not in a voice channel.'));
+        if (voiceConnection && voiceConnection.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
         musicbot.emptyQueue(msg.guild.id);
 
         if (!voiceConnection.player.dispatcher) return;
@@ -657,8 +681,8 @@ try {
 
     musicbot.npFunction = (msg, suffix, args) => {
       const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
-      const queue = musicbot.getQueue(msg.guild.id, true);
       if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
+      const queue = musicbot.getQueue(msg.guild.id, true);
       const dispatcher = voiceConnection.player.dispatcher;
 
       if (musicbot.queues.get(msg.guild.id).songs.length <= 0) return msg.channel.send(musicbot.note('note', 'Queue empty.'));
@@ -704,6 +728,10 @@ try {
     };
 
     musicbot.queueFunction = (msg, suffix, args) => {
+      if (!msg.member.voiceChannel) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
+      const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+      if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music being played.'));
+      if (voiceConnection && voiceConnection.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
       if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(musicbot.note("fail", "Could not find a queue for this server."));
       else if (musicbot.queues.get(msg.guild.id).songs.length <= 0) return msg.channel.send(musicbot.note("fail", "Queue is empty."));
       const queue = musicbot.queues.get(msg.guild.id);
@@ -774,7 +802,10 @@ try {
     };
 
     musicbot.searchFunction = (msg, suffix, args) => {
-      if (msg.member.voiceChannel === undefined) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel~`));
+      if (msg.member.voiceChannel === undefined) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
+      let vc = client.voiceConnections.find(val => val.channel.guild.id == msg.member.guild.id)
+      if (vc && vc.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
+
       if (!suffix) return msg.channel.send(musicbot.note('fail', 'No video specified!'));
       const queue = musicbot.getQueue(msg.guild.id);
       if (queue.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
@@ -904,7 +935,7 @@ try {
                       if (song_number >= 0) {
                         firstMsg.delete();
 
-                        videos[song_number].requester == msg.author.id;
+                        videos[song_number].requester = msg.author.id;
                         videos[song_number].position = queue.songs.length ? queue.songs.length : 0;
                         var embed = new Discord.RichEmbed();
                         embed.setAuthor('Adding To Queue', client.user.avatarURL);
@@ -1043,7 +1074,7 @@ try {
                       if (song_number >= 0) {
                         firstMsg.delete();
 
-                        videos[song_number].requester == msg.author.id;
+                        videos[song_number].requester = msg.author.id;
                         videos[song_number].position = queue.songs.length ? queue.songs.length : 0;
                         var embed = new Discord.RichEmbed();
                         embed.setAuthor('Adding To Queue', client.user.avatarURL);
@@ -1099,12 +1130,14 @@ try {
     };
 
     musicbot.volumeFunction = (msg, suffix, args) => {
+      if (!msg.member.voiceChannel) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
       const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
       if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'No music is being played.'));
+      if (voiceConnection && voiceConnection.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
       if (!musicbot.canAdjust(msg.member, musicbot.queues.get(msg.guild.id))) return msg.channel.send(musicbot.note('fail', `Only admins or DJ's may change volume.`));
       const dispatcher = voiceConnection.player.dispatcher;
 
-      if (!suffix) return msg.channel.send(musicbot.note('fail', 'No volume specified.'));
+      if (!suffix || isNaN(suffix)) return msg.channel.send(musicbot.note('fail', 'No volume specified.'));
       suffix = parseInt(suffix);
       if (suffix > 200 || suffix <= 0) return msg.channel.send(musicbot.note('fail', 'Volume out of range, must be within 1 to 200'));
 
@@ -1116,6 +1149,8 @@ try {
     musicbot.clearFunction = (msg, suffix, args) => {
       if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(musicbot.note("fail", "No queue found for this server."));
       if (!musicbot.isAdmin(msg.member)) return msg.channel.send(musicbot.note("fail", `Only Admins or people with the ${musicbot.djRole} can clear queues.`));
+      let vc = client.voiceConnections.find(val => val.channel.guild.id == msg.member.guild.id)
+      if (vc && vc.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
       musicbot.emptyQueue(msg.guild.id).then(res => {
         msg.channel.send(musicbot.note("note", "Queue cleared."));
         const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
@@ -1135,10 +1170,13 @@ try {
     };
 
     musicbot.removeFunction = (msg, suffix, args) => {
+      if (!msg.member.voiceChannel) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
       if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(musicbot.note('fail', `No queue for this server found!`));
       if (!suffix)  return msg.channel.send(musicbot.note("fail", "No video position given."));
-      if (parseInt(suffix - 1) == 0) return msg.channel.send(musicbot.note("fail", "You cannot clear the currently playing music."));
-      let test = musicbot.queues.get(msg.guild.id).songs.find(x => x.position == parseInt(suffix - 1));
+      let vc = client.voiceConnections.find(val => val.channel.guild.id == msg.member.guild.id)
+      if (vc && vc.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
+      if (parseInt(suffix) - 1 == 0) return msg.channel.send(musicbot.note("fail", "You cannot clear the currently playing music."));
+      let test = musicbot.queues.get(msg.guild.id).songs.find(x => x.position == parseInt(suffix) - 1);
       if (test) {
         if (test.requester !== msg.author.id && !musicbot.isAdmin(msg.member)) return msg.channel.send(musicbot.note("fail", "You cannot remove that item."));
         let newq = musicbot.queues.get(msg.guild.id).songs.filter(s => s !== test);
@@ -1152,7 +1190,10 @@ try {
     };
 
     musicbot.loopFunction = (msg, suffix, args) => {
+      if (!msg.member.voiceChannel) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
       if (!musicbot.queues.has(msg.guild.id)) return msg.channel.send(musicbot.note('fail', `No queue for this server found!`));
+      let vc = client.voiceConnections.find(val => val.channel.guild.id == msg.member.guild.id)
+      if (vc && vc.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
       if (musicbot.queues.get(msg.guild.id).loop == "none" || musicbot.queues.get(msg.guild.id).loop == null) {
         musicbot.queues.get(msg.guild.id).loop = "song";
         msg.channel.send(musicbot.note('note', 'Looping single enabled! :repeat_one:'));
@@ -1218,7 +1259,7 @@ try {
                 .catch((error) => {
                   console.log(error);
                 });
-            } else if (!msg.member.voiceChannel.joinable) {
+            } else if (!msg.member.voiceChannel.joinable || msg.member.voiceChannel.full) {
               msg.channel.send(musicbot.note('fail', 'I do not have permission to join your voice channel!'))
               reject();
             } else {
@@ -1240,7 +1281,7 @@ try {
             } else if (queue.loop == "single") {
               video = queue.last;
             } else {
-              video = queue.songs.find(s => s.position == queue.last.position + 1);
+              video = queue.songs.find(s => s.position == queue.last.position);
             };
           }
           if (!video) {
@@ -1263,7 +1304,7 @@ try {
               .setThumbnail(`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`)
               .setDescription(`[${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}](${video.url}) by [${video.channelTitle}](${video.channelURL})`)
               .setColor(musicbot.embedColor)
-              .setFooter(`Requested by ${req !== null ? req.username : "Unknwon User"}`, `${req !== null ? req.displayAvatarURL : null}`);
+              .setFooter(`Requested by ${req !== null ? req.username : "Unknown User"}`, `${req !== null ? req.displayAvatarURL : null}`);
               msg.channel.send({embed});
             } else {
               msg.channel.send(musicbot.note("note", `\`${video.title.replace(/`/g, "''")}\` by \`${video.channelURL.replace(/`/g, "''")}\``))
@@ -1278,6 +1319,7 @@ try {
             let dispatcher = connection.playStream(ytdl(video.url, {
               filter: 'audioonly'
             }), {
+              bitrate: musicbot.bitRate,
               volume: (musicbot.queues.get(msg.guild.id).volume / 100)
             })
 
@@ -1296,6 +1338,13 @@ try {
             dispatcher.on('end', () => {
               setTimeout(() => {
                 let loop = musicbot.queues.get(msg.guild.id).loop;
+                const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+                if (voiceConnection !== null && voiceConnection.channel.members.size <= 1){
+                    msg.channel.send(musicbot.note('note', 'No one in the voice channel, leaving...'))
+                    musicbot.queues.set(msg.guild.id, {songs: [], last: null, loop: "none", id: msg.guild.id, volume: musicbot.defVolume});
+                    if (musicbot.musicPresence) musicbot.updatePresence(musicbot.queues.get(msg.guild.id), msg.client, musicbot.clearPresence).catch((res) => { console.warn(`[MUSIC] Problem updating MusicPresence`); });
+                    return voiceConnection.disconnect();
+                }
                 if (musicbot.queues.get(msg.guild.id).songs.length > 0) {
                   if (loop == "none" || loop == null) {
                     musicbot.queues.get(msg.guild.id).songs.shift();

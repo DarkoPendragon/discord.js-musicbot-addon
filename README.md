@@ -3,7 +3,8 @@
     <a href="https://nodei.co/npm/discord.js-musicbot-addon
 /"><img src="https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&stars=true" alt="NPM info" /></a>
   </p>
-</div>
+</div>  
+
 # Discord MusicBot Addon
 ***  
 This module is a simple Node.js based music extension/bot for Discord.js projects using YouTube. This was originally an update of an older addon for newer versions of Discord.js but not serves as it's own module.   
@@ -42,7 +43,7 @@ Required for voice. Discord.js _prefers_ node-opus.
 
 __Installation:__  
 * `npm install discord.js-musicbot-addon`  
-If you have troubles installing, see [this link](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting) or [join the discord server](https://discordapp.com/invite/FKYrX4X).
+If you have troubles installing, see [this link](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting) or [join the discord server](https://discordapp.com/invite/JHMtwhG).
 Note that the NPM version will be *slightly behind* the GitHub version.
 
 # Examples
@@ -67,7 +68,7 @@ The options you can pass in `music.start(client, {options})` and their types is 
 | messageHelp | Boolean | Whether to message the user on help command usage. If it can't, it will send it in the channel like normal. | false |
 | botAdmins | Object/Array | An array of Discord user ID's to be admins as the bot. They will ignore permissions for the bot. | [ ] |
 | anyoneCanAdjust | Boolean | Whether anyone can adjust volume. | false |
-| ownerOverMember | Boolean | Whether the owner over-rides `CanAdjust` and `CanSkip`. | flase |
+| ownerOverMember | Boolean | Whether the owner over-rides `CanAdjust` and `CanSkip`. | false |
 | anyoneCanLeave | Boolean | Whether anyone can make the bot leave the currently connected channel. | false |
 | ownerID | String | The ID of the Discord user to be seen as the owner. Required if using `ownerOverMember`. | NaN |
 | logging | Boolean | Some extra none needed logging (such as caught errors that didn't crash the bot, etc). | true |
@@ -76,6 +77,10 @@ The options you can pass in `music.start(client, {options})` and their types is 
 | musicPresence | Boolean | Whether or not to make the bot set its presence to currently playing music. | false |
 | clearPresence | Boolean | Whether or not to clear the presence instead of setting it to "nothing" | false |
 | insertMusic | Boolean | Whether or not to insert the music bot data into `<Client>.music` on start. | false |
+| channelWhitelist | Object/Array | Sets a list of ID's allow when running messages. | [ ] |
+| channelBlacklist | Object/Array | Sets a list of ID's ignore when running messages. | [ ] |
+| bitRate | String | Sets the preferred bitRate for the Discord.js stream to use. | "120000" |
+| nextPresence | [PresenceData](https://discord.js.org/#/docs/main/stable/typedef/PresenceData) | PresenceData to set after instead of clearing it (clearPresence). | null |
 
 ## Multi-Prefix Option Example
 ```js
