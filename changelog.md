@@ -2,6 +2,16 @@
 Note that the NPM version will be behind the GitHub version, but more stable.  
 If any issues arise open an issue, or for a faster response join [the Discord server](https://discord.gg/JHMtwhG).
 ***
+## 13.7.0
+* Improved issues from 13.6.
+* Updated ytdl-core.
+
+## 13.6.0
+* Fixed some issues causing streams not to play.
+* Fixed extra logging.
+* Added some temporary fixes that should keep the module form skipping every other/third video.
+* Made a work around for playlists not working.
+
 ## 13.5.0
 * Fixed a queue issue causing it to skip a song every now and then.
 * Added module checkers to help some people.
