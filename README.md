@@ -99,7 +99,7 @@ See [examples](https://github.com/DarkoPendragon/discord.js-musicbot-addon/blob/
 | --- | --- | --- | --- |
 | cooldown | Object | The main cooldown object | |
 | cooldown.enabled | Boolean | Whether or not cooldowns are enabled. | true |
-| cooldown.timer | Number | Time in MS that cooldowns last. | 10000 |
+| cooldown.timer | Number | Time in milliseconds that cooldowns last. | 10000 |
 | cooldown.exclude | Object/Array | Array of command names to exclude. Uses default names, not set names | ["volume","queue","pause","resume","np"] |  
 
 ## Command Options.  
