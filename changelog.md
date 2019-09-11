@@ -2,6 +2,12 @@
 Note that the NPM version will be behind the GitHub version, but more stable.  
 If any issues arise open an issue, or for a faster response join [the Discord server](https://discord.gg/JHMtwhG).
 ***
+## 13.8.0
+* Improved issues from 13.7.
+* Updated ytdl-core/ytpl.
+* Added shuffle command.
+* Added `working` and `needsRefresh` to the queue object.
+
 ## 13.7.0
 * Improved issues from 13.6.
 * Updated ytdl-core.
