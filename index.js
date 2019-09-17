@@ -247,12 +247,19 @@ try {
 
       async updatePositions(obj, server) {
         return new Promise((resolve, reject) => {
-          if (!obj) reject("an invlaid object was passed @updatePositions")
+          if (!server) reject("stage 0: no server passed for @updatePositions");
+          if (!obj) resolve(this.getQueue(server));
           if (obj.working == true) reject("The queue is already performing a task!");
-          obj.working = true;
-          musicbot.queues.set(server, obj);
+          if (server != "000000") {
+            obj.working = true;
+            this.queues.set(server, obj);
+          }
           try {
-            var songs  = Array.from(obj.songs)
+            var songs  = typeof obj == "object" ? Array.from(obj.songs) : [];
+          } catch (e) {
+            console.log("aidjbasiubd");
+          };
+          try {
             if (!songs || songs.length <= 0 || typeof obj.songs != "object") {
               if (this.debug) console.log("[MUSICBOT] @updatePositions: songs object was invalid, reseting queue for "+ obj.id);
               this.queues.set(obj.id, {songs: [], last: obj.last ? obj.last : null, loop: obj.loop ? obj.loop : "none", id: obj.id, volume: this.defVolume, oldSongs: [],working: false, needsRefresh: false})
@@ -263,8 +270,7 @@ try {
             songs.forEach(s => {
               try {
                 // console.log(s);
-                if (!s.position) {
-                }
+                if (!s) return;
                 if (s.position !== mm) s.position = mm;
                 newsongs.push(s);
                 mm++;
@@ -274,14 +280,18 @@ try {
             });
           } catch (e) {
             console.log(e);
-            obj.working = false;
-            musicbot.queues.set(server, obj);
-            reject(e)
+            if (server != "000000") {
+              obj.working = false;
+              this.queues.set(server, obj);
+            }
+            reject("stage 1: @updatePositions " + e)
           };
           obj.songs = newsongs;
           obj.last.position = 0;
-          obj.working = false;
-          musicbot.queues.set(server, obj);
+          if (server != "000000") {
+            obj.working = false;
+            this.queues.set(server, obj);
+          }
           setTimeout(() => {
             resolve(obj);
           }, 2000)
@@ -1446,8 +1456,8 @@ try {
                 if (queue.songs.length > 0) {
                   if (loop == "none" || loop == null) {
                     queue.songs.shift();
-                    musicbot.updatePositions(queue).then(res => {
-                      queue.songs = Array.from(res.songs);
+                    musicbot.updatePositions(queue, msg ? msg.guild.id : 000000).then(res => {
+                      queue.songs = typeof res.songs == "object" ? Array.from(res.songs) : [];
                       musicbot.executeQueue(msg, queue);
                     }).catch(e=> {
                       console.log(e)
