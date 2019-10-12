@@ -200,7 +200,11 @@ try {
         this.youtubeKey = (options && options.youtubeKey);
         this.botPrefix = (options && options.botPrefix) || "!";
         this.defVolume = (options && options.defVolume) || 50;
-        this.maxQueueSize = (options && options.maxQueueSize) || 50;
+        if (options.maxQueueSize === 0) {
+          this.maxQueueSize = 0;
+        } else {
+          this.maxQueueSize = (options && options.maxQueueSize) || 50;
+        }
         this.ownerOverMember = (options && typeof options.ownerOverMember !== 'undefined' ? options && options.ownerOverMember : false);
         this.botAdmins = (options && options.botAdmins) || [];
         this.ownerID = (options && options.ownerID);
@@ -485,7 +489,7 @@ try {
         ytpl(playid, function(err, playlist) {
           if(err) return msg.channel.send(musicbot.note('fail', `Something went wrong fetching that playlist!`));
           if (playlist.items.length <= 0) return msg.channel.send(musicbot.note('fail', `Couldn't get any videos from that playlist.`));
-          if (playlist.total_items >= 50) return msg.channel.send(musicbot.note('fail', `Too many videos to queue. A maximum of 50 is allowed.`));
+          if (playlist.total_items >= musicbot.maxQueueSize && musicbot.maxQueueSize != 0) return msg.channel.send(musicbot.note('fail', `Too many videos to queue. A maximum of ` + musicbot.maxQueueSize + ` is allowed.`));
           var index = 0;
           var ran = 0;
           var queue = musicbot.getQueue(msg.guild.id);
@@ -569,13 +573,14 @@ try {
     };
 
     musicbot.helpFunction = (msg, suffix, args) => {
+      const prefix = typeof musicbot.botPrefix == "object" ? (musicbot.botPrefix.has(msg.guild.id) ? musicbot.botPrefix.get(msg.guild.id).prefix : musicbot.defaultPrefix) : musicbot.botPrefix;
       let command = suffix.trim();
       if (!suffix) {
         if (msg.channel.permissionsFor(msg.guild.me)
           .has('EMBED_LINKS')) {
           const embed = new Discord.RichEmbed();
-          embed.setAuthor("Commands", msg.author.displayAvatarURL);
-          embed.setDescription(`Use \`${musicbot.botPrefix}${musicbot.help.name} command name\` for help on usage. Anyone with a role named \`${musicbot.djRole}\` can use any command.`);
+          embed.setAuthor("Commands", client.user.avatarURL);
+          embed.setDescription(`Use \`${prefix}${musicbot.help.name} command name\` for help on usage. Anyone with a role named \`${musicbot.djRole}\` can use any command.`);
           // embed.addField(musicbot.helpCmd, musicbot.helpHelp);
           const newCmds = Array.from(musicbot.commands);
           let index = 0;
@@ -606,7 +611,7 @@ try {
             }
           };
         } else {
-          var cmdmsg = `= Music Commands =\nUse ${musicbot.botPrefix}${musicbot.help.name} [command] for help on a command. Anyone with a role named \`${musicbot.djRole}\` can use any command.\n`;
+          var cmdmsg = `= Music Commands =\nUse ${prefix}${musicbot.help.name} [command] for help on a command. Anyone with a role named \`${musicbot.djRole}\` can use any command.\n`;
           let index = 0;
           let max = musicbot.commandsArray.length;
           for (var i = 0; i < musicbot.commandsArray.length; i++) {
@@ -645,7 +650,7 @@ try {
           embed.setAuthor(command.name, msg.client.user.avatarURL);
           embed.setDescription(command.help);
           if (command.alt.length > 0) embed.addField(`Aliases`, command.alt.join(", "), musicbot.inlineEmbeds);
-          if (command.usage && typeof command.usage == "string") embed.addField(`Usage`, command.usage.replace(/{{prefix}})/g, musicbot.botPrefix), musicbot.inlineEmbeds);
+          if (command.usage && typeof command.usage == "string") embed.addField(`Usage`, command.usage.replace(/{{prefix}})/g, prefix), musicbot.inlineEmbeds);
           embed.setColor(musicbot.embedColor);
           msg.channel.send({
             embed
@@ -655,7 +660,7 @@ try {
           if (command.exclude) return msg.channel.send(musicbot.note('fail', `${suffix} is not a valid command!`));
           var cmdhelp = `= ${command.name} =\n`;
           cmdhelp = cmdhelp + `\n${command.help}`;
-          if (command.usage !== null) cmdhelp = cmdhelp + `\nUsage: ${command.usage.replace(/{{prefix}})/g, musicbot.botPrefix)}`;
+          if (command.usage !== null) cmdhelp = cmdhelp + `\nUsage: ${command.usage.replace(/{{prefix}})/g, prefix)}`;
           if (command.alt.length > 0) cmdhelp = cmdhelp + `\nAliases: ${command.alt.join(", ")}`;
           msg.channel.send(cmdhelp, {
             code: 'asciidoc'
