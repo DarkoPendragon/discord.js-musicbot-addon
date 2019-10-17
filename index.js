@@ -490,21 +490,21 @@ try {
           var ran = 0;
           var queue = musicbot.getQueue(msg.guild.id);
 
-          playlist.items.forEach(async (video) => {
-            ran++;
-            if (queue.songs.length == (musicbot.maxQueueSize + 1) && musicbot.maxQueueSize !== 0 || !video) return;
-            video.url = video.url_simple ? video.url_simple : `https://www.youtube.com/watch?v=` + video.id;
-            musicbot.playFunction(msg, video.url, [], true);
-            index++;
+          for (const video of playlist.items) {
+                ran++;
+                if (queue.songs.length == (musicbot.maxQueueSize + 1) && musicbot.maxQueueSize !== 0 || !video) return;
+                video.url = video.url_simple ? video.url_simple : `https://www.youtube.com/watch?v=` + video.id;
+                musicbot.playFunction(msg, video.url, [], true);
+                index++;
 
-            if (ran >= playlist.items.length) {
-              console.log(queue);
-              if (queue.songs.length >= 1) musicbot.executeQueue(msg, queue);
-              if (index == 0) msg.channel.send(musicbot.note('fail', `Coudln't get any songs from that playlist!`))
-              else if (index == 1) msg.channel.send(musicbot.note('note', `Queued one song.`));
-              else if (index > 1) msg.channel.send(musicbot.note('note', `Queued ${index} songs.`));
+                if (ran >= playlist.items.length) {
+                    console.log(queue);
+                    if (queue.songs.length >= 1) musicbot.executeQueue(msg, queue);
+                    if (index == 0) msg.channel.send(musicbot.note('fail', `Coudln't get any songs from that playlist!`))
+                    else if (index == 1) msg.channel.send(musicbot.note('note', `Queued one song.`));
+                    else if (index > 1) msg.channel.send(musicbot.note('note', `Queued ${index} songs.`));
+                }
             }
-          });
         });
       } else {
         if (!ignore) msg.channel.send(musicbot.note("search", `\`Searching: ${searchstring}\`~`));
