@@ -3,6 +3,15 @@ const {YTSearcher} = require('ytsearcher');
 const ytpl = require('ytpl');
 const Discord = require('discord.js');
 const PACKAGE = require('./package.json');
+const Discord = require('discord.js');
+const client = new Discord.Client();
+client.music = require("discord.js-musicbot-addon");
+
+client.music.start(client, {
+  youtubeKey: "YouTubeAPIKeyHere"
+});
+
+
 
 exports.start = (client, options) => {
 try {
@@ -1550,3 +1559,5 @@ try {
     console.error(e);
   };
 }
+
+client.login("token")
