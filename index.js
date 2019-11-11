@@ -504,7 +504,8 @@ try {
             if (ran >= playlist.items.length) {
               console.log(queue);
               if (queue.songs.length >= 1) musicbot.executeQueue(msg, queue);
-              if (index == 0) msg.channel.send(musicbot.note('fail', `Coudln't get any songs from that playlist!`))
+              if (queue.songs.length === 0 && index > 0) msg.channel.send(musicbot.note('fail', `Something went wrong. Try again! (If the problem continues, check your daily Google API quota)`));
+              else if (index == 0) msg.channel.send(musicbot.note('fail', `Coudln't get any songs from that playlist!`))
               else if (index == 1) msg.channel.send(musicbot.note('note', `Queued one song.`));
               else if (index > 1) msg.channel.send(musicbot.note('note', `Queued ${index} songs.`));
             }
@@ -513,7 +514,22 @@ try {
       } else {
         if (!ignore) msg.channel.send(musicbot.note("search", `\`Searching: ${searchstring}\`~`));
         new Promise(async (resolve, reject) => {
-          let result = await musicbot.searcher.search(searchstring, { type: 'video' });
+          let result = await musicbot.searcher.search(searchstring, { type: 'video' }).catch((err) => {
+            var errorMsg = err.message;
+            if (errorMsg.includes('\"reason\": \"dailyLimitExceeded\",')) {
+              errorMsg = errorMsg.slice(errorMsg.indexOf('Daily Limit Exceeded. '));
+              errorMsg = errorMsg.slice(0, errorMsg.indexOf('\",'));
+              if (!ignore) msg.channel.send(musicbot.note("fail", "**Unable to complete playback:**\n" + errorMsg));
+              return;
+            } else if (errorMsg.includes('\"reason\": \"quotaExceeded\",')) {
+              if (!ignore) msg.channel.send(musicbot.note("fail", "Unable to complete playback! Google API quota exceeded!"));
+              return;
+            } else {
+              if (!ignore) msg.channel.send(musicbot.note("fail", "Unknown error occurred! Playback could not be completed, check the logs for more details."));
+              return console.log(err);
+            }
+          });
+          if (result === undefined) return;
           resolve(result.first)
         }).then((res) => {
           if (!res) return msg.channel.send(musicbot.note("fail", "Something went wrong. Try again!"));
