@@ -486,7 +486,7 @@ try {
         if (playid.toString()
         .includes('&t=')) playid = playid.split('&t=')[0];
 
-        ytpl(playid, function(err, playlist) {
+        ytpl(playid, {limit: musicbot.maxQueueSize}, function(err, playlist) {
           if(err) return msg.channel.send(musicbot.note('fail', `Something went wrong fetching that playlist!`));
           if (playlist.items.length <= 0) return msg.channel.send(musicbot.note('fail', `Couldn't get any videos from that playlist.`));
           if (playlist.total_items >= musicbot.maxQueueSize && musicbot.maxQueueSize != 0) return msg.channel.send(musicbot.note('fail', `Too many videos to queue. A maximum of ` + musicbot.maxQueueSize + ` is allowed.`));
