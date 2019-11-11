@@ -1420,10 +1420,13 @@ try {
             });
 
             let dispatcher = connection.playStream(ytdl(video.url, {
-              filter: 'audioonly'
+              filter: 'audioonly',
+              quality: 'highestaudio',
+              highWaterMark: 1<<25
             }), {
               bitrate: musicbot.bitRate,
-              volume: (queue.volume / 100)
+              volume: (queue.volume / 100),
+              highWaterMark: 1
             })
 
             connection.on('error', (error) => {
