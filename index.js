@@ -504,8 +504,7 @@ try {
             if (ran >= playlist.items.length) {
               console.log(queue);
               if (queue.songs.length >= 1) musicbot.executeQueue(msg, queue);
-              if (queue.songs.length === 0 && index > 0) msg.channel.send(musicbot.note('fail', `Something went wrong. Try again! (If the problem continues, check your daily Google API quota)`));
-              else if (index == 0) msg.channel.send(musicbot.note('fail', `Coudln't get any songs from that playlist!`))
+              if (index == 0) msg.channel.send(musicbot.note('fail', `Coudln't get any songs from that playlist!`))
               else if (index == 1) msg.channel.send(musicbot.note('note', `Queued one song.`));
               else if (index > 1) msg.channel.send(musicbot.note('note', `Queued ${index} songs.`));
             }
