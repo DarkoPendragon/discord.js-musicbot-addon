@@ -486,7 +486,7 @@ try {
         if (playid.toString()
         .includes('&t=')) playid = playid.split('&t=')[0];
 
-        ytpl(playid, function(err, playlist) {
+        ytpl(playid, {limit: musicbot.maxQueueSize}, function(err, playlist) {
           if(err) return msg.channel.send(musicbot.note('fail', `Something went wrong fetching that playlist!`));
           if (playlist.items.length <= 0) return msg.channel.send(musicbot.note('fail', `Couldn't get any videos from that playlist.`));
           if (playlist.total_items >= musicbot.maxQueueSize && musicbot.maxQueueSize != 0) return msg.channel.send(musicbot.note('fail', `Too many videos to queue. A maximum of ` + musicbot.maxQueueSize + ` is allowed.`));
@@ -513,7 +513,22 @@ try {
       } else {
         if (!ignore) msg.channel.send(musicbot.note("search", `\`Searching: ${searchstring}\`~`));
         new Promise(async (resolve, reject) => {
-          let result = await musicbot.searcher.search(searchstring, { type: 'video' });
+          let result = await musicbot.searcher.search(searchstring, { type: 'video' }).catch((err) => {
+            var errorMsg = err.message;
+            if (errorMsg.includes('\"reason\": \"dailyLimitExceeded\",')) {
+              errorMsg = errorMsg.slice(errorMsg.indexOf('Daily Limit Exceeded. '));
+              errorMsg = errorMsg.slice(0, errorMsg.indexOf('\",'));
+              if (!ignore) msg.channel.send(musicbot.note("fail", "**Unable to complete playback:**\n" + errorMsg));
+              return;
+            } else if (errorMsg.includes('\"reason\": \"quotaExceeded\",')) {
+              if (!ignore) msg.channel.send(musicbot.note("fail", "Unable to complete playback! Google API quota exceeded!"));
+              return;
+            } else {
+              if (!ignore) msg.channel.send(musicbot.note("fail", "Unknown error occurred! Playback could not be completed, check the logs for more details."));
+              return console.log(err);
+            }
+          });
+          if (result === undefined) return;
           resolve(result.first)
         }).then((res) => {
           if (!res) return msg.channel.send(musicbot.note("fail", "Something went wrong. Try again!"));
@@ -1420,10 +1435,13 @@ try {
             });
 
             let dispatcher = connection.playStream(ytdl(video.url, {
-              filter: 'audioonly'
+              filter: 'audioonly',
+              quality: 'highestaudio',
+              highWaterMark: 1<<25
             }), {
               bitrate: musicbot.bitRate,
-              volume: (queue.volume / 100)
+              volume: (queue.volume / 100),
+              highWaterMark: 1
             })
 
             connection.on('error', (error) => {
