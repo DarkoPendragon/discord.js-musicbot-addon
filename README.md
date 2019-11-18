@@ -103,7 +103,7 @@ See [examples](https://github.com/DarkoPendragon/discord.js-musicbot-addon/blob/
 | cooldown.exclude | Object/Array | Array of command names to exclude. Uses default names, not set names | ["volume","queue","pause","resume","np"] |  
 
 ## Command Options.  
-Commands pass a bit different. Each command follows the same format as below. Valid commands are `play`, `remove`, `help`, `np`, `queue`, `volume`, `pause`, `resume`, `skip`, `clearqueue`, `loop`, `leave`.
+Commands pass a bit different. Each command follows the same format as below. Valid <command> entries are `play`, `remove`, `help`, `np`, `queue`, `volume`, `pause`, `resume`, `skip`, `clearqueue`, `loop`, `leave`, `shuffle`, `deletequeue`.
 ```js
 music.start(client, {
   <command>: {

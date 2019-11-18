@@ -2,6 +2,11 @@
 Note that the NPM version will be behind the GitHub version, but more stable.  
 If any issues arise open an issue, or for a faster response join [the Discord server](https://discord.gg/JHMtwhG).
 ***
+## 13.9.0
+* Added a check for ongoing searches, in the searchFunction
+* Added a command to completely delete a queue
+* PR's #120 and #126
+
 ## 13.8.1
 * Fixes for `TypeError: Cannot convert undefined or null to object`
 

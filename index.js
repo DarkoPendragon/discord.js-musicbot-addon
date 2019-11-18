@@ -190,6 +190,16 @@ try {
             exclude: Boolean((options && options.shuffle && options.shuffle.exclude)),
             masked: "shuffle"
         };
+        this.deleteQueue = {
+            enabled: (options.deleteQueue == undefined ? true : (options.deleteQueue && typeof options.deleteQueue.enabled !== 'undefined' ? options.deleteQueue && options.deleteQueue.enabled : true)),
+            run: "deleteQueueFunction",
+            alt: (options && options.deleteQueue && options.deleteQueue.alt) || [],
+            help: (options && options.deleteQueue && options.deleteQueue.help) || "Delete and re-make an ongoing queue",
+            name: (options && options.deleteQueue && options.deleteQueue.name) || "deletequeue",
+            usage: (options && options.deleteQueue && options.deleteQueue.usage) || null,
+            exclude: Boolean((options && options.deleteQueue && options.deleteQueue.exclude)),
+            masked: "deletequeue"
+        };
 
         this.embedColor = (options && options.embedColor) || 'GREEN';
         this.anyoneCanSkip = (options && typeof options.anyoneCanSkip !== 'undefined' ? options && options.anyoneCanSkip : false);
@@ -222,6 +232,7 @@ try {
         this.channelBlacklist = (options && options.channelBlacklist) || [];
         this.minShuffle = (options && options.shuffle) || 3;
         this.bitRate = (options && options.bitRate) || "120000";
+        this.userSearching = new Map();
 
         // Cooldown Settings
         this.cooldown = {
@@ -724,12 +735,17 @@ try {
         const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
         if (voiceConnection === null) return msg.channel.send(musicbot.note('fail', 'I\'m not in a voice channel.'));
         if (voiceConnection && voiceConnection.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
-        musicbot.emptyQueue(msg.guild.id);
+        musicbot.emptyQueue(msg.guild.id).then(() => {
+          if (!voiceConnection.player.dispatcher) return;
+          voiceConnection.player.dispatcher.end();
+          voiceConnection.disconnect();
+          msg.channel.send(musicbot.note('note', 'Successfully left the voice channel.'));
+        }).catch((res) => {
+          console.log("["+msg.guild.id+"] " + res);
+          musicbot.queues.delete(msg.guild.id);
+          musicbot.queues.set(msg.guild.id, {songs: [], last: null, loop: "none", id: msg.guild.id, volume: musicbot.defVolume, oldSongs: [],working: false, needsRefresh: false});
+        })
 
-        if (!voiceConnection.player.dispatcher) return;
-        voiceConnection.player.dispatcher.end();
-        voiceConnection.disconnect();
-        msg.channel.send(musicbot.note('note', 'Successfully left the voice channel.'));
       } else {
         const chance = Math.floor((Math.random() * 100) + 1);
         if (chance <= 10) return msg.channel.send(musicbot.note('fail', `I'm afraid I can't let you do that, ${msg.author.username}.`))
@@ -784,6 +800,28 @@ try {
         };
       }
     };
+
+    musicbot.deleteQueueFunction = async (msg, suffix, args) => {
+      if (!musicbot.isAdmin(msg.member)) return msg.channel.send(musicbot.note("fail", "Only and Admin can do this."));
+      const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
+      musicbot.emptyQueue(msg.guild.id).then(() => {
+        if (voiceConnection !== null) {
+          const dispatcher = voiceConnection.player.dispatcher;
+          dispatcher.end()
+        }
+        return msg.channel.send(musicbot.note("note", "The queue should now be emptied."))
+      }).catch(async (res) => {
+        console.log("["+msg.guild.id+"] " + e);
+        // force the queue delete
+        musicbot.queues.delete(msg.guild.id);
+        musicbot.queues.set(msg.guild.id, {songs: [], last: null, loop: "none", id: msg.guild.id, volume: musicbot.defVolume, oldSongs: [],working: false, needsRefresh: false});
+        if (voiceConnection !== null) {
+          const dispatcher = voiceConnection.player.dispatcher;
+          dispatcher.end()
+        }
+        msg.channel.send(musicbot.note("note", "The queue should now be deleted."))
+      })
+    }
 
     musicbot.queueFunction = (msg, suffix, args) => {
       if (!msg.member.voiceChannel) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
@@ -848,13 +886,18 @@ try {
             })
           })
         } else {
-          var newSongs = musicbot.queues.get(msg.guild.id).songs.map((video, index) => (`**${video.position + 1}:** __${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}__`)).join('\n\n');
-          const embed = new Discord.RichEmbed();
-          embed.setAuthor('Queued Songs', client.user.avatarURL);
-          embed.setColor(musicbot.embedColor);
-          embed.setDescription(newSongs);
-          embed.setFooter(`Page 1 of 1`, msg.author.displayAvatarURL);
-          return msg.channel.send(embed);
+          try {
+            var newSongs = musicbot.queues.get(msg.guild.id).songs.map((video, index) => (`**${video.position + 1}:** __${video.title.replace(/\\/g, '\\\\').replace(/\`/g, '\\`').replace(/\*/g, '\\*').replace(/_/g, '\\_').replace(/~/g, '\\~').replace(/`/g, '\\`')}__`)).join('\n\n');
+            const embed = new Discord.RichEmbed();
+            embed.setAuthor('Queued Songs', client.user.avatarURL);
+            embed.setColor(musicbot.embedColor);
+            embed.setDescription(newSongs);
+            embed.setFooter(`Page 1 of 1`, msg.author.displayAvatarURL);
+            return msg.channel.send(embed);
+          } catch (e) {
+            console.log("["+msg.guild.id+"] " + e);
+            return msg.channel.send(msicbot.note("fail", "Something went wrong mapping out the queue! Please delete the queue if this persists."));
+          };
         };
       };
     };
@@ -863,11 +906,13 @@ try {
       if (msg.member.voiceChannel === undefined) return msg.channel.send(musicbot.note('fail', `You're not in a voice channel.`));
       let vc = client.voiceConnections.find(val => val.channel.guild.id == msg.member.guild.id)
       if (vc && vc.channel.id != msg.member.voiceChannel.id) return msg.channel.send(musicbot.note('fail', `You must be in the same voice channel as me.`));
+      let us = `${msg.guild.id}-${msg.author.id}`;
+      if (musicbot.userSearching.has(us)) return msg.channel.send(musicbot.note("fail", `You already have a search on-going for \`${musicbot.userSearching.get(us).title}\`.\nYou may type \`cancel\` to cancel it.`));
 
       if (!suffix) return msg.channel.send(musicbot.note('fail', 'No video specified!'));
       const queue = musicbot.getQueue(msg.guild.id);
       if (queue.songs.length >= musicbot.maxQueueSize && musicbot.maxQueueSize !== 0) return msg.channel.send(musicbot.note('fail', 'Maximum queue size reached!'));
-
+      musicbot.userSearching.set(us, {guild: msg.guild.id, user: msg.author.id, title: suffix})
       let searchstring = suffix.trim();
       msg.channel.send(musicbot.note('search', `Searching: \`${searchstring}\``))
         .then(response => {
@@ -988,9 +1033,13 @@ try {
                       const newColl = Array.from(collected);
                       const mcon = newColl[0][1].content;
 
-                      if (mcon === "cancel") return firstMsg.edit(musicbot.note('note', 'Searching canceled.'));
+                      if (mcon === "cancel") {
+                        musicbot.userSearching.delete(us);
+                        return firstMsg.edit(musicbot.note('note', 'Searching canceled.'));
+                      };
                       const song_number = parseInt(mcon) - 1;
                       if (song_number >= 0) {
+                        musicbot.userSearching.delete(us);
                         firstMsg.delete();
 
                         videos[song_number].requester = msg.author.id;
@@ -1021,8 +1070,8 @@ try {
                       };
                     })
                     .catch(collected => {
-                      if (collected.toString()
-                      .match(/error|Error|TypeError|RangeError|Uncaught/)) return firstMsg.edit(`\`\`\`xl\nSearching canceled. ${collected}\n\`\`\``);
+                      musicbot.userSearching.delete(us);
+                      if (collected.toString().match(/error|Error|TypeError|RangeError|Uncaught/)) return firstMsg.edit(`\`\`\`xl\nSearching canceled. ${collected}\n\`\`\``);
                       return firstMsg.edit(`\`\`\`xl\nSearching canceled.\n\`\`\``);
                     });
                   })
@@ -1124,6 +1173,7 @@ try {
                       errors: ['time']
                     })
                     .then(collected => {
+                      musicbot.userSearching.delete(us);
                       const newColl = Array.from(collected);
                       const mcon = newColl[0][1].content;
 
@@ -1160,6 +1210,7 @@ try {
                       };
                     })
                     .catch(collected => {
+                      musicbot.userSearching.delete(us);
                       if (collected.toString()
                       .match(/error|Error|TypeError|RangeError|Uncaught/)) return firstMsg.edit(`\`\`\`xl\nSearching canceled. ${collected}\n\`\`\``);
                       return firstMsg.edit(`\`\`\`xl\nSearching canceled.\n\`\`\``);
@@ -1288,20 +1339,6 @@ try {
       if (musicbot.queues.get(msg.guild.id).songs.length < musicbot.minShuffle) return msg.channel.send(musicbot.note('fail', `Queue must a minimum of ${musicbot.minShuffle} songs to shuffle!`));
       if (musicbot.queues.get(msg.guild.id).loop == "song") return msg.channel.send(musicbot.note("fail", `Cannot shuffle while loop is set to single.`));
       const dispatcher = voiceConnection.player.dispatcher;
-      // if (typeof q.oldSongs == "object" && q.oldSongs.length > 0) {
-      //   musicbot.updatePositions(q, msg.guild.id).then((res) => {
-      //     q.songs = res.songs;
-      //     q.oldSongs = [];
-      //     musicbot.queues.set(msg.guild.id, q);
-      //     msg.channel.send(musicbot.note('note', `Queue was unshuffled!`));
-      //
-      //     if (voiceConnection.paused) dispatcher.end();
-      //     dispatcher.end();
-      //   }).catch((res) => {
-      //     console.log("@shuffleFunction: "+res);
-      //     return msg.channel.send(musicbot.note('fail', `Something went wrong shuffling the queue!`));
-      //   })
-      // } else {
       q.oldSongs = q.songs;
       q.songs.musicBotShuffle();
       q.needsRefresh = true;
@@ -1531,6 +1568,7 @@ try {
         await musicbot.loadCommand(musicbot.clearqueue);
         await musicbot.loadCommand(musicbot.np);
         await musicbot.loadCommand(musicbot.shuffle)
+        await musicbot.loadCommand(musicbot.deleteQueue)
       } catch (e) {
         console.error(new Error(e));
       };
