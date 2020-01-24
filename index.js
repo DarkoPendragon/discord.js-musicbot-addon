@@ -1591,20 +1591,23 @@ try {
     }
     musicbot.loadCommands();
 
-    Object.defineProperty(Array.prototype, 'musicArraySort', {value: function(n) {
-      return Array.from(Array(Math.ceil(this.length/n)), (_,i)=>this.slice(i*n,i*n+n));
-    }});
-    Object.defineProperty(Array.prototype, 'musicBotShuffle', {value: function(){
-        let input = this;
-        for (let i = input.length - 1; i >= 0; i--) {
-            let randomIndex = Math.floor(Math.random() * (i + 1));
-            let itemAtIndex = input[randomIndex];
-            input[randomIndex] = input[i];
-            input[i] = itemAtIndex;
-        }
-        return input;
-    }});
-
+    try {
+      Object.defineProperty(Array.prototype, 'musicArraySort', {value: function(n) {
+        return Array.from(Array(Math.ceil(this.length/n)), (_,i)=>this.slice(i*n,i*n+n));
+      }});
+      Object.defineProperty(Array.prototype, 'musicBotShuffle', {value: function() {
+          let input = this;
+          for (let i = input.length - 1; i >= 0; i--) {
+              let randomIndex = Math.floor(Math.random() * (i + 1));
+              let itemAtIndex = input[randomIndex];
+              input[randomIndex] = input[i];
+              input[i] = itemAtIndex;
+          }
+          return input;
+      }});
+    } catch (e) {
+      throw new Error("could not defineProperty(s) musicArraySort or musicBotShuffle, you are likely running this script twice. actual error: " + e.stack)
+    };
   } catch (e) {
     console.error(e);
   };

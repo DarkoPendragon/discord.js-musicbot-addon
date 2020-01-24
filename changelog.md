@@ -2,6 +2,11 @@
 Note that the NPM version will be behind the GitHub version, but more stable.  
 If any issues arise open an issue, or for a faster response join [the Discord server](https://discord.gg/JHMtwhG).
 ***
+## 13.9.1
+* Merged PR #133
+* Updated ytdl-core
+* Added a small error check for definitions
+
 ## 13.9.0
 * Added a check for ongoing searches, in the searchFunction
 * Added a command to completely delete a queue
