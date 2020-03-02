@@ -911,7 +911,7 @@ try {
             return msg.channel.send(embed);
           } catch (e) {
             console.log("["+msg.guild.id+"] " + e);
-            return msg.channel.send(msicbot.note("fail", "Something went wrong mapping out the queue! Please delete the queue if this persists."));
+            return msg.channel.send(musicbot.note("fail", "Something went wrong mapping out the queue! Please delete the queue if this persists."));
           };
         };
       };
