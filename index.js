@@ -568,8 +568,8 @@ try {
                 embed.addField("Queued On", res.queuedOn, musicbot.inlineEmbeds);
                 if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${res.id}/maxresdefault.jpg`);
                 if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${res.id}/maxresdefault.jpg`);
-                const resMem = client.users.get(res.requester);
-                if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(res.requester).username}`, res.requesterAvatarURL);
+                const resMem = client.users.cache.get(res.requester);
+                if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.cache.get(res.requester).username}`, res.requesterAvatarURL);
                 if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${res.requester})\``, res.requesterAvatarURL);
                 msg.channel.send({
                   embed
@@ -585,7 +585,7 @@ try {
                 .replace(/_/g, '\\_')
                 .replace(/~/g, '\\~')
                 .replace(/`/g, '\\`');
-                msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(res.requester).username}\nQueued On: ${res.queuedOn}`)
+                msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.cache.get(res.requester).username}\nQueued On: ${res.queuedOn}`)
               } catch (e) {
                 console.error(`[${msg.guild.name}] [npCmd] ` + e.stack);
               };
@@ -792,8 +792,8 @@ try {
           embed.addField("Queued On", queue.last.queuedOn, musicbot.inlineEmbeds);
           if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${queue.last.id}/maxresdefault.jpg`);
           if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${queue.last.id}/maxresdefault.jpg`);
-          const resMem = client.users.get(queue.last.requester);
-          if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(queue.last.requester).username}`, queue.last.requesterAvatarURL);
+          const resMem = client.users.cache.get(queue.last.requester);
+          if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.cache.get(queue.last.requester).username}`, queue.last.requesterAvatarURL);
           if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${queue.last.requester})\``, queue.last.requesterAvatarURL);
           msg.channel.send({
             embed
@@ -809,7 +809,7 @@ try {
             .replace(/_/g, '\\_')
             .replace(/~/g, '\\~')
             .replace(/`/g, '\\`');
-          msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.get(queue.last.requester).username}\nQueued On: ${queue.last.queuedOn}`)
+          msg.channel.send(`Now Playing: **${songTitle}**\nRequested By: ${client.users.cache.get(queue.last.requester).username}\nQueued On: ${queue.last.queuedOn}`)
         } catch (e) {
           console.error(`[${msg.guild.name}] [npCmd] ` + e.stack);
         };
@@ -857,8 +857,8 @@ try {
         .addField("Position", video.position + 1, musicbot.inlineEmbeds);
         if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`);
         if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`);
-        const resMem = client.users.get(video.requester);
-        if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(video.requester).username}`, video.requesterAvatarURL);
+        const resMem = client.users.cache.get(video.requester);
+        if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.cache.get(video.requester).username}`, video.requesterAvatarURL);
         if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${video.requester})\``, video.requesterAvatarURL);
         msg.channel.send({embed});
       } else {
@@ -1072,8 +1072,8 @@ try {
                         embed.addField("Queued On", videos[song_number].queuedOn, musicbot.inlineEmbeds);
                         if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
                         if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
-                        const resMem = client.users.get(videos[song_number].requester);
-                        if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(videos[song_number].requester).username}`, videos[song_number].requesterAvatarURL);
+                        const resMem = client.users.cache.get(videos[song_number].requester);
+                        if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.cache.get(videos[song_number].requester).username}`, videos[song_number].requesterAvatarURL);
                         if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${videos[song_number].requester})\``, videos[song_number].requesterAvatarURL);
                         msg.channel.send({
                           embed
@@ -1212,8 +1212,8 @@ try {
                         embed.addField("Queued On", videos[song_number].queuedOn, musicbot.inlineEmbeds);
                         if (!musicbot.bigPicture) embed.setThumbnail(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
                         if (musicbot.bigPicture) embed.setImage(`https://img.youtube.com/vi/${videos[song_number].id}/maxresdefault.jpg`);
-                        const resMem = client.users.get(videos[song_number].requester);
-                        if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.get(videos[song_number].requester).username}`, videos[song_number].requesterAvatarURL);
+                        const resMem = client.users.cache.get(videos[song_number].requester);
+                        if (musicbot.requesterName && resMem) embed.setFooter(`Requested by ${client.users.cache.get(videos[song_number].requester).username}`, videos[song_number].requesterAvatarURL);
                         if (musicbot.requesterName && !resMem) embed.setFooter(`Requested by \`UnknownUser (ID: ${videos[song_number].requester})\``, videos[song_number].requesterAvatarURL);
                         msg.channel.send({
                           embed
@@ -1452,7 +1452,7 @@ try {
           }
 
           if (musicbot.messageNewSong == true && queue.last && queue.loop !== "song") {
-            let req = client.users.get(video.requester);
+            let req = client.users.cache.get(video.requester);
             if (msg.channel.permissionsFor(msg.guild.me).has('EMBED_LINKS')) {
               const embed = new Discord.RichEmbed()
               .setTitle("Now Playing", `${req !== null ? req.displayAvatarURL : null}`)
