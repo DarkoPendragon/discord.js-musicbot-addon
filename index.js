@@ -174,7 +174,7 @@ try {
           enabled: (options.skip == undefined ? true : (options.skip && typeof options.skip.enabled !== 'undefined' ? options.skip && options.skip.enabled : true)),
           run: "skipFunction",
           alt: (options && options.skip && options.skip.alt) || [],
-          help: (options && options.skip && options.skip.help) || "Skip a song or songs with `skip [number]`",
+          help: (options && options.skip && options.skip.help) || "Skip a song",
           name: (options && options.skip && options.skip.name) || "skip",
           usage: (options && options.skip && options.skip.usage) || null,
           exclude: Boolean((options && options.skip && options.skip.exclude)),
@@ -911,7 +911,7 @@ try {
             return msg.channel.send(embed);
           } catch (e) {
             console.log("["+msg.guild.id+"] " + e);
-            return msg.channel.send(msicbot.note("fail", "Something went wrong mapping out the queue! Please delete the queue if this persists."));
+            return msg.channel.send(musicbot.note("fail", "Something went wrong mapping out the queue! Please delete the queue if this persists."));
           };
         };
       };
