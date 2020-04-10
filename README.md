@@ -1,5 +1,5 @@
 ## A Little Notice:
-Recently most members of my Discord server have been banned from it. All bans have been removed but we obvouisly can't track you all down and shove invite links at you. So, feel free to re-join the server: [https://discordapp.com/invite/JHMtwhG](https://discordapp.com/invite/JHMtwhG)
+This project is NO LONGER SUPPORTED and does NOT function. Do not use this. This repo serves as and archive of my work. If anyone wishes to re-upload this project, re-do it, or use it in any way you have my full permission. I am no longer supporting or working on this or any other projects not listed on my personal Discord or website anymore. You may still join the Discord [by clicking here](https://discord.gg/JHMtwhG).
 <div align="center">
   <p>
     <a href="https://nodei.co/npm/discord.js-musicbot-addon
