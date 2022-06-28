@@ -1,11 +1,5 @@
 ## A Little Notice:
-This project is NO LONGER SUPPORTED and does NOT function. Do not use this. This repo serves as and archive of my work. If anyone wishes to re-upload this project, re-do it, or use it in any way you have my full permission. I am no longer supporting or working on this or any other projects not listed on my personal Discord or website anymore. You may still join the Discord [by clicking here](https://discord.gg/JHMtwhG).
-<div align="center">
-  <p>
-    <a href="https://nodei.co/npm/discord.js-musicbot-addon
-/"><img src="https://nodei.co/npm/discord.js-musicbot-addon.png?downloads=true&stars=true" alt="NPM info" /></a>
-  </p>
-</div>  
+This project is NO LONGER SUPPORTED and does NOT function. Do not use this. This repo serves as an archive of my work. If anyone wishes to re-upload this project, re-do it, or use it in any way you have my full permission. I am no longer supporting or working on this or any other projects not listed on my personal Discord. You may still join the Discord [by clicking here](https://discord.gg/4c8Rh7tWhv).
 
 # Discord MusicBot Addon
 ***  
@@ -45,7 +39,7 @@ Required for voice. Discord.js _prefers_ node-opus.
 
 __Installation:__  
 * `npm install discord.js-musicbot-addon`  
-If you have troubles installing, see [this link](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting) or [join the discord server](https://discordapp.com/invite/JHMtwhG).
+If you have troubles installing, see [this link](https://github.com/DarkoPendragon/discord.js-musicbot-addon/wiki/Installation-&-Troubleshooting) or [join the discord server](https://discord.gg/4c8Rh7tWhv).
 Note that the NPM version will be *slightly behind* the GitHub version.
 
 # Examples
